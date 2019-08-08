@@ -1,0 +1,48 @@
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.mr-10 {
+  margin-right: 10px !important;
+}
+
+.mt-5 {
+  margin-top: 5px !important;
+}
+
+.mb-5 {
+  margin-bottom: 5px !important;
+}
+
+.mat-green {
+  background-color: #3a8484;
+  color: #fafafa;
+}
+
+.w-100 {
+  width: 100% !important;
+}
+
+.login-form-input > .mat-form-field-wrapper {
+  padding-bottom: 0 !important;
+  margin-bottom: 7px !important;
+  margin-top: 0 !important;
+}
+
+.login-form-input > .mat-form-field-wrapper > .mat-form-field-flex > .mat-form-field-outline {
+  background-color: rgba(0, 0, 0, 0.3) !important;
+  border-radius: 5px !important;
+}
+
+.login-form-input > .mat-form-field-wrapper > .mat-form-field-flex > .mat-form-field-infix {
+  padding: 6px 0 15px 0 !important;
+}

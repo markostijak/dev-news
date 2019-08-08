@@ -1,0 +1,64 @@
+@import '../../../theme.scss';
+
+$background: map-get($theme, background);
+$backgroundColor: map-get($background, color);
+$primary: map-get($theme, primary);
+
+.preloader-wrapper {
+  z-index: 100000;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: block;
+  background-color: $backgroundColor;
+}
+
+.preloader-container {
+  position: absolute;
+  width: 100%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.preloader-icon-container {
+  max-width: 128px;
+  width: 100%;
+  margin: auto;
+  height: auto;
+}
+
+.preloader-icon {
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(5px 6px 6px rgba(0, 0, 0, 0.5));
+}
+
+.preloader-progress {
+  margin: 30px auto auto;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
+  background-color: #fafafa;
+  height: 5px;
+  border-radius: 5px;
+  overflow: hidden;
+  position: relative;
+  max-width: 12em;
+  width: 100%;
+}
+
+.preloader-progress-bar {
+  animation: side2side 2s ease-in-out infinite;
+  background-color: mat-color($primary);
+  height: 100%;
+  position: absolute;
+  width: 50%;
+}
+
+@keyframes side2side {
+  0%, 100% {
+    transform: translateX(-50%);
+  }
+  50% {
+    transform: translateX(150%);
+  }
+}

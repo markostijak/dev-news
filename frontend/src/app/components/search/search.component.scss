@@ -1,0 +1,21 @@
+@import '../../../theme.scss';
+
+.search-container {
+  position: relative;
+  max-width: 700px;
+}
+
+.search {
+  width: calc(100% - 40px);
+  border: none;
+  outline: none;
+  background-color: rgba(0, 0, 0, 0.30);
+  border-radius: 3px;
+  padding: 10px 20px;
+  color: #fafafa;
+}
+
+.search-result-container {
+  position: absolute;
+  display: none;
+}

@@ -1,0 +1,36 @@
+<div class="login-container">
+
+  <div class="login-title">Please log in to continue.</div>
+
+  <mat-form-field class="login-form-input" appearance="outline">
+    <input type="email" matInput placeholder="Email" [formControl]="email" required>
+  </mat-form-field>
+
+  <mat-form-field class="login-form-input" appearance="outline">
+    <input type="password" matInput placeholder="Password" [formControl]="password" required>
+  </mat-form-field>
+
+  <button class="login-form-button login-button" mat-button mat-raised-button (click)="login()">Log in</button>
+
+  <hr class="w-100 h-line">
+
+  <button class="login-form-button google-button" mat-button mat-raised-button (click)="google()">
+    <mat-icon class="login-form-button-icon" svgIcon="google" aria-hidden="false" aria-label="Google"></mat-icon>
+    Log in with Google
+  </button>
+
+  <button class="login-form-button facebook-button" mat-button mat-raised-button (click)="facebook()">
+    <mat-icon class="login-form-button-icon" svgIcon="facebook" aria-hidden="false" aria-label="Facebook"></mat-icon>
+    Log in with Facebook
+  </button>
+
+  <button class="login-form-button github-button" mat-button mat-raised-button (click)="github()">
+    <mat-icon class="login-form-button-icon" svgIcon="github" aria-hidden="false" aria-label="GitHub"></mat-icon>
+    Log in with GitHub
+  </button>
+
+  <hr class="w-100 h-line">
+
+  <button class="login-form-button sign-up-button" mat-button mat-raised-button>Sign Up</button>
+
+</div>

@@ -1,7 +1,20 @@
 package com.stijaktech.devnews.models;
 
-/**
- * Created by Marko Stijak on 04.07.2019.
- */
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
+
+    private String email;
+    @JsonIgnore
+    private String password;
+    private String lastName;
+    private String firstName;
+    private String username;
+
 }

@@ -1,8 +1,12 @@
 package com.stijaktech.devnews.models;
 
-/**
- * Created by Marko Stijak on 04.07.2019.
- */
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Thread {
 
     private Post post;

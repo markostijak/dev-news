@@ -1,10 +1,14 @@
 package com.stijaktech.devnews.models;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
 
-/**
- * Created by Marko Stijak on 04.07.2019.
- */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Discussion {
 
     public List<Thread> threads;

@@ -4,7 +4,7 @@ import {MatIconRegistry} from '@angular/material';
 import {FormControl, Validators} from '@angular/forms';
 // @ts-ignore
 import {DomSanitizer} from '@angular/platform-browser';
-import {LoginService} from '../../services/login/login.service';
+import {AuthenticationService} from '../../services/authentication/authentication.service';
 
 @Component({
   selector: 'app-login',
@@ -15,10 +15,10 @@ export class LoginComponent implements OnInit {
   private _email: FormControl;
   private _password: FormControl;
   private _sanitizer: DomSanitizer;
-  private _loginService: LoginService;
+  private _loginService: AuthenticationService;
   private _iconRegistry: MatIconRegistry;
 
-  constructor(loginService: LoginService, iconRegistry: MatIconRegistry, sanitizer: DomSanitizer) {
+  constructor(loginService: AuthenticationService, iconRegistry: MatIconRegistry, sanitizer: DomSanitizer) {
     this._sanitizer = sanitizer;
     this._loginService = loginService;
     this._iconRegistry = iconRegistry;

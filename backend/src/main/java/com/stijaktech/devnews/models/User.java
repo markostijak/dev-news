@@ -17,5 +17,6 @@ public class User {
     private String username;
     private String firstName;
     private Provider provider;
+    private String refreshToken;
 
 }

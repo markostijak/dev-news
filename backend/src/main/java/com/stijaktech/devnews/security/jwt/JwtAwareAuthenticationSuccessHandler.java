@@ -2,8 +2,7 @@ package com.stijaktech.devnews.security.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stijaktech.devnews.models.User;
-import io.jsonwebtoken.Jwts;
-import io.undertow.util.Headers;
+import com.stijaktech.devnews.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,20 +18,25 @@ import java.io.IOException;
 @Component
 public class JwtAwareAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
+    private JwtProvider jwtProvider;
     private ObjectMapper objectMapper;
 
     @Autowired
-    public JwtAwareAuthenticationSuccessHandler(ObjectMapper objectMapper) {
+    public JwtAwareAuthenticationSuccessHandler(JwtProvider jwtProvider, ObjectMapper objectMapper) {
+        this.jwtProvider = jwtProvider;
         this.objectMapper = objectMapper;
     }
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         User user = (User) authentication.getPrincipal();
-        String jwt = Jwts.builder().setPayload(user.getEmail()).compact();
+
+        String refreshToken = user.getRefreshToken();
+        String accessToken = jwtProvider.generateAccessToken(authentication);
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setHeader(Headers.AUTHORIZATION_STRING, String.format("Bearer %s", jwt));
+        response.setHeader(JwtProvider.ACCESS_TOKEN_HEADER, accessToken);
+        response.setHeader(JwtProvider.REFRESH_TOKEN_HEADER, refreshToken);
         response.setStatus(HttpStatus.OK.value());
 
         objectMapper.writeValue(response.getOutputStream(), user);

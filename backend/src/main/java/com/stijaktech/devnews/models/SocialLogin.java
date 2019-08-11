@@ -8,16 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SocialLogin {
-
-    public enum Provider {
-        FACEBOOK,
-        GOOGLE,
-        GITHUB;
-    }
-
     private String code;
-    private String token;
-    private String email;
     private Provider provider;
-
 }

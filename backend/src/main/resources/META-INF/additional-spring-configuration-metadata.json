@@ -1,0 +1,44 @@
+{
+  "properties": [
+    {
+      "name": "oauth2.providers.*.scope",
+      "type": "java.util.List<java.lang.String>",
+      "description": "Description for oauth2.providers.*.scope."
+    },
+    {
+      "name": "oauth2.providers.*.client-id",
+      "type": "java.lang.String",
+      "description": "Description for oauth2.providers.*.client-id."
+    },
+    {
+      "name": "oauth2.providers.*.grant-type",
+      "type": "java.lang.String",
+      "description": "Description for oauth2.providers.*.grant-type."
+    },
+    {
+      "name": "oauth2.providers.*.client-secret",
+      "type": "java.lang.String",
+      "description": "Description for oauth2.providers.*.client-secret."
+    },
+    {
+      "name": "oauth2.providers.*.user-info-uri",
+      "type": "java.lang.String",
+      "description": "Description for oauth2.providers.*.user-info-uri."
+    },
+    {
+      "name": "oauth2.providers.*.access-token-uri",
+      "type": "java.lang.String",
+      "description": "Description for oauth2.providers.*.access-token-uri."
+    },
+    {
+      "name": "oauth2.providers.*.user-authorization-uri",
+      "type": "java.lang.String",
+      "description": "Description for oauth2.providers.*.user-authorization-uri."
+    },
+    {
+      "name": "oauth2.providers.*.pre-established-redirect-uri",
+      "type": "java.lang.String",
+      "description": "Description for oauth2.providers.*.pre-established-redirect-uri."
+    }
+  ]
+}

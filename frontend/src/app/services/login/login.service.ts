@@ -17,21 +17,29 @@ export class LoginService {
   private _user: User;
   private _httpClient: HttpClient;
   private _oauthService: OAuthService;
+  private _redirectUri: string = 'http://localhost:4200';
 
   constructor(httpClient: HttpClient) {
     this._httpClient = httpClient;
     this._oauthService = new OAuthService(new OAuthServiceConfig([
       {
         id: GoogleLoginProvider.PROVIDER_ID,
-        provider: new GoogleLoginProvider('879461385833-mgach0766m2012v6a0bdpo8i9frk4cr8.apps.googleusercontent.com')
+        provider: new GoogleLoginProvider('879461385833-dnjff3q4ja3o2m3s78btdcevfdk2hvof.apps.googleusercontent.com', {
+          redirect_uri: this._redirectUri,
+          offline_access: true
+        })
       },
       {
         id: FacebookLoginProvider.PROVIDER_ID,
-        provider: new FacebookLoginProvider('aaa')
+        provider: new FacebookLoginProvider('838239883050275', {
+          redirect_uri: this._redirectUri
+        })
       },
       {
         id: GitHubLoginProvider.PROVIDER_ID,
-        provider: new GitHubLoginProvider('1a0134416aad2086e0bf')
+        provider: new GitHubLoginProvider('d3e47fc2ddd966fa4352', {
+          redirect_uri: this._redirectUri
+        })
       }
     ]));
   }
@@ -44,29 +52,26 @@ export class LoginService {
   }
 
   public facebook(): Promise<User> {
-    return this._oauthService.signIn(FacebookLoginProvider.PROVIDER_ID).then(facebook =>
-      this.socialLogin(facebook, FacebookLoginProvider.PROVIDER_ID));
+    return this._oauthService.signIn(FacebookLoginProvider.PROVIDER_ID).then(facebook => this.socialLogin(facebook));
   }
 
   public google(): Promise<User> {
-    return this._oauthService.signIn(GoogleLoginProvider.PROVIDER_ID).then(google =>
-      this.socialLogin(google, GoogleLoginProvider.PROVIDER_ID));
+    return this._oauthService.signIn(GoogleLoginProvider.PROVIDER_ID).then(google => this.socialLogin(google));
   }
 
   public github(): Promise<User> {
-    return this._oauthService.signIn(GitHubLoginProvider.PROVIDER_ID).then(github =>
-      this.socialLogin(github, GitHubLoginProvider.PROVIDER_ID));
+    return this._oauthService.signIn(GitHubLoginProvider.PROVIDER_ID).then(github => this.socialLogin(github));
   }
 
   public logout(): Promise<any> {
     return this._httpClient.get('/logout').toPromise();
   }
 
-  private socialLogin(socialUser: SocialUser, provider: string): Promise<User> {
+  private socialLogin(socialUser: SocialUser): Promise<User> {
+    console.log(socialUser);
     return this._httpClient.post('http://localhost:8081/social-login', {
-      provider: provider,
-      email: socialUser.email,
-      code: socialUser.authToken,
+      provider: socialUser.provider,
+      code: socialUser.authorizationCode,
     }).toPromise().then(result => new User());
   }
 

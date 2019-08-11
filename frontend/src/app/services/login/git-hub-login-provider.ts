@@ -5,9 +5,11 @@ export class GitHubLoginProvider implements LoginProvider {
   static readonly PROVIDER_ID = 'GITHUB';
 
   private _clientId: string;
+  private _options: LoginOpt;
 
-  constructor(clientId: string) {
+  constructor(clientId: string, opt?: LoginOpt) {
     this._clientId = clientId;
+    this._options = opt;
   }
 
   getLoginStatus(): Promise<SocialUser> {

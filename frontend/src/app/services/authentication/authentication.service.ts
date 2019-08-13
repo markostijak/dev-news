@@ -1,13 +1,7 @@
 import {Injectable} from '@angular/core';
 import {User} from '../../models/user';
-import {HttpClient} from '@angular/common/http';
-import {
-  AuthService as OAuth2Service,
-  AuthServiceConfig as OAuth2ServiceConfig,
-  FacebookLoginProvider,
-  GoogleLoginProvider,
-  SocialUser
-} from 'angularx-social-login';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {AuthService as OAuth2Service, AuthServiceConfig as OAuth2ServiceConfig, FacebookLoginProvider, GoogleLoginProvider, SocialUser} from 'angularx-social-login';
 import {GitHubLoginProvider} from './git-hub-login-provider';
 
 @Injectable({
@@ -44,13 +38,6 @@ export class AuthenticationService {
     ]));
   }
 
-  public login(email: string, password: string): Promise<User> {
-    return this._httpClient.post('/login', {
-      email: email,
-      password: password
-    }).toPromise().then(result => new User());
-  }
-
   public facebook(): Promise<User> {
     return this._oauthService.signIn(FacebookLoginProvider.PROVIDER_ID).then(facebook => this.socialLogin(facebook));
   }
@@ -63,23 +50,39 @@ export class AuthenticationService {
     return this._oauthService.signIn(GitHubLoginProvider.PROVIDER_ID).then(github => this.socialLogin(github));
   }
 
-  public logout(): Promise<any> {
-    return this._httpClient.get('/logout').toPromise();
+  private login(email: string, password: string): Promise<User> {
+    return this.authenticate("auth/login", email, password);
   }
 
   private socialLogin(socialUser: SocialUser): Promise<User> {
     console.log(socialUser);
-    return this._httpClient.post('http://localhost:8081/social-login', {
-      provider: socialUser.provider,
-      code: socialUser.authorizationCode,
+    return this.authenticate("auth/social-login", socialUser.provider, socialUser.authorizationCode);
+  }
+
+  public jwtRefresh(accessToken: string, refreshToken: string): Promise<User> {
+    return this.authenticate('auth/jwt-refresh', accessToken, refreshToken);
+  }
+
+  public authenticate(url: string, principal: string, credentials: string): Promise<User> {
+    return this._httpClient.get(url, {
+      headers: new HttpHeaders({
+        'Authorization': 'Basic ' + btoa(principal + ':' + credentials)
+      })
     }).toPromise().then(result => {
-      console.log(result);
-      return new User();
+      let user: User = new User();
+      user.accessToken = '';
+      user.refreshToken = '';
+
+      return this._user = user;
     });
   }
 
-  public get user(): User {
-    return this._user;
+  public logout(): Promise<any> {
+    return this._httpClient.get('/logout').toPromise();
   }
 
+
+  get user(): User {
+    return this._user;
+  }
 }

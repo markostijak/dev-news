@@ -1,13 +1,15 @@
-package com.stijaktech.devnews.security;
+package com.stijaktech.devnews.configuration.security;
 
-import com.stijaktech.devnews.security.jwt.JwtAuthenticationFilter;
+import com.stijaktech.devnews.configuration.security.authentication.filters.JwtAuthenticationFilter;
+import com.stijaktech.devnews.models.Role;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.BeanIds;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -22,14 +24,21 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private JwtAuthenticationFilter jwtAuthenticationFilter;
+    private List<AuthenticationProvider> authenticationProviders;
 
-    public SecurityConfiguration(JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public SecurityConfiguration(
+            JwtAuthenticationFilter jwtAuthenticationFilter,
+            List<AuthenticationProvider> authenticationProviders) {
+
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.authenticationProviders = authenticationProviders;
     }
 
     @Bean
@@ -41,6 +50,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Bean(BeanIds.AUTHENTICATION_MANAGER)
     public AuthenticationManager authenticationManager() throws Exception {
         return super.authenticationManagerBean();
+    }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
+        authenticationProviders.forEach(authenticationManagerBuilder::authenticationProvider);
     }
 
     @Bean
@@ -83,6 +97,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/login", "/social-login")
                 .permitAll()
+                .and()
+                .authorizeRequests()
+                .antMatchers("/actuator/**")
+                .hasAnyRole(Role.ADMIN, Role.WEBMASTER)
                 .and()
                 .authorizeRequests()
                 .anyRequest()

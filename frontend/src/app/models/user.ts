@@ -1,29 +1,66 @@
 export class User {
+
+  private _id: string;
+  private _email: string;
   private _firstName: string;
   private _lastName: string;
   private _username: string;
+  private _accessToken: string;
+  private _refreshToken: string;
 
-  public get firstName(): string {
+  get id(): string {
+    return this._id;
+  }
+
+  set id(value: string) {
+    this._id = value;
+  }
+
+  get email(): string {
+    return this._email;
+  }
+
+  set email(value: string) {
+    this._email = value;
+  }
+
+  get firstName(): string {
     return this._firstName;
   }
 
-  public set firstName(value: string) {
+  set firstName(value: string) {
     this._firstName = value;
   }
 
-  public get lastName(): string {
+  get lastName(): string {
     return this._lastName;
   }
 
-  public set lastName(value: string) {
+  set lastName(value: string) {
     this._lastName = value;
   }
 
-  public get username(): string {
+  get username(): string {
     return this._username;
   }
 
-  public set username(value: string) {
+  set username(value: string) {
     this._username = value;
+  }
+
+  get accessToken(): string {
+    return this._accessToken;
+  }
+
+  set accessToken(value: string) {
+    this._accessToken = value;
+  }
+
+  get refreshToken(): string {
+    return this._refreshToken;
+  }
+
+  set refreshToken(value: string) {
+    this._refreshToken = value;
   }
 }

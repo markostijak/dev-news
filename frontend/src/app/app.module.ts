@@ -4,7 +4,7 @@ import {NgModule} from '@angular/core';
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {
   MatButtonModule,
   MatCardModule,
@@ -29,6 +29,7 @@ import {SignUpComponent} from './components/sign-up/sign-up.component';
 import {AccountMenuComponent} from './components/account-menu/account-menu.component';
 import {NewPostComponent} from './components/new-post/new-post.component';
 import {SocialLoginModule} from 'angularx-social-login';
+import {JwtInterceptorService} from "./services/authentication/jwt-interceptor.service";
 
 @NgModule({
   declarations: [
@@ -63,7 +64,13 @@ import {SocialLoginModule} from 'angularx-social-login';
     MatListModule,
     SocialLoginModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: JwtInterceptorService,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

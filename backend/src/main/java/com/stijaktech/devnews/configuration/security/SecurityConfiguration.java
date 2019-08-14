@@ -26,6 +26,8 @@ import org.springframework.web.filter.CorsFilter;
 
 import java.util.List;
 
+import static com.stijaktech.devnews.configuration.security.authentication.filters.LoginAuthenticationFilter.*;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
@@ -95,7 +97,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, "/login", "/social-login")
+                .antMatchers(AUTH_LOGIN, AUTH_SOCIAL_LOGIN, AUTH_REFRESH)
                 .permitAll()
                 .and()
                 .authorizeRequests()

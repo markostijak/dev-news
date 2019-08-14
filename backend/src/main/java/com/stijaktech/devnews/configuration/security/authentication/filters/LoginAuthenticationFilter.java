@@ -1,7 +1,7 @@
 package com.stijaktech.devnews.configuration.security.authentication.filters;
 
-import com.stijaktech.devnews.configuration.security.authentication.tokens.EmailPasswordAuthenticationToken;
 import com.stijaktech.devnews.configuration.security.authentication.tokens.AuthorizationCodeAuthenticationToken;
+import com.stijaktech.devnews.configuration.security.authentication.tokens.EmailPasswordAuthenticationToken;
 import com.stijaktech.devnews.configuration.security.authentication.tokens.JwtRefreshAuthenticationToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -24,12 +24,17 @@ import java.util.Base64;
 @Component
 public class LoginAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
+
+    public static final String AUTH_LOGIN = "/auth/login";
+    public static final String AUTH_SOCIAL_LOGIN = "/auth/social-login";
+    public static final String AUTH_REFRESH = "/auth/refresh";
+
     @Autowired
     public LoginAuthenticationFilter(AuthenticationManager authenticationManager, JwtAwareAuthenticationSuccessHandler successHandler) {
         super(new OrRequestMatcher(
-                new AntPathRequestMatcher("/auth/login"),
-                new AntPathRequestMatcher("/auth/social-login"),
-                new AntPathRequestMatcher("/auth/jwt-refresh")
+                new AntPathRequestMatcher(AUTH_LOGIN),
+                new AntPathRequestMatcher(AUTH_SOCIAL_LOGIN),
+                new AntPathRequestMatcher(AUTH_REFRESH)
         ));
         setAuthenticationManager(authenticationManager);
         setAuthenticationSuccessHandler(successHandler);
@@ -48,13 +53,13 @@ public class LoginAuthenticationFilter extends AbstractAuthenticationProcessingF
 
         Authentication authentication;
         switch (request.getServletPath()) {
-            case "/auth/login":
+            case AUTH_LOGIN:
                 authentication = new EmailPasswordAuthenticationToken(tokens[0], tokens[1]);
                 break;
-            case "/auth/social-login":
+            case AUTH_SOCIAL_LOGIN:
                 authentication = new AuthorizationCodeAuthenticationToken(tokens[0], tokens[1]);
                 break;
-            case "/auth/jwt-refresh":
+            case AUTH_REFRESH:
                 authentication = new JwtRefreshAuthenticationToken(tokens[0], tokens[1]);
                 break;
             default:

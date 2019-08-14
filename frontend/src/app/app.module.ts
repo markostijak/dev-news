@@ -30,6 +30,7 @@ import {AccountMenuComponent} from './components/account-menu/account-menu.compo
 import {NewPostComponent} from './components/new-post/new-post.component';
 import {SocialLoginModule} from 'angularx-social-login';
 import {JwtInterceptorService} from "./services/authentication/jwt-interceptor.service";
+import {FlexLayoutModule} from '@angular/flex-layout';
 
 @NgModule({
   declarations: [
@@ -46,6 +47,7 @@ import {JwtInterceptorService} from "./services/authentication/jwt-interceptor.s
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,
+    FlexLayoutModule,
     MatGridListModule,
     MatSidenavModule,
     MatButtonModule,

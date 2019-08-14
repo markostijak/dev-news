@@ -1,0 +1,12 @@
+{
+  "/src/**": {
+    "target": "http://localhost:4200/",
+    "secure": false,
+    "logLevel": "debug"
+  },
+  "/**": {
+    "target": "http://localhost:8081/",
+    "secure": false,
+    "logLevel": "debug"
+  }
+}

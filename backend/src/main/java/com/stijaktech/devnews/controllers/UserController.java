@@ -26,7 +26,7 @@ public class UserController {
     }
 
     @PostMapping("/edit")
-    public User edit(User user) {
+    public User edit(@RequestBody User user) {
         return new User();
     }
 

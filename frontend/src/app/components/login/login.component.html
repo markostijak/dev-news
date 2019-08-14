@@ -1,27 +1,29 @@
 <div class="login-container">
 
-  <div class="login-title">Please log in to continue.</div>
+  <div class="login-logo-container">
+    <img class="login-logo" src="assets/icons/logo.svg" alt="Logo">
+  </div>
 
-  <mat-form-field class="login-form-input" appearance="outline">
+  <hr class="w-100 h-line logo-divider">
+
+  <mat-form-field class="login-form-input email-field" appearance="outline">
     <input type="email" matInput placeholder="Email" [formControl]="email" required>
   </mat-form-field>
 
-  <mat-form-field class="login-form-input" appearance="outline">
+  <mat-form-field class="login-form-input password-field" appearance="outline">
     <input type="password" matInput placeholder="Password" [formControl]="password" required>
   </mat-form-field>
 
   <button class="login-form-button login-button" mat-button mat-raised-button (click)="login()">Log in</button>
 
-  <hr class="w-100 h-line">
+  <div class="or-divider-container">
+    <hr class="w-100 h-line or-divider">
+    <span class="or-divider-text">OR</span>
+  </div>
 
   <button class="login-form-button google-button" mat-button mat-raised-button (click)="google()">
     <mat-icon class="login-form-button-icon" svgIcon="google" aria-hidden="false" aria-label="Google"></mat-icon>
     Log in with Google
-  </button>
-
-  <button class="login-form-button facebook-button" mat-button mat-raised-button (click)="facebook()">
-    <mat-icon class="login-form-button-icon" svgIcon="facebook" aria-hidden="false" aria-label="Facebook"></mat-icon>
-    Log in with Facebook
   </button>
 
   <button class="login-form-button github-button" mat-button mat-raised-button (click)="github()">
@@ -29,8 +31,18 @@
     Log in with GitHub
   </button>
 
-  <hr class="w-100 h-line">
+  <button class="login-form-button facebook-button" mat-button mat-raised-button (click)="facebook()">
+    <mat-icon class="login-form-button-icon" svgIcon="facebook" aria-hidden="false" aria-label="Facebook"></mat-icon>
+    Log in with Facebook
+  </button>
 
-  <button class="login-form-button sign-up-button" mat-button mat-raised-button>Sign Up</button>
+  <div  fxLayout="row" fxFlexFill >
+    <div fxFlex="50" class="forgot-password-text">
+      Forgot password
+    </div>
+    <div fxFlex="50" class="new-user-text">
+      Sign up
+    </div>
+  </div>
 
 </div>

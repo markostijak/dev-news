@@ -1,7 +1,13 @@
 import {Injectable} from '@angular/core';
 import {User} from '../../models/user';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {AuthService as OAuth2Service, AuthServiceConfig as OAuth2ServiceConfig, FacebookLoginProvider, GoogleLoginProvider, SocialUser} from 'angularx-social-login';
+import {
+  AuthService as OAuth2Service,
+  AuthServiceConfig as OAuth2ServiceConfig,
+  FacebookLoginProvider,
+  GoogleLoginProvider,
+  SocialUser
+} from 'angularx-social-login';
 import {GitHubLoginProvider} from './git-hub-login-provider';
 
 @Injectable({
@@ -27,7 +33,7 @@ export class AuthenticationService {
         id: FacebookLoginProvider.PROVIDER_ID,
         provider: new FacebookLoginProvider('838239883050275', {
           redirect_uri: this._redirectUri
-        })
+        }, 'en', '', 'v4.0')
       },
       {
         id: GitHubLoginProvider.PROVIDER_ID,

@@ -50,17 +50,17 @@ export class AuthenticationService {
     return this._oauthService.signIn(GitHubLoginProvider.PROVIDER_ID).then(github => this.socialLogin(github));
   }
 
-  private login(email: string, password: string): Promise<User> {
-    return this.authenticate("auth/login", email, password);
+  public login(email: string, password: string): Promise<User> {
+    return this.authenticate('auth/login', email, password);
   }
 
   private socialLogin(socialUser: SocialUser): Promise<User> {
     console.log(socialUser);
-    return this.authenticate("auth/social-login", socialUser.provider, socialUser.authorizationCode);
+    return this.authenticate('auth/social-login', socialUser.provider, socialUser.authorizationCode);
   }
 
   public jwtRefresh(accessToken: string, refreshToken: string): Promise<User> {
-    return this.authenticate('auth/jwt-refresh', accessToken, refreshToken);
+    return this.authenticate('auth/refresh', accessToken, refreshToken);
   }
 
   public authenticate(url: string, principal: string, credentials: string): Promise<User> {
@@ -69,7 +69,8 @@ export class AuthenticationService {
         'Authorization': 'Basic ' + btoa(principal + ':' + credentials)
       })
     }).toPromise().then(result => {
-      let user: User = new User();
+      console.log(result);
+      const user: User = new User();
       user.accessToken = '';
       user.refreshToken = '';
 

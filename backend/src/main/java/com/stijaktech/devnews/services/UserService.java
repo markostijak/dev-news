@@ -5,19 +5,20 @@ import com.stijaktech.devnews.models.Role;
 import com.stijaktech.devnews.models.Status;
 import com.stijaktech.devnews.models.User;
 import com.stijaktech.devnews.repositories.UserRepository;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private UserRepository userRepository;
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-
     }
 
     public User create(User user) {
@@ -46,6 +47,11 @@ public class UserService {
             userRepository.save(user);
             return user;
         });
+    }
+
+    @Override
+    public User loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
     }
 
 }

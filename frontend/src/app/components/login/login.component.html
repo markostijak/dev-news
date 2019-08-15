@@ -6,12 +6,18 @@
 
   <hr class="w-100 h-line logo-divider">
 
-  <mat-form-field class="login-form-input email-field" appearance="outline">
-    <input type="email" matInput placeholder="Email" [formControl]="email" required>
+  <mat-form-field appearance="fill" color="accent">
+    <mat-label>Email</mat-label>
+    <input type="email" matInput placeholder="" [formControl]="email" required>
+    <mat-icon matSuffix>person</mat-icon>
+    <mat-hint></mat-hint>
   </mat-form-field>
 
-  <mat-form-field class="login-form-input password-field" appearance="outline">
-    <input type="password" matInput placeholder="Password" [formControl]="password" required>
+  <mat-form-field appearance="fill" color="accent">
+    <mat-label>Password</mat-label>
+    <input type="password" matInput placeholder="" [formControl]="password" required>
+    <mat-icon matSuffix>lock</mat-icon>
+    <mat-hint></mat-hint>
   </mat-form-field>
 
   <button class="login-form-button login-button" mat-button mat-raised-button (click)="login()">Log in</button>
@@ -36,13 +42,14 @@
     Log in with Facebook
   </button>
 
-  <div  fxLayout="row" fxFlexFill >
+  <div fxLayout="row" fxFlexFill>
     <div fxFlex="50" class="forgot-password-text">
-      Forgot password
+      <a mat-button routerLink=".">Forgot password</a>
     </div>
     <div fxFlex="50" class="new-user-text">
-      Sign up
+      <a mat-button routerLink=".">Create account</a>
     </div>
   </div>
+
 
 </div>

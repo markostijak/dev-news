@@ -15,8 +15,10 @@ export class LoginComponent implements OnInit {
   private _email: FormControl;
   private _password: FormControl;
   private _sanitizer: DomSanitizer;
-  private _loginService: AuthenticationService;
   private _iconRegistry: MatIconRegistry;
+  private _loginService: AuthenticationService;
+
+  private _hidePassword: boolean = true;
 
   constructor(loginService: AuthenticationService, iconRegistry: MatIconRegistry, sanitizer: DomSanitizer) {
     this._sanitizer = sanitizer;
@@ -67,4 +69,12 @@ export class LoginComponent implements OnInit {
     this._password = value;
   }
 
+
+  get hidePassword(): boolean {
+    return this._hidePassword;
+  }
+
+  set hidePassword(value: boolean) {
+    this._hidePassword = value;
+  }
 }

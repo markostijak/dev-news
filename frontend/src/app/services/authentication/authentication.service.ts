@@ -88,8 +88,8 @@ export class AuthenticationService {
     return this._httpClient.get('/logout').toPromise();
   }
 
-
   get user(): User {
     return this._user;
   }
+
 }

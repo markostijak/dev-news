@@ -1,0 +1,48 @@
+<div class="editor-container">
+  <div class="editor-wrapper">
+    <div class="editor">
+      <div class="editor-placeholder" fxLayout="row" fxLayoutGap="10px">
+        <div fxFlex="0 1 auto" class="avatar-container">
+          <div class="avatar"></div>
+        </div>
+        <div fxFlex="1 1 100%">
+          <input class="post-title" label="Title" placeholder="Title for your post...">
+        </div>
+      </div>
+      <!--suppress HtmlUnknownAttribute -->
+      <mat-tab-group mat-stretch-tabs class="tab-group">
+        <mat-tab class="tab text-tab">
+          <ng-template mat-tab-label>
+            <mat-icon class="tab-icon">chat</mat-icon>
+            Text
+          </ng-template>
+          <app-text-editor></app-text-editor>
+        </mat-tab>
+        <mat-tab class="tab media-tab">
+          <ng-template mat-tab-label>
+            <mat-icon class="tab-icon">image</mat-icon>
+            Media
+          </ng-template>
+          <app-media-uploader></app-media-uploader>
+        </mat-tab>
+        <mat-tab class="tab link-tab">
+          <ng-template mat-tab-label>
+            <mat-icon class="tab-icon">link</mat-icon>
+            Link
+          </ng-template>
+          <app-link-resolver></app-link-resolver>
+        </mat-tab>
+      </mat-tab-group>
+    </div>
+    <div>
+      <div fxLayout="row" fxLayoutGap="15px">
+        <button mat-raised-button class="cancel-button">
+          Cancel
+        </button>
+        <button mat-raised-button class="post-button" disabled>
+          Post
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

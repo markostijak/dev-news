@@ -1,0 +1,66 @@
+:host {
+  display: block;
+}
+
+.post-title {
+  width: calc(100% - 30px);
+  border: none;
+  outline: none;
+  background-color: rgba(0, 0, 0, 0.30);
+  border-radius: 3px;
+  padding: 14px 15px 14px 15px;
+  color: #fafafa;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.text {
+  width: calc(100% - 28px);
+  border: none;
+  outline: none;
+  background-color: rgba(0, 0, 0, 0.30);
+  border-radius: 3px;
+  padding: 14px;
+  color: #fafafa;
+  font-size: 15px;
+  font-weight: 500;
+  height: 200px;
+  resize: vertical;
+}
+
+.editor {
+  margin-bottom: 10px;
+}
+
+.editor-placeholder {
+  align-items: center;
+  padding-bottom: 10px;
+}
+
+.avatar {
+  width: 46px;
+  height: 46px;
+  background-color: #4267b2;
+  border-radius: 50px;
+}
+
+.post-button, .cancel-button {
+  width: 100%;
+  max-width: 130px;
+}
+
+.post-button {
+  background-color: #a23737;
+}
+
+.cancel-button {
+  margin-left: auto;
+}
+
+.tab {
+  background-color: #353535;
+}
+
+.tab-icon {
+  margin-right: 10px;
+}

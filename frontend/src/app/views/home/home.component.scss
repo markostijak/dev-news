@@ -1,0 +1,25 @@
+.row {
+  justify-content: center;
+}
+
+.left {
+  max-width: 640px;
+}
+
+.right {
+  max-width: 312px;
+}
+
+.right div div {
+  position: sticky;
+  bottom: 16px;
+}
+
+.post {
+  margin-bottom: 10px;
+}
+
+.item {
+  height: 100px;
+  margin-bottom: 16px;
+}

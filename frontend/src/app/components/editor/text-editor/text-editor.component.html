@@ -1,0 +1,23 @@
+<div class="md-editor-container">
+  <div class="textarea-container">
+    <!--suppress HtmlFormInputWithoutLabel -->
+    <textarea *ngIf="!preview" class="text" [(ngModel)]="value" placeholder="Write your post"></textarea>
+    <div *ngIf="preview" class="text text-preview" [innerHTML]="preview"></div>
+  </div>
+  <div class="toolbar" fxLayout="row">
+    <div class="help" fxFlex>
+      <button mat-button (click)="showDialog()">
+        <mat-icon>help_outline</mat-icon>
+        Markdown
+      </button>
+    </div>
+    <div class="preview" fxFlex>
+      <button *ngIf="!preview" class="preview-button" mat-button (click)="showPreview()" matTooltip="Show preview">
+        Preview
+      </button>
+      <button *ngIf="preview" class="preview-button" mat-button (click)="hidePreview()" matTooltip="Hide preview">
+        Original
+      </button>
+    </div>
+  </div>
+</div>

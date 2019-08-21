@@ -8,10 +8,10 @@ import {AuthenticationService} from '../../services/authentication/authenticatio
 
 @Component({
   selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  templateUrl: './login-form.component.html',
+  styleUrls: ['./login-form.component.scss']
 })
-export class LoginComponent implements OnInit {
+export class LoginFormComponent implements OnInit {
   private _email: FormControl;
   private _password: FormControl;
   private _sanitizer: DomSanitizer;

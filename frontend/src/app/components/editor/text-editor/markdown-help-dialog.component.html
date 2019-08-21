@@ -1,0 +1,13 @@
+<h1 mat-dialog-title>Markdown syntax</h1>
+<div mat-dialog-content>
+  <div fxLayout="row" fxLayoutGap="15px">
+    <div class="text-raw" fxFlex>
+      <pre>{{template}}</pre>
+    </div>
+    <div class="text-preview" fxFlex [innerHtml]="preview"></div>
+  </div>
+</div>
+
+<div class="actions-container" mat-dialog-actions>
+  <button class="close-button" mat-raised-button (click)="close()">Close</button>
+</div>

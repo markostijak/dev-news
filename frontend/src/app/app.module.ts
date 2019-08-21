@@ -17,30 +17,50 @@ import {
   MatInputModule,
   MatListModule,
   MatMenuModule,
+  MatRippleModule,
   MatSidenavModule,
+  MatTabsModule,
   MatToolbarModule,
   MatTooltipModule
 } from '@angular/material';
 import {PreloaderComponent} from './components/preloader/preloader.component';
 import {SearchComponent} from './components/search/search.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {LoginComponent} from './components/login/login.component';
-import {SignUpComponent} from './components/sign-up/sign-up.component';
+import {LoginFormComponent} from './components/login-form/login-form.component';
+import {SignUpFormComponent} from './components/sign-up/sign-up-form/sign-up-form.component';
 import {AccountMenuComponent} from './components/account-menu/account-menu.component';
-import {NewPostComponent} from './components/new-post/new-post.component';
+import {NewPostComponent} from './components/post/new-post/new-post.component';
 import {SocialLoginModule} from 'angularx-social-login';
-import {JwtInterceptorService} from "./services/authentication/jwt-interceptor.service";
+import {JwtInterceptorService} from './services/authentication/jwt-interceptor.service';
 import {FlexLayoutModule} from '@angular/flex-layout';
+import {ActivationFormComponent} from './components/sign-up/activation-form/activation-form.component';
+import {HomeComponent} from './views/home/home.component';
+import {PostEditorComponent} from './components/post/post-editor/post-editor.component';
+import {PostComponent} from './components/post/post/post.component';
+import {MarkdownHelpDialogComponent, TextEditorComponent} from './components/editor/text-editor/text-editor.component';
+import {MediaUploaderComponent} from './components/editor/media-uploader/media-uploader.component';
+import {LinkResolverComponent} from './components/editor/link-resolver/link-resolver.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     PreloaderComponent,
     SearchComponent,
-    LoginComponent,
-    SignUpComponent,
+    LoginFormComponent,
+    SignUpFormComponent,
     AccountMenuComponent,
-    NewPostComponent
+    NewPostComponent,
+    ActivationFormComponent,
+    HomeComponent,
+    PostEditorComponent,
+    PostComponent,
+    TextEditorComponent,
+    MarkdownHelpDialogComponent,
+    MediaUploaderComponent,
+    LinkResolverComponent
+  ],
+  entryComponents: [
+    MarkdownHelpDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -64,7 +84,9 @@ import {FlexLayoutModule} from '@angular/flex-layout';
     ReactiveFormsModule,
     MatExpansionModule,
     MatListModule,
-    SocialLoginModule
+    SocialLoginModule,
+    MatTabsModule,
+    MatRippleModule
   ],
   providers: [
     {

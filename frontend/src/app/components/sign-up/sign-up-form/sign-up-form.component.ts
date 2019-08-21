@@ -3,10 +3,10 @@ import {FormControl} from '@angular/forms';
 
 @Component({
   selector: 'app-sign-up',
-  templateUrl: './sign-up.component.html',
-  styleUrls: ['./sign-up.component.scss']
+  templateUrl: './sign-up-form.component.html',
+  styleUrls: ['./sign-up-form.component.scss']
 })
-export class SignUpComponent {
+export class SignUpFormComponent {
   private _firstName: FormControl;
   private _lastName: FormControl;
   private _username: FormControl;

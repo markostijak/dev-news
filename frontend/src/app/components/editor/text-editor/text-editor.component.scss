@@ -1,0 +1,29 @@
+:host {
+  display: block;
+}
+
+.md-editor-container {
+
+}
+
+.text {
+  width: calc(100% - 30px);
+  border: none;
+  outline: none;
+  background-color: rgba(0, 0, 0, 0.30);
+  border-radius: 4px;
+  padding: 15px;
+  color: #fafafa;
+  height: auto;
+  min-height: 200px;
+  resize: vertical;
+}
+
+.text-preview {
+  margin-top: 1px;
+  margin-bottom: 3px;
+}
+
+.preview {
+  text-align: right;
+}

@@ -1,5 +1,19 @@
 @import '../theme.scss';
 
+.header {
+  min-height: 50px;
+}
+
+.toolbar {
+  position: fixed;
+  z-index: 5;
+}
+
+.toolbar-row {
+  max-width: 1008px;
+  margin: auto;
+}
+
 .logo {
   height: 60%;
 }
@@ -20,7 +34,19 @@
 }
 
 .main-container {
-  width: 100%;
-  margin: 20px auto auto;
-  max-width: 1200px;
+  padding: 24px;
+}
+
+.toolbar {
+  min-height: 50px !important;
+}
+
+.toolbar mat-toolbar-row {
+  height: 50px !important;
+}
+
+@media only screen and (max-width: 639px) {
+  .main-container {
+    padding: 0 !important;
+  }
 }

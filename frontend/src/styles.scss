@@ -31,3 +31,15 @@ body {
 .w-100 {
   width: 100% !important;
 }
+
+.mat-expansion-panel-body {
+  padding: 0 15px 15px 15px !important;
+}
+
+.mat-tab-header {
+  background-color: #2e2e2e !important;
+}
+
+.cdk-overlay-pane {
+  margin: auto !important;
+}

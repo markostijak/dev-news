@@ -1,0 +1,18 @@
+<div class="post-container mat-elevation-z1">
+  <div class="post-wrapper">
+    <div fxLayout="row">
+      <div class="post-votes" fxFlex="0 1 auto" fxHide.lt-sm>
+        <button mat-icon-button>
+          <mat-icon>keyboard_arrow_up</mat-icon>
+        </button>
+        <div>.</div>
+        <button mat-icon-button >
+          <mat-icon>keyboard_arrow_down</mat-icon>
+        </button>
+      </div>
+      <div class="post" fxFlex="1 1 100%">
+        <ng-content></ng-content>
+      </div>
+    </div>
+  </div>
+</div>

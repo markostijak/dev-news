@@ -5,6 +5,7 @@ import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import { QuillModule } from 'ngx-quill';
 import {
   MatButtonModule,
   MatCardModule,
@@ -37,7 +38,7 @@ import {ActivationFormComponent} from './components/sign-up/activation-form/acti
 import {HomeComponent} from './views/home/home.component';
 import {PostEditorComponent} from './components/post/post-editor/post-editor.component';
 import {PostComponent} from './components/post/post/post.component';
-import {MarkdownHelpDialogComponent, TextEditorComponent} from './components/editor/text-editor/text-editor.component';
+import {TextEditorComponent} from './components/editor/text-editor/text-editor.component';
 import {MediaUploaderComponent} from './components/editor/media-uploader/media-uploader.component';
 import {LinkResolverComponent} from './components/editor/link-resolver/link-resolver.component';
 
@@ -55,18 +56,15 @@ import {LinkResolverComponent} from './components/editor/link-resolver/link-reso
     PostEditorComponent,
     PostComponent,
     TextEditorComponent,
-    MarkdownHelpDialogComponent,
     MediaUploaderComponent,
     LinkResolverComponent
-  ],
-  entryComponents: [
-    MarkdownHelpDialogComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,
+    QuillModule.forRoot(),
     FlexLayoutModule,
     MatGridListModule,
     MatSidenavModule,

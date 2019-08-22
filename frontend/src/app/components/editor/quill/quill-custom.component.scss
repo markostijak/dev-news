@@ -1,0 +1,61 @@
+@import '~quill/dist/quill.core.css';
+@import '~quill/dist/quill.snow.css';
+
+.ql-snow .ql-fill, .ql-snow .ql-stroke.ql-fill {
+  fill: white !important;
+}
+
+.ql-snow .ql-stroke {
+  stroke: white !important;
+}
+
+.ql-toolbar.ql-snow .ql-picker-label {
+  border: 1px solid #fff;
+}
+
+.ql-snow .ql-picker {
+  color: white;
+}
+
+.ql-toolbar, .ql-container {
+  border: none !important;
+}
+
+.ql-container {
+  background-color: rgba(0, 0, 0, 0.30);
+  font-family: inherit !important;
+  font-size: inherit !important;
+}
+
+.ql-toolbar {
+  background-color: #353535;
+}
+
+.ql-editor.ql-blank::before {
+  color: rgba(255, 255, 255, 0.50);
+  font-style: normal;
+}
+
+.ql-editor {
+  min-height: 200px;
+}
+
+.ql-snow .ql-tooltip {
+  background-color: #424242;
+  border: none;
+  box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+  color: white;
+  padding: 5px 12px;
+  white-space: nowrap;
+}
+
+.ql-action {
+  color: white !important;
+}
+
+.ql-tooltip > input {
+  background-color: rgba(0, 0, 0, 0.30);
+  color: #f0f0f0;
+  border: none !important;
+  outline: none;
+}

@@ -5,6 +5,7 @@ public enum Status {
     LOCKED,
     DELETED,
     EXPIRED,
+    ARCHIVED,
     SUSPENDED,
     AWAITING_ACTIVATION,
     CREDENTIALS_EXPIRED

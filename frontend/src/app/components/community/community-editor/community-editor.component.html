@@ -1,0 +1,34 @@
+<div class="editor-container">
+  <div class="editor-wrapper">
+    <div class="editor">
+      <div class="editor-placeholder" fxLayout="row" fxLayoutGap="10px">
+        <div fxFlex="0 1 auto" class="avatar-container">
+          <!--          <div class="avatar"></div>-->
+          <label *ngIf="!logoPreview" class="avatar pointer" mat-ripple matTooltip="Click here to choose logo for community">
+            <mat-icon class="logo-upload-icon">add_photo_alternate</mat-icon>
+            <input type="file" accept=".png, .jpg, .svg" class="logo-upload" (change)="onImageSelect($event)">
+          </label>
+          <img *ngIf="logoPreview" class="avatar" [src]="logoPreview" alt="Logo">
+        </div>
+        <div fxFlex="1 1 100%">
+          <!--suppress HtmlFormInputWithoutLabel -->
+          <input type="text" [(ngModel)]="title" class="community-title" placeholder="Community title...">
+        </div>
+      </div>
+
+      <!--suppress AngularUndefinedBinding, HtmlUnknownAttribute -->
+      <textarea class="text" placeholder="Community description..." (change)="onContentChanged($event)"></textarea>
+    </div>
+
+    <div>
+      <div fxLayout="row" fxLayoutGap="15px">
+        <button mat-raised-button class="cancel-button" (click)="onDiscard()">
+          Cancel
+        </button>
+        <button mat-raised-button class="save-button" [disabled]="!title" (click)="onSave()">
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

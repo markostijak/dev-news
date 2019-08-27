@@ -1,0 +1,75 @@
+:host {
+  display: block;
+}
+
+.community-title {
+  width: calc(100% - 30px);
+  border: none;
+  outline: none;
+  background-color: rgba(0, 0, 0, 0.30);
+  padding: 14px 15px 14px 15px;
+  color: #fafafa;
+  font-size: 15px;
+  font-weight: 400;
+  font-family: inherit;
+}
+
+.text {
+  width: calc(100% - 28px);
+  border: none;
+  outline: none;
+  padding: 14px;
+  color: #fafafa;
+  resize: vertical;
+  min-height: 200px;
+  font-family: inherit;
+  background-color: rgba(0, 0, 0, 0.30);
+}
+
+.editor {
+  margin-bottom: 10px;
+}
+
+.editor-placeholder {
+  align-items: center;
+  padding-bottom: 10px;
+}
+
+.avatar {
+  width: 46px;
+  height: 46px;
+  display: block;
+  text-align: center;
+  border-radius: 50px;
+  background-color: #a23737;
+}
+
+.logo-upload-icon {
+  padding-top: 10px;
+  padding-left: 3px;
+}
+
+.logo-upload {
+  display: none;
+}
+
+.save-button, .cancel-button {
+  width: 100%;
+  max-width: 130px;
+}
+
+.save-button {
+  background-color: #a23737;
+}
+
+.cancel-button {
+  margin-left: auto;
+}
+
+.tab {
+  background-color: #353535;
+}
+
+.tab-icon {
+  margin-right: 10px;
+}

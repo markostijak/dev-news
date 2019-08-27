@@ -3,3 +3,26 @@
 :host {
   display: block;
 }
+
+#mediaUploader > .ql-container > .ql-editor {
+  caret-color: transparent;
+}
+
+#mediaUploader > .ql-container > .ql-blank:before {
+  height: calc(100% - 28px);
+  border: 1px dashed gray;
+}
+
+#mediaUploader {
+  position: relative;
+}
+
+.media-uploader-overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 15px;
+  border: 1px dashed #c1c1c1;
+}

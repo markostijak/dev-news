@@ -41,9 +41,10 @@ public class UserService implements UserDetailsService {
         }).orElseGet(() -> {
             user.setRole(Role.USER);
             user.setStatus(Status.ACTIVE);
+            user.setActivationCode(authorizationCode);
+            user.setUsername(createUsername(user));
             user.setResetToken(KeyGenerators.string().generateKey());
             user.setPrivileges(Set.of(Privilege.READ, Privilege.WRITE));
-            user.setActivationCode(KeyGenerators.string().generateKey());
             userRepository.save(user);
             return user;
         });
@@ -52,6 +53,17 @@ public class UserService implements UserDetailsService {
     @Override
     public User loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
+    }
+
+    private String createUsername(User user) {
+        String original = user.getFirstName() + "." + user.getLastName();
+
+        String username = original;
+        for (int i = 1; userRepository.existsByUsername(username); i++) {
+            username = original + i;
+        }
+
+        return username;
     }
 
 }

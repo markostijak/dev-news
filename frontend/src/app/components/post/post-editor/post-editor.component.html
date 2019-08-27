@@ -7,42 +7,24 @@
         </div>
         <div fxFlex="1 1 100%">
           <!--suppress HtmlFormInputWithoutLabel -->
-          <input type="text" [(ngModel)]="title" ngDefaultControl class="post-title"
+          <input type="text" [(ngModel)]="title" class="post-title"
                  placeholder="Title for your post...">
         </div>
       </div>
-      <!--suppress HtmlUnknownAttribute -->
-      <mat-tab-group mat-stretch-tabs class="tab-group">
-        <mat-tab class="tab text-tab">
-          <ng-template mat-tab-label>
-            <mat-icon class="tab-icon">chat</mat-icon>
-            Text
-          </ng-template>
-          <!--suppress AngularUndefinedBinding, HtmlUnknownAttribute -->
-          <app-text-editor (onContentChanged)="onContentChanged($event)" placeholder="Write your post here..."></app-text-editor>
-        </mat-tab>
-        <mat-tab class="tab media-tab">
-          <ng-template mat-tab-label>
-            <mat-icon class="tab-icon">image</mat-icon>
-            Media
-          </ng-template>
-          <app-media-uploader></app-media-uploader>
-        </mat-tab>
-        <mat-tab class="tab link-tab">
-          <ng-template mat-tab-label>
-            <mat-icon class="tab-icon">link</mat-icon>
-            Link
-          </ng-template>
-          <app-link-resolver></app-link-resolver>
-        </mat-tab>
-      </mat-tab-group>
+
+      <div contenteditable="true" class="post-title">Select community</div>
+
+      <!--suppress AngularUndefinedBinding, HtmlUnknownAttribute -->
+      <app-text-editor (onContentChanged)="onContentChanged($event)"
+                       placeholder="Write your post here..."></app-text-editor>
     </div>
+
     <div>
       <div fxLayout="row" fxLayoutGap="15px">
-        <button mat-raised-button class="cancel-button">
+        <button mat-raised-button class="cancel-button" (click)="onDiscard()">
           Cancel
         </button>
-        <button mat-raised-button class="post-button" [disabled]="!title">
+        <button mat-raised-button class="post-button" [disabled]="!title" (click)="onSave()">
           Post
         </button>
       </div>

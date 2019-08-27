@@ -22,9 +22,10 @@
 
   <button class="login-form-button login-button" mat-button mat-raised-button (click)="login()">Log in</button>
 
-  <div class="or-divider-container">
-    <hr class="w-100 h-line or-divider">
-    <span class="or-divider-text">OR</span>
+  <div fxLayout="row" class="or-divider-container">
+    <hr fxFlex="1 1 100%" class="w-100 h-line">
+    <span fxFlex="1 0 70px" class="or-divider-text">OR</span>
+    <hr fxFlex="1 1 100%" class="w-100 h-line">
   </div>
 
   <button class="login-form-button google-button" mat-button mat-raised-button (click)="google()">

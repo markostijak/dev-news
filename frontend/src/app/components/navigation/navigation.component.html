@@ -1,0 +1,23 @@
+<button class="navigation-button" mat-stroked-button [matMenuTriggerFor]="menu">
+  <mat-icon class="left-icon" *ngIf="active.icon" mat-list-icon>{{active.icon}}</mat-icon>
+  <img class="left-image" *ngIf="active.logo" mat-list-icon [src]="active.logo" [alt]="active.title">
+  <span class="navigation-text">{{active.title}}</span>
+  <mat-icon class="right-icon">keyboard_arrow_down</mat-icon>
+</button>
+
+<mat-menu #menu="matMenu" style="padding: 0;">
+  <div class="filter-container">
+    <input class="filter" placeholder="Filter" (input)="onFilter($event)" (click)="$event.stopPropagation()">
+  </div>
+  <mat-action-list>
+    <ng-container *ngFor="let group of items; last as isLast">
+      <h3 *ngIf="group.title" mat-subheader>{{group.title}}</h3>
+      <mat-list-item *ngFor="let item of group.items" [routerLink]="item.route" (click)="onSelectionChange(item)">
+        <mat-icon *ngIf="item.icon" mat-list-icon>{{item.icon}}</mat-icon>
+        <img *ngIf="item.logo" mat-list-icon [src]="item.logo" [alt]="item.title">
+        <span class="navigation-item-text" mat-line>{{item.title}}</span>
+      </mat-list-item>
+      <mat-divider class="mt-10" *ngIf="!isLast"></mat-divider>
+    </ng-container>
+  </mat-action-list>
+</mat-menu>

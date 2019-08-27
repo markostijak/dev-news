@@ -1,5 +1,5 @@
-import {Component, OnInit, ViewEncapsulation} from '@angular/core';
-import {QuillEditorComponent, QuillModule} from 'ngx-quill';
+import {Component, ViewEncapsulation} from '@angular/core';
+import {QuillModule} from 'ngx-quill';
 
 @Component({
   selector: 'app-media-uploader',
@@ -7,22 +7,14 @@ import {QuillEditorComponent, QuillModule} from 'ngx-quill';
   styleUrls: ['./media-uploader.component.scss'],
   encapsulation: ViewEncapsulation.None
 })
-export class MediaUploaderComponent extends QuillEditorComponent implements OnInit {
-  bounds: string = 'self';
-
-  placeholder: string = '';
+export class MediaUploaderComponent {
 
   modules: QuillModule = {
     toolbar: false,
   };
 
-  readOnly: boolean = true;
+  public onContentChanged($event): void {
 
-  ngOnInit(): void {
-    this.onContentChanged.subscribe($event => {
-      const url = $event.text;
-      console.log(url);
-    });
   }
 
 }

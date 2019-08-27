@@ -21,16 +21,14 @@ export class LinkResolverComponent {
   }
 
   public onContentChanged($event): void {
-    this.resolve($event.text);
+    console.log($event.text);
+    this.resolve($event.editor, $event.text);
   }
 
-  private resolve(url: string): void {
-    const title = url;
-    if (title) {
-      this.linkResolved.emit({
-        title: title,
-        url: url
-      });
+  private resolve(quill: object, url: string): void {
+    if (url) {
+      // @ts-ignore
+      quill.insertEmbed(0, 'image', url);
     }
   }
 

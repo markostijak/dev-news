@@ -5,7 +5,7 @@ import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
-import { QuillModule } from 'ngx-quill';
+import {QuillModule} from 'ngx-quill';
 import {
   MatButtonModule,
   MatCardModule,
@@ -19,7 +19,9 @@ import {
   MatListModule,
   MatMenuModule,
   MatRippleModule,
+  MatSelectModule,
   MatSidenavModule,
+  MatStepperModule,
   MatTabsModule,
   MatToolbarModule,
   MatTooltipModule
@@ -30,17 +32,30 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {LoginFormComponent} from './components/login-form/login-form.component';
 import {SignUpFormComponent} from './components/sign-up/sign-up-form/sign-up-form.component';
 import {AccountMenuComponent} from './components/account-menu/account-menu.component';
-import {NewPostComponent} from './components/post/new-post/new-post.component';
 import {SocialLoginModule} from 'angularx-social-login';
 import {JwtInterceptorService} from './services/authentication/jwt-interceptor.service';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {ActivationFormComponent} from './components/sign-up/activation-form/activation-form.component';
-import {HomeComponent} from './views/home/home.component';
+import {HomeViewComponent} from './views/home/home-view.component';
 import {PostEditorComponent} from './components/post/post-editor/post-editor.component';
 import {PostComponent} from './components/post/post/post.component';
 import {TextEditorComponent} from './components/editor/text-editor/text-editor.component';
 import {MediaUploaderComponent} from './components/editor/media-uploader/media-uploader.component';
 import {LinkResolverComponent} from './components/editor/link-resolver/link-resolver.component';
+import {NavigationComponent} from './components/navigation/navigation.component';
+import {PopularViewComponent} from './views/popular/popular-view.component';
+import {AllViewComponent} from './views/all/all-view.component';
+import {CommunityViewComponent} from './views/community/community-view.component';
+import {UserViewComponent} from './views/user/user-view.component';
+import {LoginViewComponent} from './views/login/login-view.component';
+import {SignUpViewComponent} from './views/sign-up/sign-up-view.component';
+import {PostViewComponent} from './views/post/post-view.component';
+import {PasswordResetViewComponent} from './views/password-reset/password-reset-view.component';
+import {CreateCommunityDialogComponent} from './components/community/create-community-dialog/create-community-dialog.component';
+import {CreatePostDialogComponent} from './components/post/create-post-dialog/create-post-dialog.component';
+import {OverviewComponent} from './components/overview/overview.component';
+import { CommunityComponent } from './components/community/community/community.component';
+import { CommunityEditorComponent } from './components/community/community-editor/community-editor.component';
 
 @NgModule({
   declarations: [
@@ -50,14 +65,27 @@ import {LinkResolverComponent} from './components/editor/link-resolver/link-reso
     LoginFormComponent,
     SignUpFormComponent,
     AccountMenuComponent,
-    NewPostComponent,
     ActivationFormComponent,
-    HomeComponent,
+    HomeViewComponent,
     PostEditorComponent,
     PostComponent,
     TextEditorComponent,
     MediaUploaderComponent,
-    LinkResolverComponent
+    LinkResolverComponent,
+    NavigationComponent,
+    PopularViewComponent,
+    AllViewComponent,
+    CommunityViewComponent,
+    UserViewComponent,
+    LoginViewComponent,
+    SignUpViewComponent,
+    PostViewComponent,
+    PasswordResetViewComponent,
+    CreateCommunityDialogComponent,
+    CreatePostDialogComponent,
+    OverviewComponent,
+    CommunityComponent,
+    CommunityEditorComponent
   ],
   imports: [
     BrowserModule,
@@ -84,7 +112,9 @@ import {LinkResolverComponent} from './components/editor/link-resolver/link-reso
     MatListModule,
     SocialLoginModule,
     MatTabsModule,
-    MatRippleModule
+    MatRippleModule,
+    MatSelectModule,
+    MatStepperModule
   ],
   providers: [
     {
@@ -92,6 +122,10 @@ import {LinkResolverComponent} from './components/editor/link-resolver/link-reso
       useClass: JwtInterceptorService,
       multi: true
     }
+  ],
+  entryComponents: [
+    CreatePostDialogComponent,
+    CreateCommunityDialogComponent
   ],
   bootstrap: [AppComponent]
 })

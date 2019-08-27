@@ -7,7 +7,7 @@ import {DomSanitizer} from '@angular/platform-browser';
 import {AuthenticationService} from '../../services/authentication/authentication.service';
 
 @Component({
-  selector: 'app-login',
+  selector: 'app-login-form',
   templateUrl: './login-form.component.html',
   styleUrls: ['./login-form.component.scss']
 })

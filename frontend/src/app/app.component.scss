@@ -15,7 +15,14 @@
 }
 
 .logo {
-  height: 60%;
+  height: 100%;
+}
+
+.branding-wrapper {
+  text-decoration: none;
+  color: inherit;
+  height: 30px;
+  display: flex;
 }
 
 .branding {
@@ -24,8 +31,6 @@
 
 .search-container {
   flex: 1 1 auto;
-  margin-left: 30px;
-  margin-right: 30px;
 }
 
 .divider {
@@ -33,7 +38,7 @@
   color: rgba(255, 255, 255, 0.6);
 }
 
-.main-container {
+main {
   padding: 24px;
 }
 
@@ -46,7 +51,7 @@
 }
 
 @media only screen and (max-width: 639px) {
-  .main-container {
+  main {
     padding: 0 !important;
   }
 }

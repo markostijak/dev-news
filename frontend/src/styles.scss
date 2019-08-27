@@ -23,6 +23,34 @@ body {
   margin-bottom: 5px !important;
 }
 
+.mb-7 {
+  margin-bottom: 7px !important;
+}
+
+.mb-10 {
+  margin-bottom: 10px !important;
+}
+
+.mt-10 {
+  margin-top: 10px !important;
+}
+
+.mb-16 {
+  margin-bottom: 16px !important;
+}
+
+.mb-20 {
+  margin-bottom: 20px !important;
+}
+
+.mr-30 {
+  margin-right: 30px !important;
+}
+
+.ml-30 {
+  margin-left: 30px !important;
+}
+
 .mat-green {
   background-color: #3a8484;
   color: #fafafa;
@@ -30,6 +58,18 @@ body {
 
 .w-100 {
   width: 100% !important;
+}
+
+.main {
+  justify-content: center;
+}
+
+.main-left {
+  max-width: 640px;
+}
+
+.main-right {
+  max-width: 312px;
 }
 
 .mat-expansion-panel-body {
@@ -44,6 +84,14 @@ body {
   height: auto !important;
 }
 
-.cdk-overlay-pane {
-  margin: auto !important;
+.cdk-global-overlay-wrapper {
+  justify-content: center !important;
+}
+
+.mat-dialog-container {
+  box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12) !important;
+}
+
+.pointer {
+  cursor: pointer;
 }

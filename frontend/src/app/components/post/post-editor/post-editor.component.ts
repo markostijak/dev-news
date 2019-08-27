@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 
 @Component({
   selector: 'app-post-editor',
@@ -9,8 +9,17 @@ export class PostEditorComponent implements OnInit {
 
   private _title: string;
   private _content: string;
+  private _community: string;
+
+  @Output()
+  private save: EventEmitter<any>;
+
+  @Output()
+  private discard: EventEmitter<any>;
 
   constructor() {
+    this.save = new EventEmitter<any>();
+    this.discard = new EventEmitter<any>();
   }
 
   public ngOnInit(): void {
@@ -18,6 +27,20 @@ export class PostEditorComponent implements OnInit {
 
   onContentChanged($event: any): any {
     this._content = $event.html;
+  }
+
+  onSave(): any {
+    this.save.emit({
+      post: {
+        title: this.title,
+        community: this.community,
+        content: this.content
+      }
+    });
+  }
+
+  onDiscard(): any {
+    this.discard.emit();
   }
 
   public get title(): string {
@@ -34,6 +57,14 @@ export class PostEditorComponent implements OnInit {
 
   public set content(value: string) {
     this._content = value;
+  }
+
+  get community(): string {
+    return this._community;
+  }
+
+  set community(value: string) {
+    this._community = value;
   }
 
 }

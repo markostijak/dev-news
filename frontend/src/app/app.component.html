@@ -3,14 +3,16 @@
 <header class="header">
   <mat-toolbar color="dark" class="toolbar">
     <mat-toolbar-row class="toolbar-row">
-      <img class="logo" src="assets/icons/logo.svg" alt="Logo">
-      <span class="branding" *ngIf="isMobile()">Dev News</span>
-      <span class="divider" *ngIf="isMobile()">|</span>
-      <app-search class="search-container"></app-search>
+      <a class="branding-wrapper" routerLink="">
+        <img class="logo" src="assets/icons/logo.svg" alt="Logo">
+      </a>
+      <app-navigation class="ml-30"></app-navigation>
+      <app-search class="search-container ml-30 mr-30"></app-search>
       <a class="mr-10" mat-button routerLink="/login" *ngIf="isMobile()">LOG IN</a>
       <a mat-button routerLink="/sign-up" *ngIf="isMobile()">SIGN UP</a>
       <!-- menu -->
-      <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu" *ngIf="!isMobile()">
+      <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu"
+              *ngIf="!isMobile()">
         <mat-icon>more_vert</mat-icon>
       </button>
       <mat-menu #menu="matMenu">
@@ -27,6 +29,6 @@
   </mat-toolbar>
 </header>
 
-<main class="main-container">
+<main>
   <router-outlet></router-outlet>
 </main>

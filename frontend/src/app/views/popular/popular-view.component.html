@@ -1,0 +1,16 @@
+<div class="main" fxLayout="row" fxLayoutGap="24px">
+  <div class="main-left" fxFlex>
+    <app-post class="mb-10" *ngFor="let i of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]">
+      {{i}}
+    </app-post>
+  </div>
+  <div class="main-right" fxFlex fxHide.lt-md>
+    <div>
+      <div>
+        <app-overview title="Popular">
+          The best posts for you, pulled from the most active communities. Check here to see the most shared, upvoted, and commented content on the internet.
+        </app-overview>
+      </div>
+    </div>
+  </div>
+</div>

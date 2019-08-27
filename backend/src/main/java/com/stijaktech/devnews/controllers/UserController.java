@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping({"/users", "/u"})
 public class UserController {
 
     private UserService userService;
@@ -25,8 +25,8 @@ public class UserController {
         return new User();
     }
 
-    @PostMapping("/edit")
-    public User edit(@RequestBody User user) {
+    @PostMapping("/update")
+    public User update(@RequestBody User user) {
         return new User();
     }
 

@@ -1,0 +1,11 @@
+.login-container {
+  margin: auto;
+  max-width: 420px;
+}
+
+@media only screen and (max-width: 639px) {
+  .login-container {
+    background: none;
+    box-shadow: none !important;
+  }
+}

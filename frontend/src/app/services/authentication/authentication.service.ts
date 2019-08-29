@@ -9,18 +9,25 @@ import {
   SocialUser
 } from 'angularx-social-login';
 import {GitHubLoginProvider} from './git-hub-login-provider';
+import {Authentication} from './authentication';
+import {BehaviorSubject, Observable} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticationService {
-  private _user: User;
+
+  private _redirectUri: string = 'http://localhost:4200';
+
   private _httpClient: HttpClient;
   private _oauthService: OAuth2Service;
-  private _redirectUri: string = 'http://localhost:4200';
+  private _authenticationSource: BehaviorSubject<Authentication>;
+  private readonly _authentication: Observable<Authentication>;
 
   constructor(httpClient: HttpClient) {
     this._httpClient = httpClient;
+    this._authenticationSource = new BehaviorSubject<Authentication>(new Authentication(null, null, false));
+    this._authentication = this._authenticationSource.asObservable();
     this._oauthService = new OAuth2Service(new OAuth2ServiceConfig([
       {
         id: GoogleLoginProvider.PROVIDER_ID,
@@ -44,32 +51,32 @@ export class AuthenticationService {
     ]));
   }
 
-  public facebook(): Promise<User> {
+  public facebook(): Promise<Authentication> {
     return this._oauthService.signIn(FacebookLoginProvider.PROVIDER_ID).then(facebook => this.socialLogin(facebook));
   }
 
-  public google(): Promise<User> {
+  public google(): Promise<Authentication> {
     return this._oauthService.signIn(GoogleLoginProvider.PROVIDER_ID).then(google => this.socialLogin(google));
   }
 
-  public github(): Promise<User> {
+  public github(): Promise<Authentication> {
     return this._oauthService.signIn(GitHubLoginProvider.PROVIDER_ID).then(github => this.socialLogin(github));
   }
 
-  public login(email: string, password: string): Promise<User> {
+  public login(email: string, password: string): Promise<Authentication> {
     return this.authenticate('auth/login', email, password);
   }
 
-  private socialLogin(socialUser: SocialUser): Promise<User> {
+  private socialLogin(socialUser: SocialUser): Promise<Authentication> {
     console.log(socialUser);
     return this.authenticate('auth/social-login', socialUser.provider, socialUser.authorizationCode);
   }
 
-  public jwtRefresh(accessToken: string, refreshToken: string): Promise<User> {
+  public jwtRefresh(accessToken: string, refreshToken: string): Promise<Authentication> {
     return this.authenticate('auth/refresh', accessToken, refreshToken);
   }
 
-  public authenticate(url: string, principal: string, credentials: string): Promise<User> {
+  public authenticate(url: string, principal: string, credentials: string): Promise<Authentication> {
     return this._httpClient.get(url, {
       headers: new HttpHeaders({
         'Authorization': 'Basic ' + btoa(principal + ':' + credentials)
@@ -80,7 +87,14 @@ export class AuthenticationService {
       user.accessToken = '';
       user.refreshToken = '';
 
-      return this._user = user;
+      const authentication = new Authentication(user, {
+        accessToken: user.accessToken,
+        refreshToken: user.refreshToken
+      }, true);
+
+      this._authenticationSource.next(authentication);
+
+      return authentication;
     });
   }
 
@@ -88,8 +102,8 @@ export class AuthenticationService {
     return this._httpClient.get('/logout').toPromise();
   }
 
-  get user(): User {
-    return this._user;
+  get authentication(): Observable<Authentication> {
+    return this._authentication;
   }
 
 }

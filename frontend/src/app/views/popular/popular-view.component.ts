@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {NavigationService, POPULAR} from '../../services/navigation/navigation.service';
 
 @Component({
   selector: 'app-popular-view',
@@ -7,9 +8,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class PopularViewComponent implements OnInit {
 
-  constructor() { }
+  private _navigationService: NavigationService;
 
-  ngOnInit() {
+  constructor(navigationService: NavigationService) {
+    this._navigationService = navigationService;
+  }
+
+  ngOnInit(): void {
+    this._navigationService.navigate(POPULAR);
   }
 
 }

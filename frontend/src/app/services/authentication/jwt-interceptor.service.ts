@@ -1,10 +1,10 @@
 import {Injectable} from '@angular/core';
-import {HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from "@angular/common/http";
-import {BehaviorSubject, Observable, throwError} from "rxjs";
-import {AuthenticationService} from "./authentication.service";
-import {catchError, filter, switchMap, take} from "rxjs/operators";
-import {User} from "../../models/user";
-import {fromPromise} from "rxjs/internal-compatibility";
+import {HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
+import {BehaviorSubject, Observable, throwError} from 'rxjs';
+import {AuthenticationService} from './authentication.service';
+import {catchError, filter, switchMap, take} from 'rxjs/operators';
+import {fromPromise} from 'rxjs/internal-compatibility';
+import {Authentication} from './authentication';
 
 @Injectable({
   providedIn: 'root'
@@ -12,35 +12,51 @@ import {fromPromise} from "rxjs/internal-compatibility";
 export class JwtInterceptorService implements HttpInterceptor {
 
   private _refreshing = false;
+  private _authentication: Authentication;
   private _authenticationService: AuthenticationService;
   private _refreshTokenSubject: BehaviorSubject<any>;
 
   constructor(authenticationService: AuthenticationService) {
     this._authenticationService = authenticationService;
-    this._refreshTokenSubject = new BehaviorSubject<any>(null)
+    this._refreshTokenSubject = new BehaviorSubject<any>(null);
+    authenticationService.authentication.subscribe(authentication => {
+      this._authentication = authentication;
+    });
+  }
+
+  private static addToken(request: HttpRequest<any>, jws: string): HttpRequest<any> {
+    return request.clone({
+      setHeaders: {
+        'Authorization': `Bearer ${jws}`
+      }
+    });
   }
 
   public intercept(request: HttpRequest<any>, next: HttpHandler): Observable<any> {
-    let user: User = this._authenticationService.user;
-
-    if (user) {
+    if (this._authentication.authenticated) {
       request = request.clone({
         setHeaders: {
-          Authorization: `Bearer ${user.accessToken}`
+          Authorization: `Bearer ${this._authentication.credentials.accessToken}`
         }
       });
     }
 
     return next.handle(request).pipe(catchError((error: HttpErrorResponse) => {
       if (error.status === 401) {
-        return this.handle401Error(request, next, user.accessToken, user.refreshToken);
+        return this.handle401Error(
+          request,
+          next,
+          this._authentication.credentials.accessToken,
+          this._authentication.credentials.refreshToken
+        );
       }
 
       return throwError(error);
     }));
   }
 
-  private handle401Error(request: HttpRequest<any>, next: HttpHandler, accessToken: string, refreshToken: string): Observable<HttpEvent<any>> {
+  private handle401Error(request: HttpRequest<any>, next: HttpHandler, accessToken: string, refreshToken: string):
+    Observable<HttpEvent<any>> {
     if (!this._refreshing) {
       this._refreshing = true;
       this._refreshTokenSubject.next(null);
@@ -60,14 +76,6 @@ export class JwtInterceptorService implements HttpInterceptor {
           return next.handle(JwtInterceptorService.addToken(request, jwt));
         }));
     }
-  }
-
-  private static addToken(request: HttpRequest<any>, jws: string): HttpRequest<any> {
-    return request.clone({
-      setHeaders: {
-        'Authorization': `Bearer ${jws}`
-      }
-    });
   }
 
 }

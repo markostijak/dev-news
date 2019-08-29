@@ -1,0 +1,8 @@
+<ng-container *ngIf="authentication.authenticated; then home else popular"></ng-container>
+
+<ng-template #home>
+  <app-home-view></app-home-view>
+</ng-template>
+<ng-template #popular>
+  <app-popular-view></app-popular-view>
+</ng-template>

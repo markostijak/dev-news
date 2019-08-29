@@ -54,8 +54,11 @@ import {PasswordResetViewComponent} from './views/password-reset/password-reset-
 import {CreateCommunityDialogComponent} from './components/community/create-community-dialog/create-community-dialog.component';
 import {CreatePostDialogComponent} from './components/post/create-post-dialog/create-post-dialog.component';
 import {OverviewComponent} from './components/overview/overview.component';
-import { CommunityComponent } from './components/community/community/community.component';
-import { CommunityEditorComponent } from './components/community/community-editor/community-editor.component';
+import {CommunityComponent} from './components/community/community/community.component';
+import {CommunityEditorComponent} from './components/community/community-editor/community-editor.component';
+import {AuthenticationGuardService} from './services/authentication/authentication-guard.service';
+import {IndexViewComponent} from './views/index/index-view.component';
+import {NotFoundViewComponent} from './views/not-found/not-found-view.component';
 
 @NgModule({
   declarations: [
@@ -85,7 +88,9 @@ import { CommunityEditorComponent } from './components/community/community-edito
     CreatePostDialogComponent,
     OverviewComponent,
     CommunityComponent,
-    CommunityEditorComponent
+    CommunityEditorComponent,
+    IndexViewComponent,
+    NotFoundViewComponent
   ],
   imports: [
     BrowserModule,
@@ -117,6 +122,7 @@ import { CommunityEditorComponent } from './components/community/community-edito
     MatStepperModule
   ],
   providers: [
+    AuthenticationGuardService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: JwtInterceptorService,

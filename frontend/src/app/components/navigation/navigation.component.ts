@@ -1,48 +1,14 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
-import {filter, map, switchMap} from 'rxjs/operators';
-
-export interface NavigationItem {
-  icon?: string;
-  logo?: string;
-  route?: string;
-  title?: string;
-}
-
-export interface NavigationGroup {
-  title?: string;
-  items: NavigationItem[];
-}
-
-export const ALL: NavigationItem = {
-  icon: 'equalizer',
-  title: 'All',
-  route: 'c/all'
-};
-
-export const POPULAR: NavigationItem = {
-  icon: 'trending_up',
-  title: 'Popular',
-  route: 'c/popular'
-};
-
-export const HOME: NavigationItem = {
-  icon: 'home',
-  title: 'Home',
-  route: 'c/home'
-};
-
-export const LOGIN: NavigationItem = {
-  icon: 'person',
-  title: 'Login',
-  route: 'login'
-};
-
-export const SIGN_UP: NavigationItem = {
-  icon: 'person_add',
-  title: 'Sign up',
-  route: 'sign-up'
-};
+import {
+  ALL,
+  HOME,
+  LOGIN,
+  NavigationGroup,
+  NavigationItem,
+  NavigationService,
+  POPULAR,
+  SIGN_UP
+} from '../../services/navigation/navigation.service';
 
 @Component({
   selector: 'app-navigation',
@@ -51,11 +17,11 @@ export const SIGN_UP: NavigationItem = {
 })
 export class NavigationComponent implements OnInit {
 
-  private active: NavigationItem = POPULAR;
+  private _active: NavigationItem = POPULAR;
 
-  private items: NavigationGroup[] = [];
+  private _items: NavigationGroup[] = [];
 
-  private original: NavigationGroup[] = [
+  private _original: NavigationGroup[] = [
     {
       title: 'Feeds',
       items: [
@@ -83,40 +49,51 @@ export class NavigationComponent implements OnInit {
     }
   ];
 
-  private _router: Router;
-  private _activatedRoute: ActivatedRoute;
+  private _navigationService: NavigationService;
 
-  constructor(router: Router, activatedRoute: ActivatedRoute) {
-    this._router = router;
-    this._activatedRoute = activatedRoute;
+  constructor(navigationService: NavigationService) {
+    this._navigationService = navigationService;
   }
 
   public ngOnInit(): void {
-    this.items = this.original;
-    this._router.events.subscribe(value => {
-      console.log(value);
+    this._items = this._original;
+    this._navigationService.navigation.subscribe(navigationItem => {
+      this.active = navigationItem;
     });
-  }
-
-  public onSelectionChange(selection: NavigationItem): void {
-    this.active = selection;
   }
 
   public onFilter($event: any): void {
     const input = $event.target.value;
     if (input) {
-      this.items = [
-        {
-          items: [
-            {
-              title: input,
-              icon: 'build'
-            }
-          ]
+      const items: NavigationItem[] = [];
+      for (const navigationGroup of this._original) {
+        for (const navigationItem of navigationGroup.items) {
+          if (navigationItem.title.toLowerCase().startsWith(input)) {
+            items.push(navigationItem);
+          }
         }
-      ];
+      }
+
+      this.items = [{items: items}];
     } else {
-      this.items = this.original;
+      this.items = this._original;
     }
   }
+
+  get active(): NavigationItem {
+    return this._active;
+  }
+
+  set active(value: NavigationItem) {
+    this._active = value;
+  }
+
+  get items(): NavigationGroup[] {
+    return this._items;
+  }
+
+  set items(value: NavigationGroup[]) {
+    this._items = value;
+  }
+
 }

@@ -7,10 +7,12 @@ import {BreakpointObserver, BreakpointState} from '@angular/cdk/layout';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  private _mobile: boolean = false;
-  private _title: string = 'DevNews';
 
-  constructor(public _breakpointObserver: BreakpointObserver) {
+  private _mobile: boolean = false;
+  private _breakpointObserver: BreakpointObserver;
+
+  constructor(breakpointObserver: BreakpointObserver) {
+    this._breakpointObserver = breakpointObserver;
   }
 
   ngOnInit(): void {

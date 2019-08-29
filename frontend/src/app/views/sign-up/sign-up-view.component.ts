@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {NavigationService, SIGN_UP} from '../../services/navigation/navigation.service';
 
 @Component({
   selector: 'app-sign-up-view',
@@ -7,9 +8,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SignUpViewComponent implements OnInit {
 
-  constructor() { }
+  private _navigationService: NavigationService;
 
-  ngOnInit() {
+  constructor(navigationService: NavigationService) {
+    this._navigationService = navigationService;
+  }
+
+  ngOnInit(): void {
+    this._navigationService.navigate(SIGN_UP);
   }
 
 }

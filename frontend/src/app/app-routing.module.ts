@@ -7,38 +7,32 @@ import {AllViewComponent} from './views/all/all-view.component';
 import {CommunityViewComponent} from './views/community/community-view.component';
 import {PostViewComponent} from './views/post/post-view.component';
 import {HomeViewComponent} from './views/home/home-view.component';
-import {ALL, HOME, LOGIN, POPULAR, SIGN_UP} from './components/navigation/navigation.component';
+import {IndexViewComponent} from './views/index/index-view.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: HomeViewComponent,
-    data: HOME
+    component: IndexViewComponent
   },
   {
     path: 'login',
-    component: LoginViewComponent,
-    data: LOGIN
+    component: LoginViewComponent
   },
   {
     path: 'sign-up',
-    component: SignUpViewComponent,
-    data: SIGN_UP
+    component: SignUpViewComponent
   },
   {
     path: 'c/home',
-    component: HomeViewComponent,
-    data: HOME
+    component: HomeViewComponent
   },
   {
     path: 'c/all',
-    component: AllViewComponent,
-    data: ALL
+    component: AllViewComponent
   },
   {
     path: 'c/popular',
-    component: PopularViewComponent,
-    data: POPULAR
+    component: PopularViewComponent
   },
   {
     path: 'c/:community',

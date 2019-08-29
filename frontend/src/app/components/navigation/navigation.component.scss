@@ -13,7 +13,7 @@
 }
 
 .navigation-button {
-  width: 200px;
+  width: 250px;
   text-align: left;
   position: relative;
 }
@@ -45,7 +45,8 @@
   background-color: rgba(0, 0, 0, 0.3);
 }
 
-mat-list-item {
+.navigation-item {
+  text-decoration: none;
   height: 40px !important;
 }
 

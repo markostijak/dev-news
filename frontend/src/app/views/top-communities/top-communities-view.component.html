@@ -1,0 +1,30 @@
+<div class="main" fxLayout="row" fxLayoutGap="24px">
+  <div class="main-left" fxFlex>
+    <mat-card class="p-0">
+      <mat-card-header class="header">
+        Top communities
+      </mat-card-header>
+      <mat-action-list>
+        <mat-divider></mat-divider>
+        <ng-container *ngFor="let community of communities; index as index; last as last">
+          <a class="decoration-none" mat-list-item [routerLink]="['/c', community.id]" (click)="navigate(community)">
+            <span mat-list-icon class="index">{{index + 1}}.</span>
+            <img mat-list-avatar [src]="community.logo" [alt]="community.title">
+            <h4 mat-line class="title">{{community.title}}</h4>
+            <p mat-line class="subtitle">Members: {{community.members}} </p>
+          </a>
+          <mat-divider *ngIf="!last"></mat-divider>
+        </ng-container>
+      </mat-action-list>
+    </mat-card>
+  </div>
+  <div class="main-right" fxFlex fxHide.lt-md>
+    <div>
+      <div>
+        <app-overview title="To be implemented">
+          Don't have idea for content.
+        </app-overview>
+      </div>
+    </div>
+  </div>
+</div>

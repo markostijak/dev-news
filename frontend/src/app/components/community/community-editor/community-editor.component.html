@@ -8,7 +8,7 @@
             <mat-icon class="logo-upload-icon">add_photo_alternate</mat-icon>
             <input type="file" accept=".png, .jpg, .svg" class="logo-upload" (change)="onImageSelect($event)">
           </label>
-          <img *ngIf="logoPreview" class="avatar" [src]="logoPreview" alt="Logo">
+          <img *ngIf="logoPreview" class="avatar preview" [src]="logoPreview" alt="Logo">
         </div>
         <div fxFlex="1 1 100%">
           <!--suppress HtmlFormInputWithoutLabel -->
@@ -17,7 +17,7 @@
       </div>
 
       <!--suppress AngularUndefinedBinding, HtmlUnknownAttribute -->
-      <textarea class="text" placeholder="Community description..." (change)="onContentChanged($event)"></textarea>
+      <textarea class="text" placeholder="Community description..." [(ngModel)]="description"></textarea>
     </div>
 
     <div>

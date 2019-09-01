@@ -6,7 +6,7 @@
     <ng-content></ng-content>
   </mat-card-content>
   <mat-card-content>
-    <button class="w-100 mb-10" mat-raised-button color="primary" (click)="showPostDialog()">Create post</button>
-    <button class="w-100" mat-raised-button color="primary" (click)="showCommunityDialog()">Create community</button>
+    <button class="w-100 mb-10" mat-raised-button color="primary" (click)="showDialog('post')">Create post</button>
+    <button class="w-100" mat-raised-button color="primary" (click)="showDialog('community')">Create community</button>
   </mat-card-content>
 </mat-card>

@@ -7,8 +7,12 @@ import {
   NavigationItem,
   NavigationService,
   POPULAR,
-  SIGN_UP
+  SIGN_UP,
+  TOP_COMMUNITIES
 } from '../../services/navigation/navigation.service';
+import {AuthenticationService} from '../../services/authentication/authentication.service';
+import {HttpClient} from '@angular/common/http';
+import {Community} from '../../models/community';
 
 @Component({
   selector: 'app-navigation',
@@ -17,46 +21,67 @@ import {
 })
 export class NavigationComponent implements OnInit {
 
-  private _active: NavigationItem = POPULAR;
+  private _active: NavigationItem | Community = POPULAR;
 
   private _items: NavigationGroup[] = [];
+  private _original: NavigationGroup[] = [];
 
-  private _original: NavigationGroup[] = [
-    {
-      title: 'Feeds',
-      items: [
-        ALL,
-        POPULAR,
-        HOME
-      ]
-    },
-    {
-      title: 'My communities',
-      items: [
-        {
-          logo: 'https://cdn1.iconfinder.com/data/icons/system-shade-circles/512/java-512.png',
-          title: 'Java',
-          route: 'c/Java'
-        }
-      ]
-    },
-    {
-      title: 'Other',
-      items: [
-        LOGIN,
-        SIGN_UP
-      ]
-    }
-  ];
-
+  private _httpClient: HttpClient;
   private _navigationService: NavigationService;
+  private _authenticationService: AuthenticationService;
 
-  constructor(navigationService: NavigationService) {
+  constructor(httpClient: HttpClient, navigationService: NavigationService, authenticationService: AuthenticationService) {
+    this._httpClient = httpClient;
     this._navigationService = navigationService;
+    this._authenticationService = authenticationService;
   }
 
   public ngOnInit(): void {
-    this._items = this._original;
+    this._authenticationService.authentication.subscribe(authentication => {
+      if (authentication.authenticated) {
+        const home: NavigationItem = HOME;
+        home.route = '';
+        this._original = [
+          {
+            title: 'Feeds',
+            items: [
+              ALL,
+              POPULAR,
+              TOP_COMMUNITIES,
+              home
+            ]
+          },
+          {
+            title: 'My communities',
+            items: []
+          }
+        ];
+      } else {
+        const popular: NavigationItem = POPULAR;
+        popular.route = '';
+        this._original = [
+          {
+            title: 'Feeds',
+            items: [
+              ALL,
+              popular,
+              TOP_COMMUNITIES
+            ]
+          },
+          {
+            title: 'Other',
+            items: [
+              LOGIN,
+              SIGN_UP
+            ]
+          }
+        ];
+      }
+
+      this.items = this._original;
+    });
+
+    // change active item
     this._navigationService.navigation.subscribe(navigationItem => {
       this.active = navigationItem;
     });

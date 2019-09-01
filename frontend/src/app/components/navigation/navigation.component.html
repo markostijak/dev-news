@@ -1,4 +1,4 @@
-<button class="navigation-button" mat-stroked-button [matMenuTriggerFor]="menu">
+<button class="navigation-button" mat-stroked-button [matMenuTriggerFor]="menu" [matTooltip]="active.title">
   <mat-icon class="left-icon" *ngIf="active.icon" mat-list-icon>{{active.icon}}</mat-icon>
   <img class="left-image" *ngIf="active.logo" mat-list-icon [src]="active.logo" [alt]="active.title">
   <span class="navigation-text">{{active.title}}</span>

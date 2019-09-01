@@ -1,4 +1,6 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {NavigationService} from '../../../services/navigation/navigation.service';
+import {Community} from '../../../models/community';
 
 @Component({
   selector: 'app-post-editor',
@@ -9,7 +11,6 @@ export class PostEditorComponent implements OnInit {
 
   private _title: string;
   private _content: string;
-  private _community: string;
 
   @Output()
   private save: EventEmitter<any>;
@@ -17,12 +18,24 @@ export class PostEditorComponent implements OnInit {
   @Output()
   private discard: EventEmitter<any>;
 
-  constructor() {
+  private _community: Community;
+
+  constructor(navigationService: NavigationService) {
     this.save = new EventEmitter<any>();
     this.discard = new EventEmitter<any>();
+    navigationService.navigation.subscribe(navigationItem => {
+      if (navigationItem instanceof Community) {
+        this._community = navigationItem;
+      } else {
+        this._community = null;
+      }
+    });
   }
 
   public ngOnInit(): void {
+    if (this.community != null) {
+
+    }
   }
 
   onContentChanged($event: any): any {
@@ -59,12 +72,11 @@ export class PostEditorComponent implements OnInit {
     this._content = value;
   }
 
-  get community(): string {
+  get community(): Community {
     return this._community;
   }
 
-  set community(value: string) {
+  set community(value: Community) {
     this._community = value;
   }
-
 }

@@ -1,13 +1,32 @@
 <mat-card>
-  <mat-card-header>
-    Community details
-  </mat-card-header>
-  <mat-card-title>{{title}}</mat-card-title>
-  <mat-card-content>
-    <ng-content></ng-content>
+  <mat-card-content>Community details</mat-card-content>
+  <mat-card-title>
+    <div fxLayout="row" fxLayoutGap="15px" fxLayoutAlign="center center">
+      <div fxFlex="0 0 45px">
+        <img class="image w-100" [src]="community.logo" [alt]="community.title">
+      </div>
+      <div fxFlex="1 1 100%">
+        {{community.title}}
+      </div>
+    </div>
+  </mat-card-title>
+  <mat-card-content class="numbers-container">
+    <div fxLayout="row" fxLayoutAlign="center center">
+      <div fxFlex>
+        <div class="numbers">{{community.members || 0}}</div>
+        <div class="numbers-description">Members</div>
+      </div>
+      <div fxFlex>
+        <div class="numbers">{{community.postsCount || 0}}</div>
+        <div class="numbers-description">Posts</div>
+      </div>
+    </div>
   </mat-card-content>
-  <mat-card-actions>
-    <button class="w-100 mb-7" mat-raised-button color="primary" (click)="join()">Join</button>
-    <button class="w-100" mat-raised-button color="primary" (click)="showPostDialog()">Create Post</button>
-  </mat-card-actions>
+  <mat-card-content>
+    {{community.description}}
+  </mat-card-content>
+  <mat-card-content>
+      <button class="w-100 mb-10" mat-raised-button color="primary" (click)="join()">Join</button>
+      <button class="w-100" mat-raised-button color="primary" (click)="showPostDialog()">Create Post</button>
+  </mat-card-content>
 </mat-card>

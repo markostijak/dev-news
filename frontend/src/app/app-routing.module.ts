@@ -8,6 +8,7 @@ import {CommunityViewComponent} from './views/community/community-view.component
 import {PostViewComponent} from './views/post/post-view.component';
 import {HomeViewComponent} from './views/home/home-view.component';
 import {IndexViewComponent} from './views/index/index-view.component';
+import {TopCommunitiesViewComponent} from './views/top-communities/top-communities-view.component';
 
 const routes: Routes = [
   {
@@ -33,6 +34,10 @@ const routes: Routes = [
   {
     path: 'c/popular',
     component: PopularViewComponent
+  },
+  {
+    path: 'top-communities',
+    component: TopCommunitiesViewComponent
   },
   {
     path: 'c/:community',

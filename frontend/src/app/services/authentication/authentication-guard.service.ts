@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {AuthenticationService} from './authentication.service';
+import {Authentication, AuthenticationService} from './authentication.service';
 import {ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot, UrlTree} from '@angular/router';
 import {Observable} from 'rxjs';
 
@@ -8,10 +8,12 @@ import {Observable} from 'rxjs';
 })
 export class AuthenticationGuardService implements CanActivate {
 
-  private _authenticationService: AuthenticationService;
+  private _authentication: Authentication;
 
   constructor(authenticationService: AuthenticationService) {
-    this._authenticationService = authenticationService;
+    authenticationService.authentication.subscribe(authentication => {
+      this._authentication = authentication;
+    });
   }
 
   public canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot):

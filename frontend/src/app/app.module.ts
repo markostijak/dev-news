@@ -59,6 +59,9 @@ import {CommunityEditorComponent} from './components/community/community-editor/
 import {AuthenticationGuardService} from './services/authentication/authentication-guard.service';
 import {IndexViewComponent} from './views/index/index-view.component';
 import {NotFoundViewComponent} from './views/not-found/not-found-view.component';
+import {TopCommunitiesViewComponent} from './views/top-communities/top-communities-view.component';
+import {UserMenuItemComponent} from './components/user-menu-item/user-menu-item.component';
+import { LoginSignUpMenuItemComponent } from './components/login-sign-up-menu-item/login-sign-up-menu-item.component';
 
 @NgModule({
   declarations: [
@@ -90,7 +93,10 @@ import {NotFoundViewComponent} from './views/not-found/not-found-view.component'
     CommunityComponent,
     CommunityEditorComponent,
     IndexViewComponent,
-    NotFoundViewComponent
+    NotFoundViewComponent,
+    TopCommunitiesViewComponent,
+    UserMenuItemComponent,
+    LoginSignUpMenuItemComponent
   ],
   imports: [
     BrowserModule,

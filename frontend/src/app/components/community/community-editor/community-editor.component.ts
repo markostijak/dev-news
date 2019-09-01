@@ -1,5 +1,6 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {Community} from '../../../models/community';
+import {HttpClient, HttpResponse} from '@angular/common/http';
 
 @Component({
   selector: 'app-community-editor',
@@ -8,7 +9,7 @@ import {Community} from '../../../models/community';
 })
 export class CommunityEditorComponent implements OnInit {
 
-  private _logo: string;
+  private _logo: File;
   private _title: string;
   private _logoPreview: string;
   private _description: string;
@@ -19,7 +20,10 @@ export class CommunityEditorComponent implements OnInit {
   @Output()
   private discard: EventEmitter<any>;
 
-  constructor() {
+  private _httpClient: HttpClient;
+
+  constructor(httpClient: HttpClient) {
+    this._httpClient = httpClient;
     this.save = new EventEmitter<any>();
     this.discard = new EventEmitter<any>();
   }
@@ -27,15 +31,19 @@ export class CommunityEditorComponent implements OnInit {
   public ngOnInit(): void {
   }
 
-  onContentChanged($event: any): any {
-    this._description = $event.html;
-  }
-
   onSave(): any {
-    this.save.emit(new Community(null, this.title, this.description, this.logo, 0));
+    const form = new FormData();
+    form.set('title', this.title);
+    form.set('description', this.description);
+    form.set('logo', this.logo);
+
+    this._httpClient.post('/api/v1/c/create', form).subscribe((response: HttpResponse<Community>) => {
+      const community = response.body;
+      this.save.emit(community);
+    });
   }
 
-  onDiscard(): any {
+  onDiscard(): void {
     this.discard.emit();
   }
 
@@ -53,11 +61,11 @@ export class CommunityEditorComponent implements OnInit {
     }
   }
 
-  get logo(): string {
+  get logo(): File {
     return this._logo;
   }
 
-  set logo(value: string) {
+  set logo(value: File) {
     this._logo = value;
   }
 

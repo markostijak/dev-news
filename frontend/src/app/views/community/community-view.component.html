@@ -1,1 +1,14 @@
-<p>community works!</p>
+<div *ngIf="community" class="main" fxLayout="row" fxLayoutGap="24px">
+  <div class="main-left" fxFlex>
+    <app-post class="mb-10" *ngFor="let i of [1,2,3,4]">
+      {{i}}
+    </app-post>
+  </div>
+  <div class="main-right" fxFlex fxHide.lt-md>
+    <div>
+      <div>
+        <app-community [community]="community"></app-community>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,12 +1,13 @@
 export class User {
 
   private _id: string;
+  private _role: string;
   private _email: string;
-  private _firstName: string;
-  private _lastName: string;
+  private _status: string;
+  private _picture: string;
   private _username: string;
-  private _accessToken: string;
-  private _refreshToken: string;
+  private _lastName: string;
+  private _firstName: string;
 
   get id(): string {
     return this._id;
@@ -14,6 +15,14 @@ export class User {
 
   set id(value: string) {
     this._id = value;
+  }
+
+  get role(): string {
+    return this._role;
+  }
+
+  set role(value: string) {
+    this._role = value;
   }
 
   get email(): string {
@@ -24,20 +33,20 @@ export class User {
     this._email = value;
   }
 
-  get firstName(): string {
-    return this._firstName;
+  get status(): string {
+    return this._status;
   }
 
-  set firstName(value: string) {
-    this._firstName = value;
+  set status(value: string) {
+    this._status = value;
   }
 
-  get lastName(): string {
-    return this._lastName;
+  get picture(): string {
+    return this._picture;
   }
 
-  set lastName(value: string) {
-    this._lastName = value;
+  set picture(value: string) {
+    this._picture = value;
   }
 
   get username(): string {
@@ -48,19 +57,20 @@ export class User {
     this._username = value;
   }
 
-  get accessToken(): string {
-    return this._accessToken;
+  get lastName(): string {
+    return this._lastName;
   }
 
-  set accessToken(value: string) {
-    this._accessToken = value;
+  set lastName(value: string) {
+    this._lastName = value;
   }
 
-  get refreshToken(): string {
-    return this._refreshToken;
+  get firstName(): string {
+    return this._firstName;
   }
 
-  set refreshToken(value: string) {
-    this._refreshToken = value;
+  set firstName(value: string) {
+    this._firstName = value;
   }
+
 }

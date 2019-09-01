@@ -1,4 +1,4 @@
-<app-preloader [timeout]="1000"></app-preloader>
+<app-preloader [timeout]="2000"></app-preloader>
 
 <header class="header">
   <mat-toolbar color="dark" class="toolbar">
@@ -8,23 +8,13 @@
       </a>
       <app-navigation class="ml-30"></app-navigation>
       <app-search class="search-container ml-30 mr-30"></app-search>
-      <a class="mr-10" mat-button routerLink="/login" *ngIf="isMobile()">LOG IN</a>
-      <a mat-button routerLink="/sign-up" *ngIf="isMobile()">SIGN UP</a>
-      <!-- menu -->
-      <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu"
-              *ngIf="!isMobile()">
-        <mat-icon>more_vert</mat-icon>
-      </button>
-      <mat-menu #menu="matMenu">
-        <button mat-menu-item>
-          <mat-icon>person</mat-icon>
-          <span>Log In</span>
-        </button>
-        <button mat-menu-item>
-          <mat-icon>person_add</mat-icon>
-          <span>Sign In</span>
-        </button>
-      </mat-menu>
+      <ng-container *ngIf="authentication.authenticated; then user else login"></ng-container>
+      <ng-template #user>
+        <app-user-menu-item [user]="authentication.principal"></app-user-menu-item>
+      </ng-template>
+      <ng-template #login>
+        <app-login-sign-up-menu-item></app-login-sign-up-menu-item>
+      </ng-template>
     </mat-toolbar-row>
   </mat-toolbar>
 </header>

@@ -5,6 +5,7 @@ import {FormControl, Validators} from '@angular/forms';
 // @ts-ignore
 import {DomSanitizer} from '@angular/platform-browser';
 import {AuthenticationService} from '../../services/authentication/authentication.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-login-form',
@@ -12,36 +13,42 @@ import {AuthenticationService} from '../../services/authentication/authenticatio
   styleUrls: ['./login-form.component.scss']
 })
 export class LoginFormComponent implements OnInit {
+
   private _email: FormControl;
   private _password: FormControl;
+
+  private _router: Router;
   private _sanitizer: DomSanitizer;
   private _iconRegistry: MatIconRegistry;
-  private _loginService: AuthenticationService;
+  private _authenticationService: AuthenticationService;
 
   private _hidePassword: boolean = true;
 
-  constructor(loginService: AuthenticationService, iconRegistry: MatIconRegistry, sanitizer: DomSanitizer) {
+  constructor(authenticationService: AuthenticationService, router: Router, iconRegistry: MatIconRegistry, sanitizer: DomSanitizer) {
+    this._router = router;
     this._sanitizer = sanitizer;
-    this._loginService = loginService;
     this._iconRegistry = iconRegistry;
+    this._authenticationService = authenticationService;
     this._email = new FormControl('', [Validators.required, Validators.email]);
     this._password = new FormControl('', [Validators.required]);
   }
 
   public login(): void {
-    this._loginService.login(this._email.value, this._password.value).then(value => console.log(value));
+    this._authenticationService.login(this._email.value, this._password.value).subscribe(value => console.log(value));
   }
 
   public facebook(): void {
-    this._loginService.facebook().then(value => console.log(value));
+    this._authenticationService.facebook().subscribe(value => console.log(value));
   }
 
   public google(): void {
-    this._loginService.google().then(value => console.log(value));
+    this._authenticationService.google().subscribe(value => {
+      this._router.navigate(['']);
+    });
   }
 
   public github(): void {
-    this._loginService.github().then(value => console.log(value));
+    this._authenticationService.github().subscribe(value => console.log(value));
   }
 
   ngOnInit(): void {
@@ -77,4 +84,5 @@ export class LoginFormComponent implements OnInit {
   set hidePassword(value: boolean) {
     this._hidePassword = value;
   }
+
 }

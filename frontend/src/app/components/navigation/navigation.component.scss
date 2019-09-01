@@ -10,6 +10,7 @@
   top: 6px;
   left: 15px;
   position: absolute;
+  border-radius: 50px;
 }
 
 .navigation-button {
@@ -50,7 +51,7 @@
   height: 40px !important;
 }
 
-@media only screen and (max-width: 639px) {
+@media only screen and (max-width: 720px) {
   .navigation-button {
     width: 95px !important;
   }

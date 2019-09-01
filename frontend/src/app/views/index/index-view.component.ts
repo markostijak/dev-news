@@ -1,6 +1,5 @@
 import {Component} from '@angular/core';
-import {AuthenticationService} from '../../services/authentication/authentication.service';
-import {Authentication} from '../../services/authentication/authentication';
+import {Authentication, AuthenticationService} from '../../services/authentication/authentication.service';
 
 @Component({
   selector: 'app-index-view',

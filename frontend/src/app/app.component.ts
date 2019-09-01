@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {BreakpointObserver, BreakpointState} from '@angular/cdk/layout';
+import {Authentication, AuthenticationService} from './services/authentication/authentication.service';
 
 @Component({
   selector: 'app-root',
@@ -9,20 +9,20 @@ import {BreakpointObserver, BreakpointState} from '@angular/cdk/layout';
 export class AppComponent implements OnInit {
 
   private _mobile: boolean = false;
-  private _breakpointObserver: BreakpointObserver;
+  private _authentication: Authentication;
 
-  constructor(breakpointObserver: BreakpointObserver) {
-    this._breakpointObserver = breakpointObserver;
-  }
-
-  ngOnInit(): void {
-    this._breakpointObserver.observe(['(min-width: 720px)']).subscribe((state: BreakpointState) => {
-      this._mobile = state.matches;
+  constructor(authenticationService: AuthenticationService) {
+    authenticationService.authentication.subscribe(authentication => {
+      this._authentication = authentication;
     });
   }
 
-  public isMobile(): boolean {
-    return this._mobile;
+  ngOnInit(): void {
+
+  }
+
+  public get authentication(): Authentication {
+    return this._authentication;
   }
 
 }

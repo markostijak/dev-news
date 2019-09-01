@@ -1,7 +1,8 @@
 import {Component, Input} from '@angular/core';
-import {MatDialog} from '@angular/material';
-import {CreatePostDialogComponent} from '../../post/create-post-dialog/create-post-dialog.component';
 import {CommunityService} from '../../../services/community/community.service';
+import {Community} from '../../../models/community';
+import {DialogService} from '../../../services/dialog/dialog.service';
+import {CreatePostDialogComponent} from '../../post/create-post-dialog/create-post-dialog.component';
 
 @Component({
   selector: 'app-community',
@@ -11,21 +12,18 @@ import {CommunityService} from '../../../services/community/community.service';
 export class CommunityComponent {
 
   @Input()
-  private title: string;
+  private community: Community;
 
-  private _dialog: MatDialog;
+  private _dialogService: DialogService;
   private _communityService: CommunityService;
 
-  constructor(communityService: CommunityService, dialog: MatDialog) {
-    this._dialog = dialog;
+  constructor(dialogService: DialogService, communityService: CommunityService) {
+    this._dialogService = dialogService;
     this._communityService = communityService;
   }
 
   public showPostDialog(): void {
-    this._dialog.open(CreatePostDialogComponent, {
-      width: '100%',
-      maxWidth: '600px%'
-    });
+    this._dialogService.showDialog(CreatePostDialogComponent);
   }
 
   public join(): void {

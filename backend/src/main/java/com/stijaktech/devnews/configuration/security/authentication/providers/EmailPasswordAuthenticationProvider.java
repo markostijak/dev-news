@@ -1,11 +1,10 @@
 package com.stijaktech.devnews.configuration.security.authentication.providers;
 
+import com.stijaktech.devnews.configuration.security.authentication.tokens.EmailNotFoundException;
 import com.stijaktech.devnews.configuration.security.authentication.tokens.EmailPasswordAuthenticationToken;
-import com.stijaktech.devnews.models.User;
 import com.stijaktech.devnews.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,12 +27,10 @@ public class EmailPasswordAuthenticationProvider implements AuthenticationProvid
         String email = (String) authentication.getPrincipal();
         String password = (String) authentication.getCredentials();
 
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new BadCredentialsException("Email not found!"));
-        if (passwordEncoder.matches(password, user.getPassword())) {
-            authentication = new EmailPasswordAuthenticationToken(user, password, user.getAuthorities());
-        }
-
-        return authentication;
+        return userRepository.findByEmail(email)
+                .filter(user -> passwordEncoder.matches(password, user.getPassword()))
+                .map(user -> new EmailPasswordAuthenticationToken(user, password, user.getAuthorities()))
+                .orElseThrow(() -> new EmailNotFoundException("Email not found " + email));
     }
 
     @Override

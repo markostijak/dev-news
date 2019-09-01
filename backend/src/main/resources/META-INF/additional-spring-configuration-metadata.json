@@ -39,6 +39,11 @@
       "name": "oauth2.providers.*.pre-established-redirect-uri",
       "type": "java.lang.String",
       "description": "Description for oauth2.providers.*.pre-established-redirect-uri."
+    },
+    {
+      "name": "cdn.url",
+      "type": "java.lang.String",
+      "description": "Url for CDN."
     }
   ]
 }

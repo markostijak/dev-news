@@ -6,6 +6,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
 import java.sql.Date;
@@ -18,6 +19,9 @@ import java.util.Random;
 @Component
 public class JwtProvider {
 
+    private static final int TEN_MINUTES = 600;
+    private static final int ONE_MONTH = 2592000;
+
     private Random random;
     private JwtSecretRepository jwtSecretRepository;
 
@@ -28,25 +32,21 @@ public class JwtProvider {
 
     public String generateAccessToken(Authentication authentication) {
         User user = (User) authentication.getPrincipal();
-        JwtSecret secret = random(jwtSecretRepository.findAll());
-        return Jwts.builder()
-                .signWith(SignatureAlgorithm.HS256, secret.getValue())
-                .setSubject(user.getId())
-                .setIssuedAt(Date.from(Instant.now()))
-                .setExpiration(Date.from(Instant.now().plusSeconds(600)))
-                .setIssuer("dev-news")
-                .setHeaderParam(JwsHeader.KEY_ID, secret.getId())
-                .compact();
+        return generateToken(user, TEN_MINUTES);
     }
 
     public String generateRefreshToken(Authentication authentication) {
         User user = (User) authentication.getPrincipal();
+        return generateToken(user, ONE_MONTH);
+    }
+
+    private String generateToken(User user, int expireAfter) {
         JwtSecret secret = random(jwtSecretRepository.findAll());
         return Jwts.builder()
                 .signWith(SignatureAlgorithm.HS256, secret.getValue())
                 .setSubject(user.getId())
                 .setIssuedAt(Date.from(Instant.now()))
-                .setExpiration(Date.from(Instant.now().plusSeconds(2592000)))
+                .setExpiration(Date.from(Instant.now().plusSeconds(expireAfter)))
                 .setIssuer("dev-news")
                 .setHeaderParam(JwsHeader.KEY_ID, secret.getId())
                 .compact();

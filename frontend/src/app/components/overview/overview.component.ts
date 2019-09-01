@@ -1,7 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {MatDialog} from '@angular/material';
-import {CreatePostDialogComponent} from '../post/create-post-dialog/create-post-dialog.component';
-import {CreateCommunityDialogComponent} from '../community/create-community-dialog/create-community-dialog.component';
+import {DialogService} from '../../services/dialog/dialog.service';
 
 @Component({
   selector: 'app-overview',
@@ -13,24 +11,14 @@ export class OverviewComponent {
   @Input()
   private title: string;
 
-  private _dialog: MatDialog;
+  private _dialogService: DialogService;
 
-  constructor(dialog: MatDialog) {
-    this._dialog = dialog;
+  constructor(dialogService: DialogService) {
+    this._dialogService = dialogService;
   }
 
-  showPostDialog(): void {
-    this._dialog.open(CreatePostDialogComponent, {
-      width: '100%',
-      maxWidth: '600px'
-    });
-  }
-
-  showCommunityDialog(): void {
-    this._dialog.open(CreateCommunityDialogComponent, {
-      width: '100%',
-      maxWidth: '600px'
-    });
+  public showDialog(which: string): void {
+    this._dialogService.show(which);
   }
 
 }

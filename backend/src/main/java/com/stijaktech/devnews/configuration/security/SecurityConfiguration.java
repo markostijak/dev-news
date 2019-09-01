@@ -1,7 +1,9 @@
 package com.stijaktech.devnews.configuration.security;
 
+import com.stijaktech.devnews.configuration.security.authentication.filters.JwtAuthenticationFilter;
+import com.stijaktech.devnews.configuration.security.authentication.filters.JwtAwareAuthenticationSuccessHandler;
+import com.stijaktech.devnews.configuration.security.authentication.filters.LoginAuthenticationFilter;
 import com.stijaktech.devnews.models.Role;
-import com.stijaktech.devnews.services.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -13,6 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -25,11 +28,11 @@ import static com.stijaktech.devnews.configuration.security.authentication.filte
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    private UserService userService;
+    private JwtAwareAuthenticationSuccessHandler successHandler;
     private List<AuthenticationProvider> authenticationProviders;
 
-    public SecurityConfiguration(UserService userService, List<AuthenticationProvider> authenticationProviders) {
-        this.userService = userService;
+    public SecurityConfiguration(JwtAwareAuthenticationSuccessHandler successHandler, List<AuthenticationProvider> authenticationProviders) {
+        this.successHandler = successHandler;
         this.authenticationProviders = authenticationProviders;
     }
 
@@ -74,16 +77,25 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
                 .and()
                 .authorizeRequests()
-                .antMatchers(AUTH_LOGIN, AUTH_SOCIAL_LOGIN, AUTH_REFRESH)
-                .permitAll()
-                .and()
-                .authorizeRequests()
                 .antMatchers("/actuator/**")
                 .hasAnyRole(Role.ADMIN, Role.WEBMASTER)
                 .and()
                 .authorizeRequests()
                 .anyRequest()
-                .authenticated();
+                .authenticated()
+                .and()
+                .addFilterAfter(jwtAuthenticationFilter(), LogoutFilter.class)
+                .addFilterAfter(loginAuthenticationFilter(), LogoutFilter.class);
+    }
+
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
+        return new JwtAuthenticationFilter(authenticationManager());
+    }
+
+    @Bean
+    public LoginAuthenticationFilter loginAuthenticationFilter() throws Exception {
+        return new LoginAuthenticationFilter(authenticationManager(), successHandler);
     }
 
 }

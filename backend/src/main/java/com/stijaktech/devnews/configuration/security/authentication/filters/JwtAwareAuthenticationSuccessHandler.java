@@ -1,5 +1,6 @@
 package com.stijaktech.devnews.configuration.security.authentication.filters;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stijaktech.devnews.configuration.security.jwt.JwtProvider;
 import com.stijaktech.devnews.models.User;
 import com.stijaktech.devnews.repositories.UserRepository;
@@ -11,21 +12,24 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @Component
 public class JwtAwareAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
+    private ObjectMapper jackson;
     private JwtProvider jwtProvider;
     private UserRepository userRepository;
 
     @Autowired
-    public JwtAwareAuthenticationSuccessHandler(JwtProvider jwtProvider, UserRepository userRepository) {
+    public JwtAwareAuthenticationSuccessHandler(ObjectMapper jackson, JwtProvider jwtProvider, UserRepository userRepository) {
+        this.jackson = jackson;
         this.jwtProvider = jwtProvider;
         this.userRepository = userRepository;
     }
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         String accessToken = jwtProvider.generateAccessToken(authentication);
         String refreshToken = jwtProvider.generateRefreshToken(authentication);
 
@@ -36,6 +40,7 @@ public class JwtAwareAuthenticationSuccessHandler implements AuthenticationSucce
         response.setStatus(HttpStatus.OK.value());
         response.setHeader("X-Auth-Token", accessToken);
         response.setHeader("X-Refresh-Token", refreshToken);
+        jackson.writeValue(response.getWriter(), user);
     }
 
 }

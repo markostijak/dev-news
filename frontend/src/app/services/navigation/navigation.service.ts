@@ -1,12 +1,12 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
-import {Authentication} from '../authentication/authentication';
-import {AuthenticationService} from '../authentication/authentication.service';
+import {Authentication, AuthenticationService} from '../authentication/authentication.service';
+import {Community} from '../../models/community';
 
 export interface NavigationItem {
   icon?: string;
   logo?: string;
-  route: string;
+  route?: string;
   title: string;
 }
 
@@ -25,6 +25,12 @@ export const POPULAR: NavigationItem = {
   icon: 'trending_up',
   title: 'Popular',
   route: 'c/popular'
+};
+
+export const TOP_COMMUNITIES: NavigationItem = {
+  icon: 'format_list_numbered',
+  title: 'Top Communities',
+  route: 'top-communities'
 };
 
 export const HOME: NavigationItem = {
@@ -65,7 +71,7 @@ export class NavigationService {
     return this._behaviourSubject;
   }
 
-  public navigate(navigationItem: NavigationItem): void {
+  public navigate(navigationItem: NavigationItem | Community): void {
     this._behaviourSubject.next(navigationItem);
   }
 

@@ -20,7 +20,9 @@
   outline: none;
   padding: 14px;
   color: #fafafa;
+  font-size: 15px;
   resize: vertical;
+  line-height: 22px;
   min-height: 200px;
   font-family: inherit;
   background-color: rgba(0, 0, 0, 0.30);
@@ -42,6 +44,10 @@
   text-align: center;
   border-radius: 50px;
   background-color: #a23737;
+}
+
+.preview {
+  background-color: transparent !important;
 }
 
 .logo-upload-icon {

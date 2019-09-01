@@ -1,6 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {Community} from '../../models/community';
 import {NavigationService} from '../../services/navigation/navigation.service';
+import {ActivatedRoute} from '@angular/router';
+import {HttpClient} from '@angular/common/http';
 
 @Component({
   selector: 'app-community-view',
@@ -10,18 +12,27 @@ import {NavigationService} from '../../services/navigation/navigation.service';
 export class CommunityViewComponent implements OnInit {
 
   private _community: Community;
+
+  private _httpClient: HttpClient;
+  private _activatedRoute: ActivatedRoute;
   private _navigationService: NavigationService;
 
-  constructor(navigationService: NavigationService) {
+  constructor(navigationService: NavigationService, activatedRoute: ActivatedRoute, httpClient: HttpClient) {
+    this._httpClient = httpClient;
+    this._activatedRoute = activatedRoute;
     this._navigationService = navigationService;
   }
 
   ngOnInit(): void {
-    this._navigationService.navigate({
-      title: 'Java',
-      route: 'c/Java',
-      logo: 'https://cdn1.iconfinder.com/data/icons/system-shade-circles/512/java-512.png'
+    const communityId = this._activatedRoute.snapshot.params['community'];
+    this._httpClient.get('/api/v1/c/' + communityId).subscribe((community: Community) => {
+      this._community = community;
+      this._navigationService.navigate(community);
     });
+  }
+
+  get community(): Community {
+    return this._community;
   }
 
 }

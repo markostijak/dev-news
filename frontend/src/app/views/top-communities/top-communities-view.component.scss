@@ -1,0 +1,34 @@
+.p-0 {
+  padding: 0 !important;
+}
+
+.header {
+  font-size: 24px;
+  font-weight: 500;
+  padding-top: 18px;
+  padding-bottom: 10px;
+}
+
+.index {
+  width: 30px !important;
+  height: unset !important;
+  flex-shrink: 0 !important;
+  font-weight: 500 !important;
+  padding: 0 15px !important;
+  font-size: inherit !important;
+  border-radius: unset !important;
+}
+
+.icon {
+  width: 40px !important;
+  height: 40px !important;
+}
+
+.title {
+  font-weight: 500 !important;
+}
+
+.subtitle {
+  padding-top: 5px !important;
+  font-size: 14px !important;
+}

@@ -5,7 +5,6 @@ import com.stijaktech.devnews.models.CommunityForm;
 import com.stijaktech.devnews.models.User;
 import com.stijaktech.devnews.repositories.CommunityRepository;
 import com.stijaktech.devnews.services.CommunityService;
-import com.stijaktech.devnews.services.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,13 +22,11 @@ import java.util.List;
 @RequestMapping({"/communities", "/c"})
 public class CommunityController {
 
-    private ImageService imageService;
     private CommunityService communityService;
     private CommunityRepository communityRepository;
 
     @Autowired
-    public CommunityController(ImageService imageService, CommunityService communityService, CommunityRepository communityRepository) {
-        this.imageService = imageService;
+    public CommunityController(CommunityService communityService, CommunityRepository communityRepository) {
         this.communityService = communityService;
         this.communityRepository = communityRepository;
     }

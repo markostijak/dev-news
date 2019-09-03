@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Authentication, AuthenticationService} from './services/authentication/authentication.service';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -8,20 +9,17 @@ import {Authentication, AuthenticationService} from './services/authentication/a
 })
 export class AppComponent implements OnInit {
 
-  private _mobile: boolean = false;
-  private _authentication: Authentication;
+  private readonly _authentication: Observable<Authentication>;
 
   constructor(authenticationService: AuthenticationService) {
-    authenticationService.authentication.subscribe(authentication => {
-      this._authentication = authentication;
-    });
+    this._authentication = authenticationService.authentication;
   }
 
   ngOnInit(): void {
 
   }
 
-  public get authentication(): Authentication {
+  get authentication(): Observable<Authentication> {
     return this._authentication;
   }
 

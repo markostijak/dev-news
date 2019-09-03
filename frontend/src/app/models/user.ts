@@ -73,4 +73,8 @@ export class User {
     this._firstName = value;
   }
 
+  get fullName(): string {
+    return this._firstName + ' ' + this.lastName;
+  }
+
 }

@@ -1,4 +1,6 @@
-<button class="navigation-button" mat-stroked-button [matMenuTriggerFor]="menu" [matTooltip]="active.title">
+<button class="navigation-button" mat-stroked-button [matMenuTriggerFor]="menu"
+        *ngIf="navigation | async as active"
+        [matTooltip]="active.title">
   <mat-icon class="left-icon" *ngIf="active.icon" mat-list-icon>{{active.icon}}</mat-icon>
   <img class="left-image" *ngIf="active.logo" mat-list-icon [src]="active.logo" [alt]="active.title">
   <span class="navigation-text">{{active.title}}</span>
@@ -9,15 +11,15 @@
   <div class="filter-container">
     <input class="filter" placeholder="Filter" (input)="onFilter($event)" (click)="$event.stopPropagation()">
   </div>
-  <mat-action-list>
+  <mat-nav-list dense>
     <ng-container *ngFor="let group of items; last as isLast">
       <h3 *ngIf="group.title" mat-subheader>{{group.title}}</h3>
-      <a mat-list-item class="navigation-item" *ngFor="let item of group.items" [routerLink]="item.route">
-        <mat-icon *ngIf="item.icon" mat-list-icon>{{item.icon}}</mat-icon>
-        <img *ngIf="item.logo" mat-list-icon [src]="item.logo" [alt]="item.title">
+      <a mat-list-item *ngFor="let item of group.items" [routerLink]="item.route">
+        <mat-icon matListIcon *ngIf="item.icon">{{item.icon}}</mat-icon>
+        <img matListAvatar *ngIf="item.logo" [src]="item.logo" [alt]="item.title">
         <span class="navigation-item-text" mat-line>{{item.title}}</span>
       </a>
       <mat-divider class="mt-10" *ngIf="!isLast"></mat-divider>
     </ng-container>
-  </mat-action-list>
+  </mat-nav-list>
 </mat-menu>

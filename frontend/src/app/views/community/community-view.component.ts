@@ -26,8 +26,7 @@ export class CommunityViewComponent implements OnInit {
   ngOnInit(): void {
     const communityId = this._activatedRoute.snapshot.params['community'];
     this._httpClient.get('/api/v1/c/' + communityId).subscribe((community: Community) => {
-      this._community = community;
-      this._navigationService.navigate(community);
+      this._navigationService.navigate(this._community = community);
     });
   }
 

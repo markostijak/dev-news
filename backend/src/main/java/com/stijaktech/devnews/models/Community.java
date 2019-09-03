@@ -32,6 +32,7 @@ public class Community {
     private long members;
     @JsonIgnore
     private Status status;
+    private long postsCount;
     @DBRef
     private List<Post> posts;
     @JsonIgnore

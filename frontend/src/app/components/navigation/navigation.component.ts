@@ -12,6 +12,7 @@ import {
 } from '../../services/navigation/navigation.service';
 import {AuthenticationService} from '../../services/authentication/authentication.service';
 import {HttpClient} from '@angular/common/http';
+import {Observable} from 'rxjs';
 import {Community} from '../../models/community';
 
 @Component({
@@ -21,18 +22,17 @@ import {Community} from '../../models/community';
 })
 export class NavigationComponent implements OnInit {
 
-  private _active: NavigationItem | Community = POPULAR;
-
   private _items: NavigationGroup[] = [];
   private _original: NavigationGroup[] = [];
 
   private _httpClient: HttpClient;
-  private _navigationService: NavigationService;
   private _authenticationService: AuthenticationService;
+
+  private readonly _navigation: Observable<NavigationItem | Community>;
 
   constructor(httpClient: HttpClient, navigationService: NavigationService, authenticationService: AuthenticationService) {
     this._httpClient = httpClient;
-    this._navigationService = navigationService;
+    this._navigation = navigationService.navigation;
     this._authenticationService = authenticationService;
   }
 
@@ -40,7 +40,9 @@ export class NavigationComponent implements OnInit {
     this._authenticationService.authentication.subscribe(authentication => {
       if (authentication.authenticated) {
         const home: NavigationItem = HOME;
+        const popular: NavigationItem = POPULAR;
         home.route = '';
+        popular.route = 'c/popular';
         this._original = [
           {
             title: 'Feeds',
@@ -57,7 +59,9 @@ export class NavigationComponent implements OnInit {
           }
         ];
       } else {
+        const home: NavigationItem = HOME;
         const popular: NavigationItem = POPULAR;
+        home.route = 'c/home';
         popular.route = '';
         this._original = [
           {
@@ -80,11 +84,6 @@ export class NavigationComponent implements OnInit {
 
       this.items = this._original;
     });
-
-    // change active item
-    this._navigationService.navigation.subscribe(navigationItem => {
-      this.active = navigationItem;
-    });
   }
 
   public onFilter($event: any): void {
@@ -105,14 +104,6 @@ export class NavigationComponent implements OnInit {
     }
   }
 
-  get active(): NavigationItem {
-    return this._active;
-  }
-
-  set active(value: NavigationItem) {
-    this._active = value;
-  }
-
   get items(): NavigationGroup[] {
     return this._items;
   }
@@ -121,4 +112,7 @@ export class NavigationComponent implements OnInit {
     this._items = value;
   }
 
+  get navigation(): Observable<NavigationItem> {
+    return this._navigation;
+  }
 }

@@ -1,10 +1,14 @@
 package com.stijaktech.devnews.services;
 
+import com.stijaktech.devnews.models.Community;
 import com.stijaktech.devnews.models.Privilege;
 import com.stijaktech.devnews.models.Role;
 import com.stijaktech.devnews.models.Status;
 import com.stijaktech.devnews.models.User;
+import com.stijaktech.devnews.repositories.CommunityRepository;
 import com.stijaktech.devnews.repositories.UserRepository;
+import org.springframework.lang.NonNull;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.keygen.KeyGenerators;
@@ -16,9 +20,11 @@ import java.util.Set;
 public class UserService implements UserDetailsService {
 
     private UserRepository userRepository;
+    private CommunityRepository communityRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, CommunityRepository communityRepository) {
         this.userRepository = userRepository;
+        this.communityRepository = communityRepository;
     }
 
     public User create(User user) {
@@ -64,6 +70,29 @@ public class UserService implements UserDetailsService {
         }
 
         return username;
+    }
+
+
+    public boolean join(@NonNull Community community) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (user.getMyCommunities().add(community)) {
+            community.setMembers(community.getMembers() + 1);
+            communityRepository.save(community);
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean leave(@NonNull Community community) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (user.getMyCommunities().remove(community)) {
+            community.setMembers(community.getMembers() - 1);
+            communityRepository.save(community);
+            return true;
+        }
+
+        return false;
     }
 
 }

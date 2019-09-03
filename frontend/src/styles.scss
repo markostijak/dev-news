@@ -2,6 +2,10 @@ html, body {
   height: 100%;
 }
 
+html {
+  scrollbar-color: #303030 #424242;
+}
+
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
@@ -60,6 +64,10 @@ body {
   width: 100% !important;
 }
 
+.h-auto {
+  height: auto !important;
+}
+
 .main {
   justify-content: center;
 }
@@ -98,4 +106,13 @@ body {
 
 .decoration-none {
   text-decoration: none;
+}
+
+.avatar {
+  border-radius: 50px;
+}
+
+.mat-autocomplete-panel {
+  scrollbar-width: thin;
+  scrollbar-color: #424242 #303030;
 }

@@ -37,7 +37,7 @@ public class User implements UserDetails {
     private String lastName;
     private String firstName;
     @DBRef
-    private List<Community> myCommunities;
+    private Set<Community> myCommunities;
 
     @JsonProperty(access = Access.WRITE_ONLY)
     private String password;

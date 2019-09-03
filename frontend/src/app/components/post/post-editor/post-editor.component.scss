@@ -2,16 +2,52 @@
   display: block;
 }
 
-.post-title {
+.post-title, .community-select-title {
   width: calc(100% - 30px);
   border: none;
   outline: none;
-  background-color: rgba(0, 0, 0, 0.30);
-  padding: 14px 15px 14px 15px;
   color: #fafafa;
   font-size: 15px;
   font-weight: 400;
   font-family: inherit;
+}
+
+.post-title {
+  padding: 14px 15px 14px 15px;
+  background-color: rgba(0, 0, 0, 0.30);
+}
+
+.community-select-title {
+  padding: 14px 0 14px 0;
+  background-color: transparent;
+}
+
+.choose-community-container {
+  padding: 0 56px;
+  position: relative;
+  background-color: rgba(0, 0, 0, 0.30);
+}
+
+
+.community-select-icon {
+  position: absolute;
+  left: 15px;
+  top: 9px;
+  font-size: 28px;
+}
+
+.community-select-image {
+  width: 30px;
+  border-radius: 50px;
+  position: absolute;
+  left: 15px;
+  top: 8px;
+}
+
+.community-select-icon-2 {
+  position: absolute;
+  right: 15px;
+  top: 10px;
 }
 
 .text {
@@ -40,8 +76,9 @@
 .avatar {
   width: 46px;
   height: 46px;
-  background-color: #4267b2;
+  display: block;
   border-radius: 50px;
+  background-color: #4267b2;
 }
 
 .post-button, .cancel-button {
@@ -63,4 +100,27 @@
 
 .tab-icon {
   margin-right: 10px;
+}
+
+mat-option {
+  height: auto;
+  line-height: unset;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.mat-option-avatar {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 50px;
+}
+
+.community-title {
+
+}
+
+.community-members {
+  font-size: 13px;
+  opacity: 0.5;
 }

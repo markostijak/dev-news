@@ -7,6 +7,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {QuillModule} from 'ngx-quill';
 import {
+  MatAutocompleteModule,
   MatButtonModule,
   MatCardModule,
   MatDialogModule,
@@ -125,7 +126,8 @@ import { LoginSignUpMenuItemComponent } from './components/login-sign-up-menu-it
     MatTabsModule,
     MatRippleModule,
     MatSelectModule,
-    MatStepperModule
+    MatStepperModule,
+    MatAutocompleteModule
   ],
   providers: [
     AuthenticationGuardService,

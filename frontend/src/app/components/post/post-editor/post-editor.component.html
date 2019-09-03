@@ -1,18 +1,38 @@
 <div class="editor-container">
   <div class="editor-wrapper">
     <div class="editor">
-      <div class="editor-placeholder" fxLayout="row" fxLayoutGap="10px">
+      <div class="mb-10" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center center">
         <div fxFlex="0 1 auto" class="avatar-container">
-          <div class="avatar"></div>
+          <ng-container *ngIf="authentication | async as authentication">
+            <img class="avatar" [src]="authentication.principal.picture" [alt]="authentication.principal.fullName">
+          </ng-container>
         </div>
         <div fxFlex="1 1 100%">
           <!--suppress HtmlFormInputWithoutLabel -->
-          <input type="text" [(ngModel)]="title" class="post-title"
-                 placeholder="Title for your post...">
+          <input type="text" [(ngModel)]="title" class="post-title" placeholder="Title for your post...">
         </div>
       </div>
 
-      <div contenteditable="true" class="post-title">Select community</div>
+      <div class="choose-community-container" matAutocompleteOrigin #origin="matAutocompleteOrigin">
+        <mat-icon class="community-select-icon" *ngIf="!selected">search</mat-icon>
+        <img class="community-select-image" *ngIf="selected" [src]="selected.logo" [alt]="selected.title">
+        <input [formControl]="autocomplete" class="community-select-title" placeholder="Choose a community" aria-label="Community"
+               [matAutocomplete]="auto" [matAutocompleteConnectedTo]="origin">
+        <mat-icon class="community-select-icon-2">keyboard_arrow_down</mat-icon>
+      </div>
+      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onCommunitySelected($event)" [displayWith]="displayCommunity">
+            <mat-option *ngFor="let community of (communities | async)" [value]="community">
+              <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center center">
+                <div fxFlex="0 0 30px">
+                  <img class="mat-option-avatar" [src]="community.logo" [alt]="community.title">
+                </div>
+                <div fxFlex="1 1 100%">
+                  <div class="community-title">{{community.title}}</div>
+                  <div class="community-members">{{community.members}} members</div>
+                </div>
+              </div>
+            </mat-option>
+      </mat-autocomplete>
 
       <!--suppress AngularUndefinedBinding, HtmlUnknownAttribute -->
       <app-text-editor (onContentChanged)="onContentChanged($event)"

@@ -30,4 +30,10 @@ public interface CommunityRepository extends MongoRepository<Community, String> 
     @Query(value = "{}", fields = "{'posts':0}")
     Page<Community> findAllByOrderByMembersDesc(Pageable pageable);
 
+    Optional<Community> findByAlias(String alias);
+
+    Optional<Community> findByIdOrAlias(String id, String alias);
+
+    void deleteByIdOrAlias(String id, String alias);
+
 }

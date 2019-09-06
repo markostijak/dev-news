@@ -112,7 +112,15 @@ body {
   border-radius: 50px;
 }
 
-.mat-autocomplete-panel {
+.mat-autocomplete-panel, .mat-menu-panel {
   scrollbar-width: thin;
   scrollbar-color: #424242 #303030;
+}
+
+.mat-menu-panel {
+  max-height: 500px !important;
+}
+
+.mat-list-text{
+  font-size: 14px !important;
 }

@@ -8,7 +8,6 @@ import com.stijaktech.devnews.models.User;
 import com.stijaktech.devnews.repositories.CommunityRepository;
 import com.stijaktech.devnews.repositories.UserRepository;
 import org.springframework.lang.NonNull;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.keygen.KeyGenerators;
@@ -62,7 +61,7 @@ public class UserService implements UserDetailsService {
     }
 
     private String createUsername(User user) {
-        String original = user.getFirstName() + "." + user.getLastName();
+        String original = (user.getFirstName() + "." + user.getLastName()).toLowerCase();
 
         String username = original;
         for (int i = 1; userRepository.existsByUsername(username); i++) {
@@ -73,8 +72,7 @@ public class UserService implements UserDetailsService {
     }
 
 
-    public boolean join(@NonNull Community community) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public boolean join(@NonNull User user, @NonNull Community community) {
         if (user.getMyCommunities().add(community)) {
             community.setMembers(community.getMembers() + 1);
             communityRepository.save(community);
@@ -84,8 +82,7 @@ public class UserService implements UserDetailsService {
         return false;
     }
 
-    public boolean leave(@NonNull Community community) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public boolean leave(@NonNull User user, @NonNull Community community) {
         if (user.getMyCommunities().remove(community)) {
             community.setMembers(community.getMembers() - 1);
             communityRepository.save(community);

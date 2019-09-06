@@ -58,6 +58,7 @@ export class NavigationComponent implements OnInit {
             items: []
           }
         ];
+        this._httpClient.get('/api/v1/c/all').subscribe((communities: Community[]) => this._original[1].items = communities);
       } else {
         const home: NavigationItem = HOME;
         const popular: NavigationItem = POPULAR;

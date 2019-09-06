@@ -4,7 +4,7 @@ import {MatIconRegistry} from '@angular/material';
 import {FormControl, Validators} from '@angular/forms';
 // @ts-ignore
 import {DomSanitizer} from '@angular/platform-browser';
-import {AuthenticationService} from '../../services/authentication/authentication.service';
+import {Authentication, AuthenticationService} from '../../services/authentication/authentication.service';
 import {Router} from '@angular/router';
 
 @Component({
@@ -42,7 +42,7 @@ export class LoginFormComponent implements OnInit {
   }
 
   public google(): void {
-    this._authenticationService.google().subscribe(value => {
+    this._authenticationService.google().subscribe((authentication: Authentication) => {
       this._router.navigate(['']);
     });
   }

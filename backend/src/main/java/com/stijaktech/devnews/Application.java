@@ -8,7 +8,6 @@ import com.stijaktech.devnews.models.Role;
 import com.stijaktech.devnews.models.Status;
 import com.stijaktech.devnews.models.User;
 import com.stijaktech.devnews.repositories.UserRepository;
-import com.stijaktech.devnews.services.ImageService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +17,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -39,11 +36,6 @@ public class Application implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        if (!Files.exists(ImageService.STATIC_LOCATION)) {
-            Path path = Files.createDirectories(ImageService.STATIC_LOCATION);
-            log.info("Created static directory at " + path);
-        }
-
         List<JwtSecret> jwtSecrets = jwtSecretRepository.findAll();
         if (jwtSecrets.isEmpty()) {
             for (int i = 0; i < 10; i++) {

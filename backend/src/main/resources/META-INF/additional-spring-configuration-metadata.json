@@ -41,9 +41,14 @@
       "description": "Description for oauth2.providers.*.pre-established-redirect-uri."
     },
     {
-      "name": "cdn.url",
+      "name": "file-upload.host",
       "type": "java.lang.String",
-      "description": "Url for CDN."
+      "description": "Prefix for static content."
+    },
+    {
+      "name": "file-upload.store-location",
+      "type": "java.lang.String",
+      "description": "Save static content to this location."
     }
   ]
 }

@@ -14,20 +14,21 @@ import {FormControl} from '@angular/forms';
 })
 export class PostEditorComponent implements OnInit {
 
-  private _title: string;
-  private _selected: Community;
-  private _content: string;
-
   @Output()
   private save: EventEmitter<any>;
 
   @Output()
   private discard: EventEmitter<any>;
 
-  private _autocomplete: FormControl;
+  private _title: string;
+  private _selected: Community;
+  private _content: string;
+
   private _httpClient: HttpClient;
-  private _communities: Observable<Community[]>;
   private _navigation: Observable<Community>;
+  private _communities: Observable<Community[]>;
+
+  private readonly _autocomplete: FormControl;
   private readonly _authentication: Observable<Authentication>;
 
   constructor(navigationService: NavigationService, authenticationService: AuthenticationService, httpClient: HttpClient) {
@@ -56,7 +57,7 @@ export class PostEditorComponent implements OnInit {
   }
 
   displayCommunity(community: Community): string {
-    return community.title;
+    return community ? community.title : '';
   }
 
   onContentChanged($event: any): any {
@@ -64,13 +65,12 @@ export class PostEditorComponent implements OnInit {
   }
 
   onSave(): any {
-    this.save.emit({
-      post: {
-        title: this.title,
-        community: this.selected,
-        content: this.content
-      }
-    });
+    const form = new FormData();
+    form.set('title', this.title);
+    form.set('communityId', this.selected.id);
+    form.set('content', this.content);
+
+    this._httpClient.post('/api/v1/p/create', form).subscribe(p => this.save.emit(p));
   }
 
   onDiscard(): any {
@@ -108,4 +108,5 @@ export class PostEditorComponent implements OnInit {
   get autocomplete(): FormControl {
     return this._autocomplete;
   }
+
 }

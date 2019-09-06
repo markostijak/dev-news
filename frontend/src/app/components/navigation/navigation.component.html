@@ -11,12 +11,15 @@
   <div class="filter-container">
     <input class="filter" placeholder="Filter" (input)="onFilter($event)" (click)="$event.stopPropagation()">
   </div>
-  <mat-nav-list dense>
+  <mat-nav-list>
+    <mat-divider></mat-divider>
     <ng-container *ngFor="let group of items; last as isLast">
       <h3 *ngIf="group.title" mat-subheader>{{group.title}}</h3>
-      <a mat-list-item *ngFor="let item of group.items" [routerLink]="item.route">
+      <!--suppress TypeScriptUnresolvedVariable -->
+      <a class="navigation-item" mat-list-item *ngFor="let item of group.items"
+         [routerLink]="item.route ? item.route : 'c/' + item.alias">
         <mat-icon matListIcon *ngIf="item.icon">{{item.icon}}</mat-icon>
-        <img matListAvatar *ngIf="item.logo" [src]="item.logo" [alt]="item.title">
+        <img matListIcon *ngIf="item.logo" [src]="item.logo" [alt]="item.title">
         <span class="navigation-item-text" mat-line>{{item.title}}</span>
       </a>
       <mat-divider class="mt-10" *ngIf="!isLast"></mat-divider>

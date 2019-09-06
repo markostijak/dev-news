@@ -1,12 +1,14 @@
 package com.stijaktech.devnews.controllers;
 
 import com.stijaktech.devnews.models.Community;
-import com.stijaktech.devnews.models.CommunityForm;
 import com.stijaktech.devnews.models.User;
 import com.stijaktech.devnews.repositories.CommunityRepository;
 import com.stijaktech.devnews.services.CommunityService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -41,16 +42,6 @@ public class CommunityController {
         return communityRepository.findPopular();
     }
 
-    @GetMapping("/{id}")
-    public Community view(@PathVariable("id") String id) {
-        return communityRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Title not found"));
-    }
-
-    @GetMapping("/home")
-    public List<Community> home(@AuthenticationPrincipal User user) {
-        return communityRepository.findForUser(user);
-    }
-
     @GetMapping("/top-communities")
     public List<Community> topCommunities(
             @RequestParam(name = "start", required = false, defaultValue = "0") int start,
@@ -58,14 +49,30 @@ public class CommunityController {
         return communityService.topCommunities(start, count);
     }
 
+    @GetMapping("/home")
+    public List<Community> home(@AuthenticationPrincipal User user) {
+        return communityRepository.findForUser(user);
+    }
+
+    @GetMapping("/{id}")
+    public Community view(@PathVariable("id") String id) {
+        return communityService.getByIdOrAlias(id);
+    }
+
     @PostMapping("/create")
-    public Community create(CommunityForm communityForm) throws IOException {
-        return communityService.create(communityForm);
+    public Community create(@RequestBody Community community) {
+        return communityService.create(community);
     }
 
     @PostMapping("/update")
-    public Community update(@RequestBody Community community) {
-        return communityRepository.save(community);
+    public Community update(@RequestBody Community community, @AuthenticationPrincipal User user) {
+        return communityService.update(user, community);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable("id") String id, @AuthenticationPrincipal User user) {
+        communityService.delete(user, id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 }

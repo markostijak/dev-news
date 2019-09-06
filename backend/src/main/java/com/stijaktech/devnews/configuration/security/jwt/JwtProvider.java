@@ -19,7 +19,7 @@ import java.util.Random;
 @Component
 public class JwtProvider {
 
-    private static final int TEN_MINUTES = 600;
+    private static final int TEN_MINUTES = 600000;
     private static final int ONE_MONTH = 2592000;
 
     private Random random;

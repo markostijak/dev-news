@@ -6,6 +6,7 @@ import com.stijaktech.devnews.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,14 +44,14 @@ public class UserController {
     }
 
     @GetMapping("/join")
-    public ResponseEntity join(@RequestParam("id") String community) {
-        boolean b = communityRepository.findById(community).map(userService::join).orElse(false);
+    public ResponseEntity join(@RequestParam("cid") String communityId, @AuthenticationPrincipal User user) {
+        boolean b = communityRepository.findById(communityId).map(c -> userService.join(user, c)).orElse(false);
         return b ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
     }
 
     @DeleteMapping("/leave")
-    public ResponseEntity leave(@RequestParam("id") String community) {
-        boolean b = communityRepository.findById(community).map(userService::leave).orElse(false);
+    public ResponseEntity leave(@RequestParam("cid") String communityId, @AuthenticationPrincipal User user) {
+        boolean b = communityRepository.findById(communityId).map(c -> userService.leave(user, c)).orElse(false);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 

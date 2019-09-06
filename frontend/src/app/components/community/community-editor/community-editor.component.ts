@@ -1,6 +1,6 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-import {Community} from '../../../models/community';
-import {HttpClient, HttpResponse} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
+import {mergeMap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-community-editor',
@@ -33,14 +33,14 @@ export class CommunityEditorComponent implements OnInit {
 
   onSave(): any {
     const form = new FormData();
-    form.set('title', this.title);
-    form.set('description', this.description);
-    form.set('logo', this.logo);
+    form.set('file', this.logo);
 
-    this._httpClient.post('/api/v1/c/create', form).subscribe((response: HttpResponse<Community>) => {
-      const community = response.body;
-      this.save.emit(community);
-    });
+    this._httpClient.post('/api/v1/f/image', form)
+      .pipe(mergeMap(uri => this._httpClient.post('/api/v1/c/create', {
+        logo: uri,
+        title: this.title,
+        description: this.description
+      }))).subscribe(c => this.save.emit(c));
   }
 
   onDiscard(): void {
@@ -87,10 +87,6 @@ export class CommunityEditorComponent implements OnInit {
 
   get logoPreview(): string {
     return this._logoPreview;
-  }
-
-  set logoPreview(value: string) {
-    this._logoPreview = value;
   }
 
 }

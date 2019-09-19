@@ -1,0 +1,77 @@
+:host {
+  display: block;
+}
+
+.post-container {
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.post {
+  background-color: #424242;
+  padding: 15px;
+}
+
+.community-logo {
+  border-radius: 50px;
+}
+
+.community {
+  font-weight: 500;
+}
+
+.community-link {
+  color: white;
+  text-decoration: none;
+}
+
+.user {
+  opacity: 0.6;
+  font-weight: 200;
+}
+
+.info {
+  font-size: 12px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 22px;
+  padding-top: 10px;
+}
+
+.content {
+  padding-top: 20px;
+}
+
+.actions {
+  padding-top: 20px;
+}
+
+.comment-editor-container {
+  margin-top: 30px;
+}
+
+.comment-as {
+ font-size: 13px;
+  padding-bottom: 5px;
+}
+
+.comments-container {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.post-editor {
+  padding-top: 20px;
+}
+
+app-comment {
+  margin-top: 20px;
+}
+
+app-comment:first-child {
+  margin-top: 0 !important;
+}

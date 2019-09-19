@@ -15,3 +15,13 @@
 .numbers-description {
   font-size: 13px;
 }
+
+.more-button-container {
+  position: relative;
+}
+
+.more-button {
+  position: absolute;
+  top: -13px;
+  right: -13px;
+}

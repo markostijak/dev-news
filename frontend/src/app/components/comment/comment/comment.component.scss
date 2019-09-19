@@ -1,0 +1,63 @@
+:host {
+  display: block;
+}
+
+.comment-info {
+  font-size: 12px;
+}
+
+.user-image {
+  border-radius: 50px;
+  display: block;
+}
+
+.user {
+  font-weight: 500;
+}
+
+.date {
+  opacity: 0.6;
+}
+
+.actions {
+  margin-top: 4px;
+}
+
+.actions > a {
+  opacity: 0.6;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.actions > a:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+//noinspection CssNoGenericFontName
+.icon {
+  width: 12px;
+  height: 12px;
+  font-size: 14px;
+  margin-right: 2px;
+  font-style: initial;
+  vertical-align: bottom;
+  font-family: "Material Icons";
+}
+
+.reply-editor-container, .comment-replies {
+  margin-top: 20px;
+  margin-left: 10px;
+  margin-bottom: 10px;
+  padding-left: 15px;
+  border-left: 2px solid rgba(255, 255, 255, 0.6);
+}
+
+app-comment {
+  margin-top: 20px;
+}
+
+.comment-edit-editor {
+  margin-top: 10px;
+}

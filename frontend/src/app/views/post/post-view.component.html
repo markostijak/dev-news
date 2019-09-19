@@ -1,1 +1,89 @@
-<p>post works!</p>
+<div *ngIf="post" class="main" fxLayout="row" fxLayoutGap="24px">
+  <div class="main-left" fxFlex>
+    <div class="post-container mat-elevation-z1">
+      <div class="post-wrapper">
+        <div class="post">
+          <div class="info" fxLayout="row" fxLayoutGap="5px" fxLayoutAlign="center center">
+            <div fxFlex="0 0 20px">
+              <a class="community-link  w-100" [routerLink]="['/c/', community.alias]">
+                <img class="community-logo w-100" [src]="community.logo ? community.logo : 'assets/icons/community.svg'"
+                     [alt]="community.alias">
+              </a>
+            </div>
+            <div fxFlex="0 0 auto" class="community">
+              <a class="community-link" [routerLink]="['/c/', community.alias]">{{community.title}}</a>
+            </div>
+            <div fxFlex="0 0 auto">
+              <span class="separator">•</span>
+            </div>
+            <div fxFlex="0 0 auto" class="user">Posted
+              by {{post.createdBy.username}} {{timeFormatter.format(post.createdAt)}}</div>
+            <div *ngIf="post.updatedAt" fxFlex="0 0 auto" class="user">
+              (edited {{timeFormatter.format(post.updatedAt)}})
+            </div>
+            <div fxFlex="1 1 auto"></div>
+          </div>
+          <div class="title">{{post.title}}</div>
+
+          <ng-container *ngIf="!startEditing; then showPost else editPost"></ng-container>
+          <ng-template #showPost>
+            <div class="content">
+              <quill-view-html [content]="post.content"></quill-view-html>
+            </div>
+            <div class="actions">
+              <button mat-raised-button class="mr-10">
+                <mat-icon>mode_comment</mat-icon>
+                {{post.commentsCount}} Comments
+              </button>
+              <button mat-raised-button class="mr-10">
+                <mat-icon>share</mat-icon>
+                Share
+              </button>
+              <ng-container>
+                <button mat-raised-button class="mr-10" (click)="showEditor()">
+                  <mat-icon>edit</mat-icon>
+                  Edit
+                </button>
+                <button mat-raised-button>
+                  <mat-icon>delete</mat-icon>
+                  Delete
+                </button>
+              </ng-container>
+            </div>
+          </ng-template>
+          <ng-template #editPost>
+            <app-post-edit-editor
+              class="post-editor"
+              [content]="post.content"
+              (cancel)="onPostEditCancel()"
+              (save)="onPostEditSave($event)"
+            ></app-post-edit-editor>
+          </ng-template>
+
+          <ng-container *ngIf="(authentication | async) as authentication">
+            <div *ngIf="authentication.authenticated" class="comment-editor-container">
+              <div class="comment-as">Comment as {{authentication.principal.username}}</div>
+              <app-comment-editor (save)="onSave($event)"></app-comment-editor>
+            </div>
+          </ng-container>
+          <div class="comments-container">
+            <ng-container *ngIf="comments.length; then commentsTemplate else emptyTemplate"></ng-container>
+            <ng-template #commentsTemplate>
+              <app-comment *ngFor="let comment of comments" [comment]="comment"></app-comment>
+            </ng-template>
+            <ng-template #emptyTemplate>
+              Such an empty
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="main-right" fxFlex fxHide.lt-md>
+    <div>
+      <div>
+        <app-community *ngIf="community" [community]="community" [showCreatePostButton]="false"></app-community>
+      </div>
+    </div>
+  </div>
+</div>

@@ -4,8 +4,7 @@ import {QuillModule} from 'ngx-quill';
 @Component({
   selector: 'app-link-resolver',
   templateUrl: './link-resolver.component.html',
-  styleUrls: ['./link-resolver.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./link-resolver.component.scss']
 })
 export class LinkResolverComponent {
 

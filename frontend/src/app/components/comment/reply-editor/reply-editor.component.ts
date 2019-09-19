@@ -1,0 +1,63 @@
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {QuillEditorComponent, QuillModule} from 'ngx-quill';
+
+export interface Data {
+  content: string;
+  editor: ReplyEditorComponent;
+}
+
+@Component({
+  selector: 'app-reply-editor',
+  templateUrl: './reply-editor.component.html',
+  styleUrls: ['./reply-editor.component.scss']
+})
+export class ReplyEditorComponent extends QuillEditorComponent implements OnInit {
+
+  @Output()
+  private save: EventEmitter<Data> = new EventEmitter<Data>();
+  @Output()
+  private cancel: EventEmitter<ReplyEditorComponent> = new EventEmitter<ReplyEditorComponent>();
+
+  @Input()
+  private buttonText: string = 'Reply';
+  @Input()
+  content: string = null;
+
+  private _html: string;
+  private _toolbar: string = 'rt_' + Math.random().toString(16).substr(3);
+
+  bounds: string = 'self';
+  placeholder: string = 'What are your thoughts?';
+  modules: QuillModule = {
+    toolbar: '#' + this._toolbar
+  };
+
+  ngOnInit(): void {
+    this.onContentChanged.subscribe($event => {
+      this._html = $event.html;
+    });
+  }
+
+  public onSave(): void {
+    this.save.emit({
+      editor: this,
+      content: this._html
+    });
+  }
+
+  public onCancel(): void {
+    this.cancel.emit(this);
+  }
+
+  public reset(): void {
+    this.quillEditor.setText('');
+  }
+
+  get toolbar(): string {
+    return this._toolbar;
+  }
+
+  get html(): string {
+    return this._html;
+  }
+}

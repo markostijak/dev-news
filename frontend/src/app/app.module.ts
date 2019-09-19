@@ -63,6 +63,10 @@ import {NotFoundViewComponent} from './views/not-found/not-found-view.component'
 import {TopCommunitiesViewComponent} from './views/top-communities/top-communities-view.component';
 import {UserMenuItemComponent} from './components/user-menu-item/user-menu-item.component';
 import { LoginSignUpMenuItemComponent } from './components/login-sign-up-menu-item/login-sign-up-menu-item.component';
+import { CommentEditorComponent } from './components/comment/comment-editor/comment-editor.component';
+import { CommentComponent } from './components/comment/comment/comment.component';
+import { ReplyEditorComponent } from './components/comment/reply-editor/reply-editor.component';
+import { PostEditEditorComponent } from './components/post/post-edit-editor/post-edit-editor.component';
 
 @NgModule({
   declarations: [
@@ -97,7 +101,11 @@ import { LoginSignUpMenuItemComponent } from './components/login-sign-up-menu-it
     NotFoundViewComponent,
     TopCommunitiesViewComponent,
     UserMenuItemComponent,
-    LoginSignUpMenuItemComponent
+    LoginSignUpMenuItemComponent,
+    CommentEditorComponent,
+    CommentComponent,
+    ReplyEditorComponent,
+    PostEditEditorComponent
   ],
   imports: [
     BrowserModule,

@@ -2,11 +2,13 @@
 
 .header {
   min-height: 50px;
+  position: sticky;
+  z-index: 5;
+  top: 0;
 }
 
 .toolbar {
-  position: fixed;
-  z-index: 5;
+
 }
 
 .toolbar-row {

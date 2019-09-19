@@ -35,8 +35,8 @@ export class CommunityEditorComponent implements OnInit {
     const form = new FormData();
     form.set('file', this.logo);
 
-    this._httpClient.post('/api/v1/f/image', form)
-      .pipe(mergeMap(uri => this._httpClient.post('/api/v1/c/create', {
+    this._httpClient.post('/api/v1/files/image', form)
+      .pipe(mergeMap(uri => this._httpClient.post('/api/v1/communities', {
         logo: uri,
         title: this.title,
         description: this.description

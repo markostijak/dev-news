@@ -1,11 +1,10 @@
-import {Component, ViewEncapsulation} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {QuillEditorComponent, QuillModule} from 'ngx-quill';
 
 @Component({
   selector: 'app-text-editor',
   templateUrl: './text-editor.component.html',
-  styleUrls: ['./text-editor.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./text-editor.component.scss']
 })
 export class TextEditorComponent extends QuillEditorComponent {
 
@@ -13,14 +12,20 @@ export class TextEditorComponent extends QuillEditorComponent {
 
   placeholder: string = 'Write your text here...';
 
+  @Input()
+  content: string;
+
   modules: QuillModule = {
-    toolbar: [
-      ['bold', 'italic', 'underline', 'strike'],
-      ['blockquote', 'code-block'],
-      [{'header': 1}, {'header': 2}],
-      [{'list': 'ordered'}, {'list': 'bullet'}],
-      ['link', 'image', 'video']
-    ]
+    toolbar: {
+      container: [
+        ['bold', 'italic', 'underline', 'strike'],
+        ['blockquote', 'code-block'],
+        [{'header': 1}, {'header': 2}],
+        [{'list': 'ordered'}, {'list': 'bullet'}],
+        ['link', 'image', 'video']
+      ],
+      handlers: {}
+    }
   };
 
 }

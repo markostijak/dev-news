@@ -1,0 +1,46 @@
+<div class="comment-info" fxLayout="row" fxLayoutGap="5px" fxLayoutAlign="center center">
+  <div fxFlex="0 0 20px">
+    <img class="user-image w-100" [src]="comment.createdBy.picture" [alt]="comment.createdBy.username">
+  </div>
+  <div fxFlex="0 0 auto" class="user">{{comment.createdBy.username}}</div>
+  <div fxFlex="0 0 auto"><span class="separator">•</span></div>
+  <div fxFlex="0 0 auto" class="date">{{timeFormatter.format(comment.createdAt)}}</div>
+  <div *ngIf="comment.updatedAt" fxFlex="0 0 auto" class="date">(edited {{timeFormatter.format(comment.updatedAt)}})</div>
+  <div fxFlex="1 1 auto"></div>
+</div>
+
+<ng-container *ngIf="!startEditing; then show else edit"></ng-container>
+<ng-template #show>
+  <quill-view-html *ngIf="!startEditing" class="comment-content" [content]="comment.content"></quill-view-html>
+  <div class="actions">
+    <a class="mr-10" (click)="toggleReplyEditor()">
+      <i class="icon">mode_comment</i>
+      Reply
+    </a>
+    <a class="mr-10">
+      Share
+    </a>
+    <ng-container>
+      <a class="mr-10" (click)="toggleEditEditor()">
+        Edit
+      </a>
+      <a *ngIf="!comment.replies || !comment.replies.length">
+        Delete
+      </a>
+    </ng-container>
+  </div>
+  <div *ngIf="showEditor" class="reply-editor-container">
+    <app-reply-editor (save)="onSave($event)" (cancel)="onCancel($event)"></app-reply-editor>
+  </div>
+</ng-template>
+<ng-template #edit>
+  <app-reply-editor class="comment-edit-editor"
+                    buttonText="Save"
+                    [content]="comment.content"
+                    (cancel)="onEditCancel($event)"
+                    (save)="onEditSave($event)"
+  ></app-reply-editor>
+</ng-template>
+<div *ngIf="comment.replies && comment.replies.length" class="comment-replies">
+  <app-comment *ngFor="let reply of comment.replies" [comment]="reply"></app-comment>
+</div>

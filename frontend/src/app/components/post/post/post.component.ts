@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
+import {Post} from '../../../models/post';
+import {TimeAgoService} from '../../../services/time-ago/time-ago.service';
 
 @Component({
   selector: 'app-post',
@@ -7,9 +9,27 @@ import { Component, OnInit } from '@angular/core';
 })
 export class PostComponent implements OnInit {
 
-  constructor() { }
+  @Input()
+  private post: Post;
+  @Input()
+  private showCommunity: boolean = true;
 
-  ngOnInit() {
+  private readonly _timeFormatter: TimeAgoService;
+
+  constructor(timeFormatter: TimeAgoService) {
+    this._timeFormatter = timeFormatter;
+  }
+
+  ngOnInit(): void {
+
+  }
+
+  private showMask(content: string): boolean {
+    return !(content.startsWith('<iframe') || content.startsWith('<img'));
+  }
+
+  get timeFormatter(): TimeAgoService {
+    return this._timeFormatter;
   }
 
 }

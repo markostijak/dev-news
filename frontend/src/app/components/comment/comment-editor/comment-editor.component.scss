@@ -1,0 +1,17 @@
+:host {
+  display: flex;
+  flex-flow: column-reverse;
+}
+
+.action-button-container {
+  float: right;
+  margin-right: 0 !important;
+}
+
+.action-button {
+  line-height: 30px;
+  margin-top: -3px;
+  margin-bottom: -3px;
+  margin-right: -3px;
+  background-color: #a23737;
+}

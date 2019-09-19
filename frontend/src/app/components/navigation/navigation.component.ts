@@ -14,6 +14,7 @@ import {AuthenticationService} from '../../services/authentication/authenticatio
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {Community} from '../../models/community';
+import {CommunityService} from '../../services/community/community.service';
 
 @Component({
   selector: 'app-navigation',
@@ -26,12 +27,18 @@ export class NavigationComponent implements OnInit {
   private _original: NavigationGroup[] = [];
 
   private _httpClient: HttpClient;
+  private _communityService: CommunityService;
   private _authenticationService: AuthenticationService;
 
   private readonly _navigation: Observable<NavigationItem | Community>;
 
-  constructor(httpClient: HttpClient, navigationService: NavigationService, authenticationService: AuthenticationService) {
+  constructor(httpClient: HttpClient,
+              communityService: CommunityService,
+              navigationService: NavigationService,
+              authenticationService: AuthenticationService) {
+
     this._httpClient = httpClient;
+    this._communityService = communityService;
     this._navigation = navigationService.navigation;
     this._authenticationService = authenticationService;
   }
@@ -48,9 +55,9 @@ export class NavigationComponent implements OnInit {
             title: 'Feeds',
             items: [
               ALL,
+              home,
               POPULAR,
-              TOP_COMMUNITIES,
-              home
+              TOP_COMMUNITIES
             ]
           },
           {
@@ -58,7 +65,9 @@ export class NavigationComponent implements OnInit {
             items: []
           }
         ];
-        this._httpClient.get('/api/v1/c/all').subscribe((communities: Community[]) => this._original[1].items = communities);
+        this._communityService.myCommunities().subscribe((communities: any) => {
+          this._original[1].items = communities;
+        });
       } else {
         const home: NavigationItem = HOME;
         const popular: NavigationItem = POPULAR;

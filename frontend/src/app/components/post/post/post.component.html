@@ -1,18 +1,41 @@
-<div class="post-container mat-elevation-z1">
+<div class="post-container mat-elevation-z1" [routerLink]="['/c', post.community.alias, 'p', post.id]">
   <div class="post-wrapper">
-    <div fxLayout="row">
-      <div class="post-votes" fxFlex="0 1 auto" fxHide.lt-sm>
-        <button mat-icon-button>
-          <mat-icon>keyboard_arrow_up</mat-icon>
-        </button>
-        <div>.</div>
-        <button mat-icon-button >
-          <mat-icon>keyboard_arrow_down</mat-icon>
-        </button>
+      <div class="post">
+        <div class="info" fxLayout="row" fxLayoutGap="5px" fxLayoutAlign="center center">
+          <ng-container *ngIf="(showCommunity && post.community) as community">
+            <div fxFlex="0 0 20px">
+              <a class="community-link  w-100" [routerLink]="['/c/', community.alias]">
+                <img class="community-logo w-100" [src]="community.logo ? community.logo : 'assets/icons/community.svg'" [alt]="community.alias">
+              </a>
+            </div>
+            <div fxFlex="0 0 auto" class="community">
+              <a class="community-link" [routerLink]="['/c/', community.alias]">{{community.title}}</a>
+            </div>
+            <div fxFlex="0 0 auto">
+              <span class="separator">•</span>
+            </div>
+          </ng-container>
+          <div fxFlex="1 1 auto" class="user">Posted
+            by {{post.createdBy.username}} {{timeFormatter.format(post.createdAt)}}</div>
+        </div>
+        <div class="title">{{post.title}}</div>
+        <div [class]="showMask(post.content) ? 'content content-mask' : 'content'">
+          <quill-view-html [content]="post.content"></quill-view-html>
+        </div>
+        <div class="actions">
+          <button mat-raised-button class="mr-10">
+            <mat-icon>mode_comment</mat-icon>
+            {{post.commentsCount}} Comments
+          </button>
+          <button mat-raised-button class="mr-10">
+            <mat-icon>share</mat-icon>
+            Share
+          </button>
+          <button mat-raised-button class="ml-auto">
+            <mat-icon>near_me</mat-icon>
+            Show
+          </button>
+        </div>
       </div>
-      <div class="post" fxFlex="1 1 100%">
-        <ng-content></ng-content>
-      </div>
-    </div>
   </div>
 </div>

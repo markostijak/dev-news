@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {NavigationService, TOP_COMMUNITIES} from '../../services/navigation/navigation.service';
 import {Community} from '../../models/community';
 import {HttpClient, HttpParams} from '@angular/common/http';
+import {Hal, Page} from '../../models/hal';
 
 @Component({
   selector: 'app-top-communities-view',
@@ -10,9 +11,10 @@ import {HttpClient, HttpParams} from '@angular/common/http';
 })
 export class TopCommunitiesViewComponent implements OnInit {
 
-  private _start: number = 0;
-  private _httpClient: HttpClient;
+  private _page: Page;
   private _communities: Community[] = [];
+
+  private _httpClient: HttpClient;
   private _navigationService: NavigationService;
 
   constructor(navigationService: NavigationService, httpClient: HttpClient) {
@@ -22,17 +24,18 @@ export class TopCommunitiesViewComponent implements OnInit {
 
   ngOnInit(): void {
     this._navigationService.navigate(TOP_COMMUNITIES);
-    this.fetchCommunities(this._start);
+    this.fetchCommunities(0);
   }
 
   private fetchCommunities(start: number): void {
-    this._httpClient.get('api/v1/c/top-communities', {
+    this._httpClient.get('api/v1/communities', {
       params: new HttpParams()
-        .set('start', String(start))
-        .set('limit', String(20))
-    }).subscribe((communities: Community[]) => {
-      this._communities.push(...communities);
-      this._start = this._communities.length;
+        .set('page', String(start))
+        .set('sort', 'members,desc')
+        .set('projection', 'include-stats')
+    }).subscribe((hal: Hal) => {
+      this._communities.push(...hal._embedded.communities);
+      this._page = hal.page;
     });
   }
 

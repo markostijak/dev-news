@@ -6,6 +6,8 @@ import {HttpClient} from '@angular/common/http';
 import {MatAutocompleteSelectedEvent} from '@angular/material';
 import {Observable, of} from 'rxjs';
 import {FormControl} from '@angular/forms';
+import {Post} from '../../../models/post';
+import {CommunityService} from '../../../services/community/community.service';
 
 @Component({
   selector: 'app-post-editor',
@@ -26,16 +28,22 @@ export class PostEditorComponent implements OnInit {
 
   private _httpClient: HttpClient;
   private _navigation: Observable<Community>;
+  private _communityService: CommunityService;
   private _communities: Observable<Community[]>;
 
   private readonly _autocomplete: FormControl;
   private readonly _authentication: Observable<Authentication>;
 
-  constructor(navigationService: NavigationService, authenticationService: AuthenticationService, httpClient: HttpClient) {
+  constructor(httpClient: HttpClient,
+              communityService: CommunityService,
+              navigationService: NavigationService,
+              authenticationService: AuthenticationService) {
+
     this._httpClient = httpClient;
     this.save = new EventEmitter<any>();
     this.discard = new EventEmitter<any>();
     this._autocomplete = new FormControl();
+    this._communityService = communityService;
     this._authentication = authenticationService.authentication;
     this._navigation = navigationService.navigation as Observable<Community>;
   }
@@ -47,7 +55,7 @@ export class PostEditorComponent implements OnInit {
         this.autocomplete.setValue(community);
         this.selected = community;
       } else {
-        this._communities = this._httpClient.get('/api/v1/c/all') as Observable<Community[]>;
+        this._communities = this._communityService.myCommunities();
       }
     });
   }
@@ -64,16 +72,18 @@ export class PostEditorComponent implements OnInit {
     this._content = $event.html;
   }
 
-  onSave(): any {
-    const form = new FormData();
-    form.set('title', this.title);
-    form.set('communityId', this.selected.id);
-    form.set('content', this.content);
-
-    this._httpClient.post('/api/v1/p/create', form).subscribe(p => this.save.emit(p));
+  onSave(): void {
+    this._httpClient.post('/api/v1/posts', {
+      title: this._title,
+      content: this._content,
+      community: '/api/v1/communities/' + this._selected.id
+    }).subscribe((post: Post) => {
+      this.save.emit(post);
+      console.log(post);
+    });
   }
 
-  onDiscard(): any {
+  onDiscard(): void {
     this.discard.emit();
   }
 

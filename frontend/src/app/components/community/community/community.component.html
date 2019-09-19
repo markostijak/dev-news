@@ -1,9 +1,21 @@
 <mat-card>
-  <mat-card-content>Community details</mat-card-content>
+  <mat-card-content>
+    <div fxLayout="row" fxLayoutGap="15px">
+      <div fxFlex="0 0 auto">
+        Community details
+      </div>
+      <div fxFlex="1 1 auto"></div>
+      <div fxFlex="0 0 30px" class="more-button-container">
+        <button mat-icon-button class="more-button">
+          <mat-icon>more_horiz</mat-icon>
+        </button>
+      </div>
+    </div>
+  </mat-card-content>
   <mat-card-title>
     <div fxLayout="row" fxLayoutGap="15px" fxLayoutAlign="center center">
       <div fxFlex="0 0 45px">
-        <img class="image w-100" [src]="community.logo" [alt]="community.title">
+        <img class="image w-100" [src]="community.logo ? community.logo : 'assets/icons/community.svg'" [alt]="community.title">
       </div>
       <div fxFlex="1 1 100%">
         {{community.title}}
@@ -13,7 +25,7 @@
   <mat-card-content class="numbers-container">
     <div fxLayout="row" fxLayoutAlign="center center">
       <div fxFlex>
-        <div class="numbers">{{community.members || 0}}</div>
+        <div class="numbers">{{community.membersCount || 0}}</div>
         <div class="numbers-description">Members</div>
       </div>
       <div fxFlex>
@@ -26,7 +38,8 @@
     {{community.description}}
   </mat-card-content>
   <mat-card-content>
-      <button class="w-100 mb-10" mat-raised-button color="primary" (click)="join()">Join</button>
-      <button class="w-100" mat-raised-button color="primary" (click)="showPostDialog()">Create Post</button>
+    <button *ngIf="!member" class="w-100 mb-10" mat-raised-button color="primary" (click)="join()">Join</button>
+    <button *ngIf="member" class="w-100 mb-10" mat-raised-button color="primary" (click)="leave()">Leave</button>
+    <button *ngIf="showCreatePostButton" class="w-100" mat-raised-button color="primary" (click)="showPostDialog()">Create Post</button>
   </mat-card-content>
 </mat-card>

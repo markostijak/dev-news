@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
-import {MatDialog} from '@angular/material';
+import {MatDialog, MatDialogRef} from '@angular/material';
 import {Authentication, AuthenticationService} from '../authentication/authentication.service';
 import {ComponentType} from '@angular/cdk/portal';
 import {CreatePostDialogComponent} from '../../components/post/create-post-dialog/create-post-dialog.component';
@@ -23,25 +23,24 @@ export class DialogService {
     });
   }
 
-  public showDialog(dialog: ComponentType<any>): void {
+  public showDialog(dialog: ComponentType<any>): MatDialogRef<CreatePostDialogComponent | CreateCommunityDialogComponent> {
     if (this._authentication.authenticated) {
-      this._dialog.open(dialog, {
+      return this._dialog.open(dialog, {
         width: '100%',
         maxWidth: '600px'
       });
     } else {
       this._router.navigate(['login']);
+      return null;
     }
   }
 
-  public show(which: string): void {
+  public show(which: string): MatDialogRef<CreatePostDialogComponent | CreateCommunityDialogComponent> {
     switch (which) {
       case 'post':
-        this.showDialog(CreatePostDialogComponent);
-        break;
+        return this.showDialog(CreatePostDialogComponent);
       case 'community':
-        this.showDialog(CreateCommunityDialogComponent);
-        break;
+        return this.showDialog(CreateCommunityDialogComponent);
     }
   }
 

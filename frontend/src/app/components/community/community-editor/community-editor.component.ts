@@ -1,6 +1,9 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {mergeMap} from 'rxjs/operators';
+import {Observable, of} from 'rxjs';
+import {FileService} from '../../../services/file/file.service';
+import {CommunityService} from '../../../services/community/community.service';
+import {Community} from '../../../models/community';
 
 @Component({
   selector: 'app-community-editor',
@@ -21,9 +24,13 @@ export class CommunityEditorComponent implements OnInit {
   private discard: EventEmitter<any>;
 
   private _httpClient: HttpClient;
+  private _fileService: FileService;
+  private _communityService: CommunityService;
 
-  constructor(httpClient: HttpClient) {
+  constructor(httpClient: HttpClient, fileService: FileService, communityService: CommunityService) {
     this._httpClient = httpClient;
+    this._fileService = fileService;
+    this._communityService = communityService;
     this.save = new EventEmitter<any>();
     this.discard = new EventEmitter<any>();
   }
@@ -32,15 +39,15 @@ export class CommunityEditorComponent implements OnInit {
   }
 
   onSave(): any {
-    const form = new FormData();
-    form.set('file', this.logo);
-
-    this._httpClient.post('/api/v1/files/image', form)
-      .pipe(mergeMap(uri => this._httpClient.post('/api/v1/communities', {
+    this._fileService.uploadImage(this.logo).subscribe(uri => {
+      this._communityService.create({
         logo: uri,
         title: this.title,
         description: this.description
-      }))).subscribe(c => this.save.emit(c));
+      } as Community).subscribe(community => {
+        this.save.emit(community);
+      });
+    });
   }
 
   onDiscard(): void {

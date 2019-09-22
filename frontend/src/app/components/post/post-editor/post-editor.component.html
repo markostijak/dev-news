@@ -4,7 +4,7 @@
       <div class="mb-10" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center center">
         <div fxFlex="0 1 auto" class="avatar-container">
           <ng-container *ngIf="authentication | async as authentication">
-            <img class="avatar" [src]="authentication.principal.picture" [alt]="authentication.principal.fullName">
+            <img class="avatar" [src]="authentication.principal.picture" [alt]="authentication.principal.username">
           </ng-container>
         </div>
         <div fxFlex="1 1 100%">
@@ -24,7 +24,7 @@
             <mat-option *ngFor="let community of (communities | async)" [value]="community">
               <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center center">
                 <div fxFlex="0 0 30px">
-                  <img class="mat-option-avatar" [src]="community.logo" [alt]="community.title">
+                  <img class="mat-option-avatar" [src]="community.logo ? community.logo : 'assets/icons/community.svg'" [alt]="community.title">
                 </div>
                 <div fxFlex="1 1 100%">
                   <div class="community-title">{{community.title}}</div>

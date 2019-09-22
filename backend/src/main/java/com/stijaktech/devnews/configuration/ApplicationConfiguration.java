@@ -1,11 +1,13 @@
 package com.stijaktech.devnews.configuration;
 
-import com.stijaktech.devnews.domain.community.Community;
 import com.stijaktech.devnews.domain.comment.Comment;
+import com.stijaktech.devnews.domain.community.Community;
 import com.stijaktech.devnews.domain.post.Post;
 import com.stijaktech.devnews.domain.user.User;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.boot.web.servlet.MultipartConfigFactory;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
@@ -13,8 +15,10 @@ import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.projection.SpelAwareProxyProjectionFactory;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
+import org.springframework.data.rest.core.event.ValidatingRepositoryEventListener;
 import org.springframework.data.rest.core.projection.ProjectionDefinitions;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,13 +26,41 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.security.oauth2.client.filter.state.DefaultStateKeyGenerator;
 import org.springframework.security.oauth2.client.token.grant.code.AuthorizationCodeAccessTokenProvider;
+import org.springframework.util.unit.DataSize;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
+import javax.servlet.MultipartConfigElement;
 import java.util.Optional;
 
 @Configuration
+@EnableCaching
+@EnableWebSecurity
 @EnableMongoAuditing
 public class ApplicationConfiguration {
+
+    @Bean
+    public MultipartConfigElement multipartConfigElement() {
+        MultipartConfigFactory factory = new MultipartConfigFactory();
+        factory.setMaxFileSize(DataSize.ofMegabytes(10));
+        factory.setMaxRequestSize(DataSize.ofMegabytes(10));
+        return factory.createMultipartConfig();
+    }
+
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.addAllowedOrigin("*");
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -49,11 +81,17 @@ public class ApplicationConfiguration {
     }
 
     @Bean
-    public RepositoryRestConfigurer repositoryRestConfigurer() {
+    public RepositoryRestConfigurer repositoryRestConfigurer(LocalValidatorFactoryBean validator) {
         return new RepositoryRestConfigurer() {
             @Override
             public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config) {
                 config.exposeIdsFor(User.class, Community.class, Post.class, Comment.class);
+            }
+
+            @Override
+            public void configureValidatingRepositoryEventListener(ValidatingRepositoryEventListener validatingListener) {
+                validatingListener.addValidator("beforeCreate", validator);
+                validatingListener.addValidator("beforeSave", validator);
             }
         };
     }

@@ -18,6 +18,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +38,16 @@ public class Application implements CommandLineRunner {
     private PasswordEncoder passwordEncoder;
     private JwtSecretRepository jwtSecretRepository;
     private CommunityRepository communityRepository;
+
+    @Controller
+    @SuppressWarnings("MVCPathVariableInspection")
+    public static class AngularController {
+        @RequestMapping(value = "/{[path:[^.]*}")
+        public String forward() {
+            // forward to angular
+            return "forward:/";
+        }
+    }
 
     @Override
     public void run(String... args) {

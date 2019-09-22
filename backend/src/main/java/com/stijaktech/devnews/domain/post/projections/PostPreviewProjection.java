@@ -1,13 +1,13 @@
 package com.stijaktech.devnews.domain.post.projections;
 
 import com.stijaktech.devnews.domain.post.Post;
-import com.stijaktech.devnews.domain.user.projections.UserPreview;
+import com.stijaktech.devnews.domain.user.projections.UserPreviewProjection;
 import org.springframework.data.rest.core.config.Projection;
 
 import java.time.Instant;
 
 @Projection(name = "preview", types = Post.class)
-public interface PostPreview {
+public interface PostPreviewProjection {
 
     String getId();
 
@@ -19,6 +19,6 @@ public interface PostPreview {
 
     Instant getUpdatedAt();
 
-    UserPreview getCreatedBy();
+    UserPreviewProjection getCreatedBy();
 
 }

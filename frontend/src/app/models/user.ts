@@ -1,3 +1,5 @@
+import {Links} from './hal';
+
 export class User {
 
   public id: string;
@@ -8,9 +10,6 @@ export class User {
   public username: string;
   public lastName: string;
   public firstName: string;
-
-  get fullName(): string {
-    return this.firstName + ' ' + this.lastName;
-  }
+  public _links: Links;
 
 }

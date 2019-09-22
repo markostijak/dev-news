@@ -5,7 +5,7 @@
   <div fxFlex="0 0 auto" class="user">{{comment.createdBy.username}}</div>
   <div fxFlex="0 0 auto"><span class="separator">•</span></div>
   <div fxFlex="0 0 auto" class="date">{{timeFormatter.format(comment.createdAt)}}</div>
-  <div *ngIf="comment.updatedAt" fxFlex="0 0 auto" class="date">(edited {{timeFormatter.format(comment.updatedAt)}})</div>
+  <div *ngIf="comment.updatedAt && comment.createdAt != comment.updatedAt" fxFlex="0 0 auto" class="date">(edited {{timeFormatter.format(comment.updatedAt)}})</div>
   <div fxFlex="1 1 auto"></div>
 </div>
 
@@ -42,5 +42,5 @@
   ></app-reply-editor>
 </ng-template>
 <div *ngIf="comment.replies && comment.replies.length" class="comment-replies">
-  <app-comment *ngFor="let reply of comment.replies" [comment]="reply"></app-comment>
+  <app-comment *ngFor="let reply of comment.replies" [comment]="reply" [post]="post" (reply)="onReply($event)"></app-comment>
 </div>

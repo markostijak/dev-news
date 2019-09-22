@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.core.config.Projection;
 
 @Projection(name = "include-stats", types = Community.class)
-public interface IncludeStats {
+public interface IncludeStatsProjection {
 
     String getId();
 

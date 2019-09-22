@@ -1,13 +1,13 @@
 package com.stijaktech.devnews.domain.comment.projections;
 
 import com.stijaktech.devnews.domain.comment.Comment;
-import com.stijaktech.devnews.domain.user.projections.UserPreview;
+import com.stijaktech.devnews.domain.user.projections.UserPreviewProjection;
 import org.springframework.data.rest.core.config.Projection;
 
 import java.time.Instant;
 
-@Projection(name = "preview", types = Comment.class)
-public interface CommentPreview {
+@Projection(name = "inline-replies", types = {Comment.class})
+public interface InlineRepliesProjection {
 
     String getId();
 
@@ -17,6 +17,8 @@ public interface CommentPreview {
 
     Instant getUpdatedAt();
 
-    UserPreview getCreatedBy();
+    UserPreviewProjection getCreatedBy();
+
+    InlineRepliesProjection getReplies();
 
 }

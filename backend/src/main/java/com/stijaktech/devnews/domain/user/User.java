@@ -30,8 +30,10 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import static java.util.stream.Collectors.*;
 
 @Data
 @NoArgsConstructor
@@ -125,7 +127,8 @@ public class User implements UserDetails {
     @Override
     @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return privileges.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        return Stream.concat(Stream.of(role), privileges.stream())
+                .map(SimpleGrantedAuthority::new).collect(toSet());
     }
 
 }

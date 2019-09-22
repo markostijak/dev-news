@@ -40,7 +40,7 @@ public class Post {
     private String title;
 
     @NotBlank
-    @SafeHtml(whitelistType = NONE)
+    @SafeHtml
     private String content;
 
     @CreatedBy

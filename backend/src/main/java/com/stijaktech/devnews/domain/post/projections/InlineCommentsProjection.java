@@ -1,8 +1,8 @@
 package com.stijaktech.devnews.domain.post.projections;
 
-import com.stijaktech.devnews.domain.comment.projections.InlineReplies;
+import com.stijaktech.devnews.domain.comment.projections.InlineRepliesProjection;
 import com.stijaktech.devnews.domain.post.Post;
-import com.stijaktech.devnews.domain.user.projections.UserPreview;
+import com.stijaktech.devnews.domain.user.projections.UserPreviewProjection;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.rest.core.config.Projection;
 
@@ -10,7 +10,7 @@ import java.time.Instant;
 import java.util.List;
 
 @Projection(name = "inline-comments", types = Post.class)
-public interface InlineComments {
+public interface InlineCommentsProjection {
 
     String getId();
 
@@ -22,9 +22,9 @@ public interface InlineComments {
 
     Instant getUpdatedAt();
 
-    UserPreview getCreatedBy();
+    UserPreviewProjection getCreatedBy();
 
     @Value("#{@commentRepository.findAllByPostOrderByCreatedAtAsc(target)")
-    List<InlineReplies> getComments();
+    List<InlineRepliesProjection> getComments();
 
 }

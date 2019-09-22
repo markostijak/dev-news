@@ -1,23 +1,23 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
 import {NavigationService} from '../../../services/navigation/navigation.service';
 import {Community} from '../../../models/community';
 import {Authentication, AuthenticationService} from '../../../services/authentication/authentication.service';
-import {HttpClient} from '@angular/common/http';
 import {MatAutocompleteSelectedEvent} from '@angular/material';
-import {Observable, of} from 'rxjs';
+import {Observable, of, Subscription} from 'rxjs';
 import {FormControl} from '@angular/forms';
 import {Post} from '../../../models/post';
 import {CommunityService} from '../../../services/community/community.service';
+import {PostService} from '../../../services/post/post.service';
 
 @Component({
   selector: 'app-post-editor',
   templateUrl: './post-editor.component.html',
   styleUrls: ['./post-editor.component.scss']
 })
-export class PostEditorComponent implements OnInit {
+export class PostEditorComponent implements OnInit, OnDestroy {
 
   @Output()
-  private save: EventEmitter<any>;
+  private save: EventEmitter<Post>;
 
   @Output()
   private discard: EventEmitter<any>;
@@ -26,20 +26,21 @@ export class PostEditorComponent implements OnInit {
   private _selected: Community;
   private _content: string;
 
-  private _httpClient: HttpClient;
+  private _postService: PostService;
   private _navigation: Observable<Community>;
   private _communityService: CommunityService;
   private _communities: Observable<Community[]>;
 
   private readonly _autocomplete: FormControl;
   private readonly _authentication: Observable<Authentication>;
+  private _subscription: Subscription;
 
-  constructor(httpClient: HttpClient,
+  constructor(postService: PostService,
               communityService: CommunityService,
               navigationService: NavigationService,
               authenticationService: AuthenticationService) {
 
-    this._httpClient = httpClient;
+    this._postService = postService;
     this.save = new EventEmitter<any>();
     this.discard = new EventEmitter<any>();
     this._autocomplete = new FormControl();
@@ -49,7 +50,7 @@ export class PostEditorComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this._navigation.subscribe((community: Community) => {
+    this._subscription = this._navigation.subscribe((community: Community) => {
       if (community.logo) {
         this._communities = of([community]);
         this.autocomplete.setValue(community);
@@ -58,6 +59,10 @@ export class PostEditorComponent implements OnInit {
         this._communities = this._communityService.myCommunities();
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this._subscription.unsubscribe();
   }
 
   onCommunitySelected($event: MatAutocompleteSelectedEvent): void {
@@ -73,13 +78,13 @@ export class PostEditorComponent implements OnInit {
   }
 
   onSave(): void {
-    this._httpClient.post('/api/v1/posts', {
+    this._postService.create({
       title: this._title,
       content: this._content,
-      community: '/api/v1/communities/' + this._selected.id
-    }).subscribe((post: Post) => {
+      community: this._selected._links.self.href as unknown
+    } as Post).subscribe((post: Post) => {
+      post.community = this._selected;
       this.save.emit(post);
-      console.log(post);
     });
   }
 

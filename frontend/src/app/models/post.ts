@@ -1,5 +1,8 @@
 import {User} from './user';
 import {Community} from './community';
+import {Links} from './hal';
+import {Comment} from './comment';
+import {NavigationItem} from '../services/navigation/navigation.service';
 
 export class Post {
 
@@ -9,6 +12,9 @@ export class Post {
   public createdBy: User;
   public createdAt: string;
   public updatedAt: string;
-  public community: Community;
+  public comments: Comment[];
   public commentsCount: number = 0;
+  public community: Community;
+  public _links: Links;
+
 }

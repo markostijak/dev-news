@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -24,6 +25,7 @@ import java.time.Instant;
 import java.util.List;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import static org.hibernate.validator.constraints.SafeHtml.WhiteListType.NONE;
 
 @Data
 @Builder
@@ -39,6 +41,7 @@ public class Community {
     private String logo;
 
     @NotBlank
+    @SafeHtml(whitelistType = NONE)
     private String title;
 
     @Indexed(unique = true)
@@ -59,6 +62,7 @@ public class Community {
     private User updatedBy;
 
     @NotBlank
+    @SafeHtml(whitelistType = NONE)
     private String description;
 
     @CreatedDate

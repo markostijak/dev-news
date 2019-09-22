@@ -24,19 +24,19 @@ export class AllViewComponent implements OnInit {
 
   ngOnInit(): void {
     this._navigationService.navigate(ALL);
-    this.fetchPosts(0).subscribe((response: Hal) => {
+    this.fetchPosts(0).subscribe((response: Hal<Post[]>) => {
       this._posts.push(...response._embedded.posts);
       this._page = response.page;
     });
   }
 
-  public fetchPosts(page: number): Observable<Hal> {
+  public fetchPosts(page: number): Observable<Hal<Post[]>> {
     return this._httpClient.get('/api/v1/posts', {
       params: new HttpParams()
         .set('page', String(page))
-        .set('projection', 'inline-community')
+        .set('projection', 'include-stats')
         .set('sort', 'createdAt,desc')
-    }) as Observable<Hal>;
+    }) as Observable<Hal<Post[]>>;
   }
 
   get posts(): Post[] {

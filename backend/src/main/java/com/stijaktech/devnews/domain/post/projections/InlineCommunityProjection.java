@@ -1,15 +1,14 @@
 package com.stijaktech.devnews.domain.post.projections;
 
-import com.stijaktech.devnews.domain.community.projections.CommunityPreview;
+import com.stijaktech.devnews.domain.community.projections.CommunityPreviewProjection;
 import com.stijaktech.devnews.domain.post.Post;
-import com.stijaktech.devnews.domain.user.User;
-import com.stijaktech.devnews.domain.user.projections.UserPreview;
+import com.stijaktech.devnews.domain.user.projections.UserPreviewProjection;
 import org.springframework.data.rest.core.config.Projection;
 
 import java.time.Instant;
 
 @Projection(name = "inline-community", types = Post.class)
-public interface InlineCommunity {
+public interface InlineCommunityProjection {
 
     String getId();
 
@@ -21,8 +20,8 @@ public interface InlineCommunity {
 
     Instant getUpdatedAt();
 
-    UserPreview getCreatedBy();
+    UserPreviewProjection getCreatedBy();
 
-    CommunityPreview getCommunity();
+    CommunityPreviewProjection getCommunity();
 
 }

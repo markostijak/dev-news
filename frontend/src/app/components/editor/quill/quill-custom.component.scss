@@ -130,6 +130,10 @@ app-comment > quill-view-html > .ql-container > .ql-editor {
   min-height: initial !important;
 }
 
+quill-view-html > .ql-container > .ql-editor > p:last-child > br:only-child {
+    display: none;
+}
+
 .ql-editor > h1 {
   font-size: 18px !important;
   font-weight: 500 !important;

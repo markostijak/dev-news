@@ -1,17 +1,15 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Community} from '../../models/community';
 import {Post} from '../../models/post';
-import {HttpClient, HttpParams} from '@angular/common/http';
 import {ActivatedRoute} from '@angular/router';
 import {NavigationService} from '../../services/navigation/navigation.service';
-import {Observable, Subscription} from 'rxjs';
+import {forkJoin, Observable, Subscription} from 'rxjs';
 import {TimeAgoService} from '../../services/time-ago/time-ago.service';
 import {Authentication, AuthenticationService} from '../../services/authentication/authentication.service';
 import {Data} from '../../components/comment/comment-editor/comment-editor.component';
 import {Comment} from '../../models/comment';
 import {User} from '../../models/user';
-import {map} from 'rxjs/operators';
-import {Hal} from '../../models/hal';
+import {PostService} from '../../services/post/post.service';
 
 @Component({
   selector: 'app-post-view',
@@ -24,34 +22,35 @@ export class PostViewComponent implements OnInit, OnDestroy {
   private _community: Community;
   private _comments: Comment[] = [];
 
-  private _httpClient: HttpClient;
-  private _authentication: Observable<Authentication>;
+  private _postService: PostService;
   private _activatedRoute: ActivatedRoute;
   private _navigationService: NavigationService;
   private readonly _timeFormatter: TimeAgoService;
+  private _authentication: Observable<Authentication>;
 
   private _startEditing: boolean = false;
   private _subscription: Subscription = new Subscription();
 
   private _user: User;
 
-  constructor(httpClient: HttpClient,
+  constructor(postService: PostService,
               timeFormatter: TimeAgoService,
               activatedRoute: ActivatedRoute,
               navigationService: NavigationService,
               authenticationService: AuthenticationService) {
 
-    this._httpClient = httpClient;
+    this._postService = postService;
     this._timeFormatter = timeFormatter;
     this._activatedRoute = activatedRoute;
     this._navigationService = navigationService;
     this._authentication = authenticationService.authentication;
-    this.authentication.subscribe((a: Authentication) => {
-      this._user = a.principal;
-    });
   }
 
   ngOnInit(): void {
+    this.authentication.subscribe((a: Authentication) => {
+      this._user = a.principal;
+    });
+
     this._subscription.add(this._activatedRoute.params.subscribe(params => {
       this._community = null;
       this.reload(params['post']);
@@ -63,43 +62,34 @@ export class PostViewComponent implements OnInit, OnDestroy {
   }
 
   private reload(id: string): void {
-    this._httpClient.get('/api/v1/posts/' + id, {
-      params: new HttpParams()
-        .set('projection', 'inline-community')
-    }).subscribe((post: Post) => {
+    this._postService.fetch('/api/v1/posts/' + id, 'include-stats').subscribe(post => {
       this._navigationService.navigate(post.community);
-      this.fetchCommunity(post.community.id).subscribe(community => {
+
+      forkJoin({
+        community: this._postService.fetchCommunity(post, 'include-stats'),
+        comments: this._postService.fetchComments(post, 'preview')
+      }).subscribe(result => {
         this._post = post;
-        this._community = community;
+        this._community = result.community;
+        this._comments.push(...result.comments);
       });
-      this.fetchComments(post.id).subscribe(comments => this._comments.push(...comments));
     });
   }
 
-  private fetchCommunity(communityId: string): Observable<Community> {
-    return this._httpClient.get('/api/v1/communities/' + communityId, {
-      params: new HttpParams()
-        .set('projection', 'include-stats')
-    }) as Observable<Community>;
-  }
-
-  private fetchComments(postId: string): Observable<Comment[]> {
-    return this._httpClient.get('/api/v1/comments/search/findAllByPost', {
-      params: new HttpParams()
-        .set('post', '/api/v1/posts/' + postId)
-        .set('projection', 'inline-replies')
-        .set('sort', 'createdAt,asc')
-    }).pipe(map((hal: Hal) => hal._embedded.comments)) as Observable<Comment[]>;
-  }
-
   onSave($event: Data): void {
-    this._httpClient.post('/api/v1/comments', {
-      content: $event.content,
-      post: '/api/v1/posts/' + this._post.id
-    }).subscribe((comment: Comment) => {
+    this._postService.addComment({content: $event.content, post: this._post._links.self.href} as Comment).subscribe(comment => {
       comment.createdBy = this._user;
       this._comments.push(comment);
+      this.post.commentsCount++;
       $event.editor.reset();
+    });
+  }
+
+  onPostEditSave(content: string): void {
+    this._postService.update(this._post, content).subscribe(post => {
+      this._post.content = post.content;
+      this._post.updatedAt = post.updatedAt;
+      this._startEditing = false;
     });
   }
 
@@ -107,13 +97,12 @@ export class PostViewComponent implements OnInit, OnDestroy {
     this._startEditing = true;
   }
 
-  onPostEditSave($event: string): void {
-    this.post.content = $event;
+  onPostEditCancel(): void {
     this._startEditing = false;
   }
 
-  onPostEditCancel(): void {
-    this._startEditing = false;
+  onReply($event: Comment): void {
+    this._post.commentsCount++;
   }
 
   get post(): Post {

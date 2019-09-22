@@ -18,7 +18,7 @@
             </div>
             <div fxFlex="0 0 auto" class="user">Posted
               by {{post.createdBy.username}} {{timeFormatter.format(post.createdAt)}}</div>
-            <div *ngIf="post.updatedAt" fxFlex="0 0 auto" class="user">
+            <div *ngIf="post.updatedAt && post.createdAt != post.updatedAt" fxFlex="0 0 auto" class="user">
               (edited {{timeFormatter.format(post.updatedAt)}})
             </div>
             <div fxFlex="1 1 auto"></div>
@@ -69,7 +69,7 @@
           <div class="comments-container">
             <ng-container *ngIf="comments.length; then commentsTemplate else emptyTemplate"></ng-container>
             <ng-template #commentsTemplate>
-              <app-comment *ngFor="let comment of comments" [comment]="comment"></app-comment>
+              <app-comment *ngFor="let comment of comments" [comment]="comment" [post]="post" (reply)="onReply($event)"></app-comment>
             </ng-template>
             <ng-template #emptyTemplate>
               Such an empty

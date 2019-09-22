@@ -36,8 +36,8 @@ export class PopularViewComponent implements OnInit {
       params: new HttpParams()
         .set('page', String(page))
         .set('sort', 'createdAt,desc')
-        .set('projection', 'inline-community')
-    }).subscribe((response: Hal) => {
+        .set('projection', 'include-stats')
+    }).subscribe((response: Hal<Post[]>) => {
       this._page = response.page;
       if (response._embedded) {
         this._posts.push(...response._embedded.posts);

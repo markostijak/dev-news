@@ -46,9 +46,9 @@ export class HomeViewComponent implements OnInit {
       params: new HttpParams()
         .set('user', this._user.id)
         .set('page', String(page))
-        .set('projection', 'inline-community')
+        .set('projection', 'include-stats')
         .set('sort', 'createdAt,desc')
-    }).subscribe((response: Hal) => {
+    }).subscribe((response: Hal<Post[]>) => {
       this._page = response.page;
       if (response._embedded) {
         this._posts.push(...response._embedded.posts);

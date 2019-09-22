@@ -2,10 +2,10 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Community} from '../../models/community';
 import {NavigationService} from '../../services/navigation/navigation.service';
 import {ActivatedRoute} from '@angular/router';
-import {HttpClient, HttpParams} from '@angular/common/http';
 import {Observable, Subscription} from 'rxjs';
 import {Post} from '../../models/post';
 import {Hal, Page} from '../../models/hal';
+import {CommunityService} from '../../services/community/community.service';
 
 @Component({
   selector: 'app-community-view',
@@ -18,15 +18,15 @@ export class CommunityViewComponent implements OnInit, OnDestroy {
   private _posts: Post[] = [];
   private _community: Community;
 
-  private _httpClient: HttpClient;
   private _activatedRoute: ActivatedRoute;
+  private _communityService: CommunityService;
   private _navigationService: NavigationService;
 
   private _subscription: Subscription = new Subscription();
 
-  constructor(navigationService: NavigationService, activatedRoute: ActivatedRoute, httpClient: HttpClient) {
-    this._httpClient = httpClient;
+  constructor(navigationService: NavigationService, activatedRoute: ActivatedRoute, communityService: CommunityService) {
     this._activatedRoute = activatedRoute;
+    this._communityService = communityService;
     this._navigationService = navigationService;
   }
 
@@ -44,28 +44,19 @@ export class CommunityViewComponent implements OnInit, OnDestroy {
   }
 
   private reload(alias: string): void {
-    this._httpClient.get('/api/v1/communities/search/findByAlias', {
-      params: new HttpParams()
-        .set('alias', alias)
-        .set('projection', 'include-stats')
-    }).subscribe((community: Community) => {
-      this._navigationService.navigate(community);
-      this.fetchPosts(community, 0).subscribe(hal => {
-        this._posts.push(...hal._embedded.posts);
-        this._community = community;
-        this._page = hal.page;
+    this._communityService.fetchByAlias('/api/v1/communities/search/findByAlias', alias, 'include-stats')
+      .subscribe(community => {
+        this._navigationService.navigate(community);
+        this.fetchPosts(community, 0).subscribe(hal => {
+          this._posts.push(...hal._embedded.posts);
+          this._community = community;
+          this._page = hal.page;
+        });
       });
-    });
   }
 
-  private fetchPosts(community: Community, page: number): Observable<Hal> {
-    return this._httpClient.get('/api/v1/posts/search/findAllByCommunityId', {
-      params: new HttpParams()
-        .set('id', community.id)
-        .set('page', String(page))
-        .set('sort', 'createdAt,desc')
-        .set('projection', 'inline-community')
-    }) as Observable<Hal>;
+  private fetchPosts(community: Community, page: number): Observable<Hal<Post[]>> {
+    return this._communityService.fetchPosts(community._links.self.href, {number: page} as Page, 'include-stats');
   }
 
   get community(): Community {

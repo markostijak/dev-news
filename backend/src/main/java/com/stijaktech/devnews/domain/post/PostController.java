@@ -7,15 +7,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.hateoas.PagedResources;
-import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @SuppressWarnings("unchecked")
-@RequestMapping("/posts")
 @RepositoryRestController
 public class PostController {
 
@@ -29,8 +28,8 @@ public class PostController {
     }
 
     @ResponseBody
-    @GetMapping("/search/findForUser")
-    public PagedResources<Resource<?>> findForUser(
+    @GetMapping("/posts/search/findForUser")
+    public PagedModel<EntityModel<?>> findForUser(
             @RequestParam("user") User user,
             @RequestParam(value = "projection", required = false) String projection,
             Pageable pageable, PagedResourcesAssembler assembler) {
@@ -41,12 +40,12 @@ public class PostController {
             posts = projectionService.createProjection(posts, Post.class, projection);
         }
 
-        return assembler.toResource(posts);
+        return assembler.toModel(posts);
     }
 
     @ResponseBody
-    @GetMapping("/search/findPopular")
-    public PagedResources<Resource<?>> findPopular(
+    @GetMapping("/posts/search/findPopular")
+    public PagedModel<EntityModel<?>> findPopular(
             @RequestParam(value = "projection", required = false) String projection,
             Pageable pageable, PagedResourcesAssembler assembler) {
 
@@ -56,7 +55,7 @@ public class PostController {
             posts = projectionService.createProjection(posts, Post.class, projection);
         }
 
-        return assembler.toResource(posts);
+        return assembler.toModel(posts);
     }
 
 }

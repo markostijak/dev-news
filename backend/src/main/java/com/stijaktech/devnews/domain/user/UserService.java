@@ -1,7 +1,7 @@
 package com.stijaktech.devnews.domain.user;
 
 import com.stijaktech.devnews.domain.Status;
-import com.stijaktech.devnews.domain.community.CommunityRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.keygen.KeyGenerators;
@@ -13,19 +13,10 @@ import java.util.Set;
 public class UserService implements UserDetailsService {
 
     private UserRepository userRepository;
-    private CommunityRepository communityRepository;
 
-    public UserService(UserRepository userRepository, CommunityRepository communityRepository) {
+    @Autowired
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.communityRepository = communityRepository;
-    }
-
-    public User create(User user) {
-        return user;
-    }
-
-    public User update(User user) {
-        return user;
     }
 
     public User createOrUpdate(User user, String authorizationCode) {
@@ -40,8 +31,8 @@ public class UserService implements UserDetailsService {
         }).orElseGet(() -> {
             user.setRole(Role.USER);
             user.setStatus(Status.ACTIVE);
-            user.setActivationCode(authorizationCode);
             user.setUsername(createUsername(user));
+            user.setActivationCode(authorizationCode);
             user.setResetToken(KeyGenerators.string().generateKey());
             user.setPrivileges(Set.of(Privilege.READ, Privilege.WRITE));
             userRepository.save(user);

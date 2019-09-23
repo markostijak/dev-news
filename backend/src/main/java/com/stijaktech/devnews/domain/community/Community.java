@@ -1,6 +1,7 @@
 package com.stijaktech.devnews.domain.community;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.stijaktech.devnews.domain.Status;
 import com.stijaktech.devnews.domain.post.Post;
 import com.stijaktech.devnews.domain.user.User;
@@ -25,6 +26,7 @@ import java.time.Instant;
 import java.util.List;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import static com.fasterxml.jackson.annotation.JsonProperty.Access.READ_ONLY;
 import static org.hibernate.validator.constraints.SafeHtml.WhiteListType.NONE;
 
 @Data
@@ -45,6 +47,7 @@ public class Community {
     private String title;
 
     @Indexed(unique = true)
+    @JsonProperty(access = READ_ONLY)
     private String alias;
 
     private Status status;

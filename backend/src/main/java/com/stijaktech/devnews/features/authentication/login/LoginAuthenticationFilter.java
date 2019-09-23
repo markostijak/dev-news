@@ -44,20 +44,12 @@ public class LoginAuthenticationFilter extends AbstractAuthenticationProcessingF
         String[] tokens = extractAndDecodeHeader(header);
         assert tokens.length == 2;
 
-        Authentication authentication;
-        switch (request.getServletPath()) {
-            case AUTH_LOGIN:
-                authentication = new EmailPasswordAuthenticationToken(tokens[0], tokens[1]);
-                break;
-            case AUTH_SOCIAL_LOGIN:
-                authentication = new AuthorizationCodeAuthenticationToken(tokens[0], tokens[1]);
-                break;
-            case AUTH_REFRESH:
-                authentication = new JwtRefreshAuthenticationToken(tokens[0], tokens[1]);
-                break;
-            default:
-                throw new IllegalStateException("Unsupported path");
-        }
+        Authentication authentication = switch (request.getServletPath()) {
+            case AUTH_LOGIN -> new EmailPasswordAuthenticationToken(tokens[0], tokens[1]);
+            case AUTH_SOCIAL_LOGIN -> new AuthorizationCodeAuthenticationToken(tokens[0], tokens[1]);
+            case AUTH_REFRESH -> new JwtRefreshAuthenticationToken(tokens[0], tokens[1]);
+            default -> throw new IllegalStateException("Unsupported path");
+        };
 
         return getAuthenticationManager().authenticate(authentication);
     }

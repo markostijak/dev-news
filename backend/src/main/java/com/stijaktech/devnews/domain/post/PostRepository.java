@@ -24,4 +24,6 @@ public interface PostRepository extends MongoRepository<Post, String> {
     @RestResource(exported = false)
     Page<Post> findAllByCommunityIn(Set<Community> communities, Pageable pageable);
 
+    boolean existsByAlias(String alias);
+
 }

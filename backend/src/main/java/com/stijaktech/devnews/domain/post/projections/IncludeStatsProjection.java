@@ -15,17 +15,18 @@ public interface IncludeStatsProjection {
 
     String getTitle();
 
+    String getAlias();
+
     String getContent();
 
     Instant getCreatedAt();
 
     Instant getUpdatedAt();
 
+    long getCommentsCount();
+
     UserPreviewProjection getCreatedBy();
 
     CommunityPreviewProjection getCommunity();
-
-    @Value("#{@commentRepository.countByPost(target)}")
-    long getCommentsCount();
 
 }

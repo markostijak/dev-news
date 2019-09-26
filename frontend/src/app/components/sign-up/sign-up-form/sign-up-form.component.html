@@ -1,26 +1,43 @@
 <div class="sign-up-container">
-  <mat-form-field appearance="outline">
-    <mat-label>Write your first name</mat-label>
-    <input type="text" matInput placeholder="First name" [formControl]="firstName" required>
+
+  <mat-form-field appearance="fill" color="accent">
+    <mat-label>First name</mat-label>
+    <input type="text" matInput placeholder="" [formControl]="firstName" required>
+    <mat-hint></mat-hint>
   </mat-form-field>
-  <mat-form-field appearance="outline">
-    <mat-label>Write your last name</mat-label>
-    <input type="text" matInput placeholder="Last name" [formControl]="lastName" required>
+
+  <mat-form-field appearance="fill" color="accent">
+    <mat-label>Last name</mat-label>
+    <input type="text" matInput placeholder="" [formControl]="lastName" required>
+    <mat-hint></mat-hint>
   </mat-form-field>
-  <mat-form-field appearance="outline">
-    <input type="text" matInput placeholder="Username" [formControl]="username" required>
+
+  <mat-form-field appearance="fill" color="accent">
+    <mat-label>Username</mat-label>
+    <input type="email" matInput placeholder="" [formControl]="username" required>
+    <mat-icon matSuffix>person</mat-icon>
+    <mat-hint></mat-hint>
   </mat-form-field>
-  <mat-form-field appearance="outline">
-    <input type="email" matInput placeholder="Email" [formControl]="email" required>
+
+  <mat-form-field appearance="fill" color="accent">
+    <mat-label>Email</mat-label>
+    <input type="email" matInput placeholder="" [formControl]="email" required>
+    <mat-icon matSuffix>person</mat-icon>
+    <mat-hint></mat-hint>
   </mat-form-field>
-  <mat-form-field appearance="outline">
-    <input type="password" matInput placeholder="Password" [formControl]="password" required>
+
+  <mat-form-field appearance="fill" color="accent">
+    <mat-label>Password</mat-label>
+    <input type="password" matInput placeholder="" [formControl]="password" required>
+    <mat-icon matSuffix>lock</mat-icon>
+    <mat-hint></mat-hint>
   </mat-form-field>
-  <mat-form-field appearance="outline">
-    <input type="password" matInput placeholder="Confirm password" [formControl]="confirmPassword" required>
+
+  <mat-form-field appearance="fill" color="accent">
+    <mat-label>Confirm password</mat-label>
+    <input type="password" matInput placeholder="" [formControl]="confirmPassword" required>
+    <mat-icon matSuffix>lock</mat-icon>
+    <mat-hint></mat-hint>
   </mat-form-field>
-  <mat-action-row>
-    <button class="mr-10" mat-button mat-raised-button>Sign up</button>
-    <button mat-button mat-raised-button>Log In</button>
-  </mat-action-row>
+
 </div>

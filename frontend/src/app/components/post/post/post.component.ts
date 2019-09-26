@@ -25,7 +25,7 @@ export class PostComponent implements OnInit {
   }
 
   private showMask(content: string): boolean {
-    return !(content.startsWith('<iframe') || content.startsWith('<img'));
+    return !(content.includes('video') || content.includes('image'));
   }
 
   get timeFormatter(): TimeAgoService {

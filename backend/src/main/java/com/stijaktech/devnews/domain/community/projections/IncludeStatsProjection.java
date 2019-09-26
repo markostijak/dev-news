@@ -15,12 +15,11 @@ public interface IncludeStatsProjection {
 
     String getAlias();
 
+    long getPostsCount();
+
     String getDescription();
 
     @Value("#{@userRepository.countByCommunitiesContaining(target)}")
     long getMembersCount();
-
-    @Value("#{@postRepository.countByCommunity(target)}")
-    long getPostsCount();
 
 }

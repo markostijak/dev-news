@@ -1,7 +1,9 @@
 package com.stijaktech.devnews.domain.community;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.stijaktech.devnews.domain.Blamable;
 import com.stijaktech.devnews.domain.Status;
 import com.stijaktech.devnews.domain.post.Post;
 import com.stijaktech.devnews.domain.user.User;
@@ -35,7 +37,7 @@ import static org.hibernate.validator.constraints.SafeHtml.WhiteListType.NONE;
 @AllArgsConstructor
 @Document("communities")
 @JsonInclude(NON_NULL)
-public class Community {
+public class Community implements Blamable {
 
     @Id
     private String id;
@@ -50,6 +52,9 @@ public class Community {
     @JsonProperty(access = READ_ONLY)
     private String alias;
 
+    @JsonProperty(access = READ_ONLY)
+    private long postsCount;
+
     private Status status;
 
     @DBRef
@@ -59,6 +64,7 @@ public class Community {
     private User createdBy;
 
     @DBRef
+    @JsonIgnore
     @LastModifiedBy
     @ToString.Exclude
     @EqualsAndHashCode.Exclude

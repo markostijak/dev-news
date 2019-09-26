@@ -44,7 +44,7 @@ export class CommunityViewComponent implements OnInit, OnDestroy {
   }
 
   private reload(alias: string): void {
-    this._communityService.fetchByAlias('/api/v1/communities/search/findByAlias', alias, 'include-stats')
+    this._communityService.fetchByAlias(alias, 'include-stats')
       .subscribe(community => {
         this._navigationService.navigate(community);
         this.fetchPosts(community, 0).subscribe(hal => {

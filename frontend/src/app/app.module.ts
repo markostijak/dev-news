@@ -5,7 +5,7 @@ import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
-import {QuillModule} from 'ngx-quill';
+
 import {
   MatAutocompleteModule,
   MatButtonModule,
@@ -67,6 +67,7 @@ import { CommentEditorComponent } from './components/comment/comment-editor/comm
 import { CommentComponent } from './components/comment/comment/comment.component';
 import { ReplyEditorComponent } from './components/comment/reply-editor/reply-editor.component';
 import { PostEditEditorComponent } from './components/post/post-edit-editor/post-edit-editor.component';
+import {AppEditorModule} from './modules/editor/app-editor.module';
 
 @NgModule({
   declarations: [
@@ -112,7 +113,7 @@ import { PostEditEditorComponent } from './components/post/post-edit-editor/post
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,
-    QuillModule.forRoot(),
+    AppEditorModule,
     FlexLayoutModule,
     MatGridListModule,
     MatSidenavModule,

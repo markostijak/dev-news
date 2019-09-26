@@ -28,7 +28,7 @@
           <ng-container *ngIf="!startEditing; then showPost else editPost"></ng-container>
           <ng-template #showPost>
             <div class="content">
-              <quill-view-html [content]="post.content"></quill-view-html>
+              <quill-view format="json" [content]="post.content"></quill-view>
             </div>
             <div class="actions">
               <button mat-raised-button class="mr-10">

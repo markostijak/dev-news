@@ -2,6 +2,7 @@ package com.stijaktech.devnews.domain.post;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.stijaktech.devnews.domain.Blamable;
 import com.stijaktech.devnews.domain.community.Community;
 import com.stijaktech.devnews.domain.user.User;
 import lombok.AllArgsConstructor;
@@ -24,7 +25,7 @@ import javax.validation.constraints.NotBlank;
 import java.time.Instant;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
-import static com.fasterxml.jackson.annotation.JsonProperty.Access.*;
+import static com.fasterxml.jackson.annotation.JsonProperty.Access.READ_ONLY;
 import static org.hibernate.validator.constraints.SafeHtml.WhiteListType.NONE;
 
 @Data
@@ -33,7 +34,7 @@ import static org.hibernate.validator.constraints.SafeHtml.WhiteListType.NONE;
 @AllArgsConstructor
 @Document("posts")
 @JsonInclude(NON_NULL)
-public class Post {
+public class Post implements Blamable {
 
     @Id
     private String id;
@@ -49,6 +50,9 @@ public class Post {
     @NotBlank
     @SafeHtml
     private String content;
+
+    @JsonProperty(access = READ_ONLY)
+    private long commentsCount;
 
     @CreatedBy
     @DBRef(lazy = true)

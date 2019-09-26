@@ -22,7 +22,7 @@ export class CreatePostDialogComponent {
   }
 
   public onSave(post: Post): void {
-    this._router.navigate(['/c', post.community.alias, 'p', post.id]);
+    this._router.navigate(['/c', post.community.alias, 'p', post.alias]);
     this._dialog.close();
   }
 

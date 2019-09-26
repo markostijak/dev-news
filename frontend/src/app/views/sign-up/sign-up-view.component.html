@@ -1,14 +1,22 @@
-<mat-horizontal-stepper class="sign-up-container">
-  <mat-step>
-    <ng-template matStepLabel>Sign up</ng-template>
-    <app-sign-up-form></app-sign-up-form>
-  </mat-step>
-  <mat-step>
-    <ng-template matStepLabel>Activate</ng-template>
-    <app-activation-form></app-activation-form>
-  </mat-step>
-  <mat-step>
-    <ng-template matStepLabel>Log in</ng-template>
-    <app-login-form></app-login-form>
-  </mat-step>
-</mat-horizontal-stepper>
+<mat-card class="sign-up-container">
+  <mat-horizontal-stepper labelPosition="bottom" linear #stepper>
+    <mat-step [stepControl]="signUpFormGroup" errorMessage="Name is required.">
+      <form [formGroup]="signUpFormGroup">
+
+      </form>
+      <div>
+        Already a member? <a mat-button routerLink="/login">Log in</a>
+      </div>
+    </mat-step>
+    <mat-step [stepControl]="activationFormGroup" errorMessage="Address is required.">
+      <form [formGroup]="activationFormGroup">
+
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="loginFormGroup" errorMessage="Address is required.">
+      <form [formGroup]="activationFormGroup">
+
+      </form>
+    </mat-step>
+  </mat-horizontal-stepper>
+</mat-card>

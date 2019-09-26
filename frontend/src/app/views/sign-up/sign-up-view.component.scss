@@ -2,3 +2,10 @@
   margin: auto;
   max-width: 380px;
 }
+
+@media only screen and (max-width: 639px) {
+  .sign-up-container {
+    background: none;
+    box-shadow: none !important;
+  }
+}

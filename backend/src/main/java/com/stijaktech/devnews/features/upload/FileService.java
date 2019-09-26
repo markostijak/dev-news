@@ -32,21 +32,21 @@ public class FileService {
     }
 
     @SneakyThrows
-    public URI storeImage(@NonNull MultipartFile image) {
+    public String storeImage(@NonNull MultipartFile image) {
         return store("image_", image);
     }
 
     @SneakyThrows
-    public URI storeVideo(@NonNull MultipartFile video) {
+    public String storeVideo(@NonNull MultipartFile video) {
         return store("video_", video);
     }
 
     @SneakyThrows
-    public URI storeDocument(@NonNull MultipartFile document) {
+    public String storeDocument(@NonNull MultipartFile document) {
         return store("doc_", document);
     }
 
-    private URI store(String prefix, MultipartFile file) throws IOException {
+    private String store(String prefix, MultipartFile file) throws IOException {
         if (file == null || file.getOriginalFilename() == null) {
             throw new FileNotPresentException();
         }
@@ -54,7 +54,7 @@ public class FileService {
         String original = file.getOriginalFilename();
         String filename = generateFileName(prefix, original.substring(original.lastIndexOf(".")));
         file.transferTo(storeLocation.resolve(filename));
-        return URI.create(host + filename);
+        return host + filename;
     }
 
     private String generateFileName(String prefix, String fileType) {

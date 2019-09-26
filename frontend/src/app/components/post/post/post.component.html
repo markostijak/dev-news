@@ -1,4 +1,4 @@
-<div class="post-container mat-elevation-z1" [routerLink]="['/c', post.community.alias, 'p', post.id]">
+<div class="post-container mat-elevation-z1" [routerLink]="['/c', post.community.alias, 'p', post.alias]">
   <div class="post-wrapper">
       <div class="post">
         <div class="info" fxLayout="row" fxLayoutGap="5px" fxLayoutAlign="center center">
@@ -20,7 +20,7 @@
         </div>
         <div class="title">{{post.title}}</div>
         <div [class]="showMask(post.content) ? 'content content-mask' : 'content'">
-          <quill-view-html [content]="post.content"></quill-view-html>
+          <quill-view format="json" [content]="post.content"></quill-view>
         </div>
         <div class="actions">
           <button mat-raised-button class="mr-10">

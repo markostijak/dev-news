@@ -78,13 +78,13 @@ export class CommunityService {
     return this._httpClient.post('api/v1/communities', community) as Observable<Community>;
   }
 
-  public fetchByAlias(communityResource: string, alias: string, projection?: string): Observable<Community> {
+  public fetchByAlias(alias: string, projection?: string): Observable<Community> {
     let params = new HttpParams();
     if (projection) {
       params = params.set('projection', projection);
     }
 
-    return this.fetchResource(communityResource, params.set('alias', alias)) as Observable<Community>;
+    return this.fetchResource('/api/v1/communities/search/findByAlias', params.set('alias', alias)) as Observable<Community>;
   }
 
   public fetchPosts(communityResource: string, page?: Page, projection?: string): Observable<Hal<Post[]>> {

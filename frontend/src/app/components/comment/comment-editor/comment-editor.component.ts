@@ -20,7 +20,7 @@ export class CommentEditorComponent extends QuillEditorComponent implements OnIn
   @Output()
   private save: EventEmitter<Data> = new EventEmitter<Data>();
 
-  private _html: string;
+  private _html: object;
 
   bounds: string = 'self';
   placeholder: string = 'What are your thoughts?';
@@ -30,24 +30,25 @@ export class CommentEditorComponent extends QuillEditorComponent implements OnIn
 
   ngOnInit(): void {
     this.onContentChanged.subscribe($event => {
-      this._html = $event.html;
+      this._html = $event.content;
     });
   }
 
   public onSave(): void {
-    if (this._html && this._html.length) {
+    if (this._html) {
       this.save.emit({
         editor: this,
-        content: this._html
+        content: JSON.stringify(this._html)
       });
     }
   }
 
   public reset(): void {
     this.quillEditor.setText('');
+    this._html = null;
   }
 
-  get html(): string {
+  get html(): object {
     return this._html;
   }
 }

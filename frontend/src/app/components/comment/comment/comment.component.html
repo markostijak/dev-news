@@ -11,7 +11,7 @@
 
 <ng-container *ngIf="!startEditing; then show else edit"></ng-container>
 <ng-template #show>
-  <quill-view-html *ngIf="!startEditing" class="comment-content" [content]="comment.content"></quill-view-html>
+  <quill-view *ngIf="!startEditing" class="comment-content" format="json" [content]="comment.content"></quill-view>
   <div class="actions">
     <a class="mr-10" (click)="toggleReplyEditor()">
       <i class="icon">mode_comment</i>
@@ -36,6 +36,7 @@
 <ng-template #edit>
   <app-reply-editor class="comment-edit-editor"
                     buttonText="Save"
+                    format="json"
                     [content]="comment.content"
                     (cancel)="onEditCancel($event)"
                     (save)="onEditSave($event)"

@@ -27,14 +27,16 @@
   font-size: inherit !important;
 }
 
-.ngx-quill-view-html {
+.ngx-quill-view-html, .ngx-quill-view {
   background-color: inherit !important;
 }
 
-.ngx-quill-view-html > .ql-editor {
+.ngx-quill-view-html > .ql-editor, .ngx-quill-view > .ql-editor {
   padding: 0;
   min-height: 80px;
 }
+
+
 
 .ql-toolbar {
   background-color: #353535;
@@ -82,9 +84,15 @@
   background-color: rgba(0, 0, 0, 0.2);
 }
 
+.ql-video-wrapper {
+  position: relative;
+  padding-bottom: 56.25%;
+}
+
 .ql-video {
   width: 100%;
-  height: auto;
+  height: 100%;
+  position: absolute;
 }
 
 .ql-editor > h1 {
@@ -126,11 +134,12 @@ app-comment-editor > .ql-container > .ql-editor, app-reply-editor > .ql-containe
   min-height: 115px !important;
 }
 
-app-comment > quill-view-html > .ql-container > .ql-editor {
+app-comment > quill-view-html > .ql-container > .ql-editor, app-comment > quill-view > .ql-container > .ql-editor {
   min-height: initial !important;
 }
 
-quill-view-html > .ql-container > .ql-editor > p:last-child > br:only-child {
+quill-view-html > .ql-container > .ql-editor > p:last-child > br:only-child,
+quill-view > .ql-container > .ql-editor > p:last-child > br:only-child {
     display: none;
 }
 

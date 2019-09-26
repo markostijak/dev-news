@@ -61,8 +61,8 @@ export class PostViewComponent implements OnInit, OnDestroy {
     this._subscription.unsubscribe();
   }
 
-  private reload(id: string): void {
-    this._postService.fetch('/api/v1/posts/' + id, 'include-stats').subscribe(post => {
+  private reload(alias: string): void {
+    this._postService.fetchByAlias(alias, 'include-stats').subscribe(post => {
       this._navigationService.navigate(post.community);
 
       forkJoin({

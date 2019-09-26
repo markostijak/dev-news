@@ -23,7 +23,10 @@ export class ReplyEditorComponent extends QuillEditorComponent implements OnInit
   @Input()
   content: string = null;
 
-  private _html: string;
+  @Input()
+  format?: 'object' | 'html' | 'text' | 'json';
+
+  private _html: object;
   private _toolbar: string = 'rt_' + Math.random().toString(16).substr(3);
 
   bounds: string = 'self';
@@ -34,14 +37,14 @@ export class ReplyEditorComponent extends QuillEditorComponent implements OnInit
 
   ngOnInit(): void {
     this.onContentChanged.subscribe($event => {
-      this._html = $event.html;
+      this._html = $event.content;
     });
   }
 
   public onSave(): void {
     this.save.emit({
       editor: this,
-      content: this._html
+      content: JSON.stringify(this._html)
     });
   }
 
@@ -51,13 +54,14 @@ export class ReplyEditorComponent extends QuillEditorComponent implements OnInit
 
   public reset(): void {
     this.quillEditor.setText('');
+    this._html = null;
   }
 
   get toolbar(): string {
     return this._toolbar;
   }
 
-  get html(): string {
+  get html(): object {
     return this._html;
   }
 }

@@ -16,6 +16,8 @@ public interface InlineCommentsProjection {
 
     String getTitle();
 
+    String getAlias();
+
     String getContent();
 
     Instant getCreatedAt();

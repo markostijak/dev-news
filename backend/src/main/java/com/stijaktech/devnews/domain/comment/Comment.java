@@ -2,6 +2,8 @@ package com.stijaktech.devnews.domain.comment;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.stijaktech.devnews.domain.Blamable;
 import com.stijaktech.devnews.domain.post.Post;
 import com.stijaktech.devnews.domain.user.User;
 import lombok.AllArgsConstructor;
@@ -14,8 +16,6 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.annotation.Transient;
-import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.lang.Nullable;
@@ -23,16 +23,16 @@ import org.springframework.lang.Nullable;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
-import java.util.List;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import static com.fasterxml.jackson.annotation.JsonProperty.Access.*;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Document("comments")
 @JsonInclude(NON_NULL)
-public class Comment {
+public class Comment implements Blamable {
 
     @Id
     private String id;
@@ -46,11 +46,13 @@ public class Comment {
     @Nullable
     @DBRef(lazy = true)
     @EqualsAndHashCode.Exclude
+    @JsonProperty(access = WRITE_ONLY)
     private Comment parent;
 
     @NotNull
     @DBRef(lazy = true)
     @EqualsAndHashCode.Exclude
+    @JsonProperty(access = WRITE_ONLY)
     private Post post;
 
     @NotBlank

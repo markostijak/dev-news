@@ -24,7 +24,7 @@ export class PostEditorComponent implements OnInit, OnDestroy {
 
   private _title: string;
   private _selected: Community;
-  private _content: string;
+  private _content: object;
 
   private _postService: PostService;
   private _navigation: Observable<Community>;
@@ -74,13 +74,14 @@ export class PostEditorComponent implements OnInit, OnDestroy {
   }
 
   onContentChanged($event: any): any {
-    this._content = $event.html;
+    this._content = $event.content;
+    console.log(JSON.stringify($event.content));
   }
 
   onSave(): void {
     this._postService.create({
       title: this._title,
-      content: this._content,
+      content: JSON.stringify(this._content),
       community: this._selected._links.self.href as unknown
     } as Post).subscribe((post: Post) => {
       post.community = this._selected;
@@ -100,7 +101,7 @@ export class PostEditorComponent implements OnInit, OnDestroy {
     this._title = value;
   }
 
-  public get content(): string {
+  public get content(): object {
     return this._content;
   }
 

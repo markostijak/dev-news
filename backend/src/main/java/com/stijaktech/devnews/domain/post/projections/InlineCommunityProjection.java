@@ -14,6 +14,8 @@ public interface InlineCommunityProjection {
 
     String getTitle();
 
+    String getAlias();
+
     String getContent();
 
     Instant getCreatedAt();

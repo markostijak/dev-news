@@ -19,9 +19,9 @@ import java.util.Base64;
 
 public class LoginAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
-    private static final String AUTH_LOGIN = "/api/v1/auth/login";
-    private static final String AUTH_SOCIAL_LOGIN = "/api/v1/auth/social-login";
-    private static final String AUTH_REFRESH = "/api/v1/auth/refresh";
+    private static final String AUTH_LOGIN = "/api/auth/login";
+    private static final String AUTH_SOCIAL_LOGIN = "/api/auth/social-login";
+    private static final String AUTH_REFRESH = "/api/auth/refresh";
 
     public LoginAuthenticationFilter(AuthenticationManager authenticationManager, AuthenticationSuccessHandler successHandler) {
         super(new OrRequestMatcher(

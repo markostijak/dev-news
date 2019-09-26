@@ -1,5 +1,8 @@
 package com.stijaktech.devnews.domain.comment;
 
+import com.stijaktech.devnews.domain.post.Post;
+import com.stijaktech.devnews.domain.post.PostRepository;
+import org.springframework.data.rest.core.annotation.HandleAfterCreate;
 import org.springframework.data.rest.core.annotation.HandleBeforeCreate;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.security.crypto.codec.Hex;
@@ -14,8 +17,10 @@ import java.time.Instant;
 public class CommentEventHandler {
 
     private BytesKeyGenerator generator;
+    private PostRepository postRepository;
 
-    public CommentEventHandler() {
+    public CommentEventHandler(PostRepository postRepository) {
+        this.postRepository = postRepository;
         this.generator = KeyGenerators.secureRandom(3);
     }
 
@@ -28,6 +33,13 @@ public class CommentEventHandler {
         comment.setSlug((parent != null ? parent.getSlug() + "/" : "") + slug);
         comment.setFullSlug((parent != null ? parent.getFullSlug() + "/" : "") + fullSlug);
         comment.setParentId(parent != null ? parent.getId() : null);
+    }
+
+    @HandleAfterCreate
+    public void afterCreate(Comment comment) {
+        Post post = comment.getPost();
+        post.setCommentsCount(post.getCommentsCount() + 1);
+        postRepository.save(post);
     }
 
     private String generateKey() {

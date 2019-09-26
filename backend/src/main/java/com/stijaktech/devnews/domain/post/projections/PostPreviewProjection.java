@@ -13,6 +13,8 @@ public interface PostPreviewProjection {
 
     String getTitle();
 
+    String getAlias();
+
     String getContent();
 
     Instant getCreatedAt();

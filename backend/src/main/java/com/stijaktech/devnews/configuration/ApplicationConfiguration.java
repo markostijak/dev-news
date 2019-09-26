@@ -1,8 +1,5 @@
 package com.stijaktech.devnews.configuration;
 
-import com.stijaktech.devnews.domain.comment.Comment;
-import com.stijaktech.devnews.domain.community.Community;
-import com.stijaktech.devnews.domain.post.Post;
 import com.stijaktech.devnews.domain.user.User;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -18,6 +15,8 @@ import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.data.rest.core.event.ValidatingRepositoryEventListener;
 import org.springframework.data.rest.core.projection.ProjectionDefinitions;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -40,6 +39,7 @@ import java.util.Optional;
 @EnableCaching
 @EnableWebSecurity
 @EnableMongoAuditing
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class ApplicationConfiguration {
 
     @Bean
@@ -85,7 +85,10 @@ public class ApplicationConfiguration {
         return new RepositoryRestConfigurer() {
             @Override
             public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config) {
-                config.exposeIdsFor(User.class, Community.class, Post.class, Comment.class);
+                config.getExposureConfiguration()
+                        .forDomainType(User.class)
+                        .withItemExposure((metadata, httpMethods) -> httpMethods.disable(HttpMethod.POST))
+                        .withCollectionExposure((metadata, httpMethods) -> httpMethods.disable(HttpMethod.POST));
             }
 
             @Override

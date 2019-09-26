@@ -46,6 +46,15 @@ export class PostService {
     return this.fetchResource(postResource, params) as Observable<Post>;
   }
 
+  public fetchByAlias(alias: string, projection?: string): Observable<Post> {
+    let params = new HttpParams();
+    if (projection) {
+      params = params.set('projection', projection);
+    }
+
+    return this.fetchResource('/api/v1/posts/search/findByAlias', params.set('alias', alias)) as Observable<Post>;
+  }
+
   public update(post: Post, content: string): Observable<Post> {
     return this._httpClient.patch(post._links.self.href, {
       content: content

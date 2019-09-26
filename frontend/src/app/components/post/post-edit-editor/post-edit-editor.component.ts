@@ -17,18 +17,18 @@ export class PostEditEditorComponent implements OnInit {
 
   @ViewChild('editor', {static: false}) editorElem: HTMLElement;
 
-  private _html: string = null;
+  private _html: object = null;
 
   ngOnInit(): void {
   }
 
   onContentChanged($event: any): any {
-    this._html = $event.html;
+    this._html = $event.content;
   }
 
   public onSave(): void {
     if (this._html) {
-      this.save.emit(this._html);
+      this.save.emit(JSON.stringify(this._html));
     }
   }
 
@@ -36,7 +36,7 @@ export class PostEditEditorComponent implements OnInit {
     this.cancel.emit();
   }
 
-  get html(): string {
+  get html(): object {
     return this._html;
   }
 

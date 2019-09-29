@@ -5,8 +5,8 @@ import com.stijaktech.devnews.domain.user.User;
 import com.stijaktech.devnews.domain.user.UserRepository;
 import com.stijaktech.devnews.domain.user.UserService;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.Nullable;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -19,7 +19,7 @@ public class SignUpService {
     private JavaMailSender mailSender;
     private UserRepository userRepository;
 
-    public SignUpService(UserService userService, JavaMailSender mailSender, UserRepository userRepository) {
+    public SignUpService(UserService userService, @Nullable JavaMailSender mailSender, UserRepository userRepository) {
         this.mailSender = mailSender;
         this.userService = userService;
         this.userRepository = userRepository;
@@ -34,7 +34,7 @@ public class SignUpService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
-        return user;
+        return userService.activate(user, activationCode);
     }
 
     public User create(User user) {
@@ -52,11 +52,18 @@ public class SignUpService {
     }
 
     private void sendMail(String email, String activationCode) {
-        MimeMessageHelper messageHelper = new MimeMessageHelper(mailSender.createMimeMessage());
-
-
-
-        mailSender.send(messageHelper.getMimeMessage());
+        System.out.println("Activation code: " + email + " -> " + activationCode);
+        /*
+        try {
+            MimeMessageHelper messageHelper = new MimeMessageHelper(mailSender.createMimeMessage());
+            messageHelper.setTo(email);
+            messageHelper.setSubject("Dew-news Activation Code");
+            messageHelper.setText("Your activation code: " + activationCode + ".");
+            mailSender.send(messageHelper.getMimeMessage());
+        } catch (MessagingException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+         */
     }
 
 }

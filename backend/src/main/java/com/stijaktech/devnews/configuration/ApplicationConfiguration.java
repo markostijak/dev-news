@@ -105,6 +105,7 @@ public class ApplicationConfiguration {
                 .map(SecurityContext::getAuthentication)
                 .filter(Authentication::isAuthenticated)
                 .map(Authentication::getPrincipal)
+                .filter(p -> p instanceof User)
                 .map(User.class::cast);
     }
 

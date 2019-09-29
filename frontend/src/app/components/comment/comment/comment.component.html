@@ -1,11 +1,13 @@
 <div class="comment-info" fxLayout="row" fxLayoutGap="5px" fxLayoutAlign="center center">
   <div fxFlex="0 0 20px">
-    <img class="user-image w-100" [src]="comment.createdBy.picture" [alt]="comment.createdBy.username">
+    <img class="user-image w-100" [src]="comment.createdBy.picture  || 'assets/icons/user.png'" [alt]="comment.createdBy.username">
   </div>
   <div fxFlex="0 0 auto" class="user">{{comment.createdBy.username}}</div>
   <div fxFlex="0 0 auto"><span class="separator">•</span></div>
   <div fxFlex="0 0 auto" class="date">{{timeFormatter.format(comment.createdAt)}}</div>
-  <div *ngIf="comment.updatedAt && comment.createdAt != comment.updatedAt" fxFlex="0 0 auto" class="date">(edited {{timeFormatter.format(comment.updatedAt)}})</div>
+  <div *ngIf="comment.updatedAt && comment.createdAt != comment.updatedAt" fxFlex="0 0 auto" class="date">
+    (edited {{timeFormatter.format(comment.updatedAt)}})
+  </div>
   <div fxFlex="1 1 auto"></div>
 </div>
 
@@ -13,21 +15,19 @@
 <ng-template #show>
   <quill-view *ngIf="!startEditing" class="comment-content" format="json" [content]="comment.content"></quill-view>
   <div class="actions">
-    <a class="mr-10" (click)="toggleReplyEditor()">
+    <a *ngIf="authorizationService.canView(comment)" class="mr-10" (click)="toggleReplyEditor()">
       <i class="icon">mode_comment</i>
       Reply
     </a>
     <a class="mr-10">
       Share
     </a>
-    <ng-container>
-      <a class="mr-10" (click)="toggleEditEditor()">
-        Edit
-      </a>
-      <a *ngIf="!comment.replies || !comment.replies.length">
-        Delete
-      </a>
-    </ng-container>
+    <a *ngIf="authorizationService.canEdit(comment)" class="mr-10" (click)="toggleEditEditor()">
+      Edit
+    </a>
+    <a *ngIf="authorizationService.canDelete(comment)">
+      Delete
+    </a>
   </div>
   <div *ngIf="showEditor" class="reply-editor-container">
     <app-reply-editor (save)="onSave($event)" (cancel)="onCancel($event)"></app-reply-editor>
@@ -43,5 +43,6 @@
   ></app-reply-editor>
 </ng-template>
 <div *ngIf="comment.replies && comment.replies.length" class="comment-replies">
-  <app-comment *ngFor="let reply of comment.replies" [comment]="reply" [post]="post" (reply)="onReply($event)"></app-comment>
+  <app-comment *ngFor="let reply of comment.replies" [comment]="reply" [post]="post"
+               (reply)="onReply($event)"></app-comment>
 </div>

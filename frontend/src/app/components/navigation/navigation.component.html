@@ -3,7 +3,8 @@
         *ngIf="navigation | async as active"
         [matTooltip]="active.title">
   <mat-icon class="left-icon" *ngIf="!active.id" mat-list-icon>{{active.icon}}</mat-icon>
-  <img class="left-image" *ngIf="active.id" mat-list-icon [src]="active.logo ? active.logo : 'assets/icons/community.svg'" [alt]="active.title">
+  <img class="left-image" *ngIf="active.id" mat-list-icon
+       [src]="active.logo ? active.logo : 'assets/icons/community.svg'" [alt]="active.title">
   <span class="navigation-text">{{active.title}}</span>
   <mat-icon class="right-icon">keyboard_arrow_down</mat-icon>
 </button>
@@ -15,14 +16,15 @@
   <mat-nav-list>
     <mat-divider></mat-divider>
     <ng-container *ngFor="let group of items; last as isLast">
-      <h3 *ngIf="group.title" mat-subheader>{{group.title}}</h3>
-      <a class="navigation-item" mat-list-item *ngFor="let item of group.items"
-         [routerLink]="item.id ? 'c/' + item.alias : item.route">
-        <mat-icon matListIcon *ngIf="!item.id">{{item.icon}}</mat-icon>
-        <img matListIcon *ngIf="item.id" [src]="item.logo ? item.logo : 'assets/icons/community.svg'" [alt]="item.title">
-        <span class="navigation-item-text" mat-line>{{item.title}}</span>
-      </a>
-      <mat-divider class="mt-10" *ngIf="!isLast"></mat-divider>
+        <h3 *ngIf="group.title" mat-subheader>{{group.title}}</h3>
+        <a class="navigation-item" mat-list-item *ngFor="let item of group.items"
+           [routerLink]="item.alias ? 'c/' + item.alias : item.route">
+          <mat-icon matListIcon *ngIf="!item.alias">{{item.icon}}</mat-icon>
+          <img matListIcon *ngIf="item.alias" [src]="item.logo ? item.logo : 'assets/icons/community.svg'"
+               [alt]="item.title">
+          <span class="navigation-item-text" mat-line>{{item.title}}</span>
+        </a>
+        <mat-divider class="mt-10" *ngIf="!isLast"></mat-divider>
     </ng-container>
   </mat-nav-list>
 </mat-menu>

@@ -4,6 +4,7 @@ import {TimeAgoService} from '../../../services/time-ago/time-ago.service';
 import {Data, ReplyEditorComponent} from '../reply-editor/reply-editor.component';
 import {CommentService} from '../../../services/comment/comment.service';
 import {Post} from '../../../models/post';
+import {AuthorizationService} from '../../../services/authorization/authorization.service';
 
 @Component({
   selector: 'app-comment',
@@ -13,24 +14,25 @@ import {Post} from '../../../models/post';
 export class CommentComponent implements OnInit {
 
   @Input()
-  private comment: Comment;
-
-  @Input()
   private post: Post;
 
+  @Input()
+  private comment: Comment;
+
   @Output()
-  private reply: EventEmitter<Comment>;
+  private reply: EventEmitter<Comment> = new EventEmitter<Comment>();
 
   private _showEditor: boolean = false;
   private _startEditing: boolean = false;
 
   private _commentService: CommentService;
   private readonly _timeFormatter: TimeAgoService;
+  private _authorizationService: AuthorizationService;
 
-  constructor(commentService: CommentService, timeFormatter: TimeAgoService) {
+  constructor(commentService: CommentService, timeFormatter: TimeAgoService, authorizationService: AuthorizationService) {
     this._timeFormatter = timeFormatter;
     this._commentService = commentService;
-    this.reply = new EventEmitter<Comment>();
+    this._authorizationService = authorizationService;
   }
 
   ngOnInit(): void {
@@ -100,4 +102,9 @@ export class CommentComponent implements OnInit {
   get startEditing(): boolean {
     return this._startEditing;
   }
+
+  get authorizationService(): AuthorizationService {
+    return this._authorizationService;
+  }
+
 }

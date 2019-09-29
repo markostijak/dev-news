@@ -3,6 +3,7 @@ import {CommunityService} from '../../../services/community/community.service';
 import {Community} from '../../../models/community';
 import {DialogService} from '../../../services/dialog/dialog.service';
 import {CreatePostDialogComponent} from '../../post/create-post-dialog/create-post-dialog.component';
+import {AuthorizationService} from '../../../services/authorization/authorization.service';
 
 @Component({
   selector: 'app-community',
@@ -19,10 +20,12 @@ export class CommunityComponent implements OnInit {
   private _member: boolean;
   private _dialogService: DialogService;
   private _communityService: CommunityService;
+  private _authorizationService: AuthorizationService;
 
-  constructor(dialogService: DialogService, communityService: CommunityService) {
+  constructor(dialogService: DialogService, communityService: CommunityService, authorizationService: AuthorizationService) {
     this._dialogService = dialogService;
     this._communityService = communityService;
+    this._authorizationService = authorizationService;
   }
 
   public showPostDialog(): void {
@@ -49,5 +52,9 @@ export class CommunityComponent implements OnInit {
 
   get member(): boolean {
     return this._member;
+  }
+
+  get authorizationService(): AuthorizationService {
+    return this._authorizationService;
   }
 }

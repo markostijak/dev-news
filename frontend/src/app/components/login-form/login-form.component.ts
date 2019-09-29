@@ -1,8 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {MatIconRegistry} from '@angular/material';
-// @ts-ignore
 import {FormControl, Validators} from '@angular/forms';
-// @ts-ignore
 import {DomSanitizer} from '@angular/platform-browser';
 import {Authentication, AuthenticationService} from '../../services/authentication/authentication.service';
 import {Router} from '@angular/router';
@@ -22,42 +20,44 @@ export class LoginFormComponent implements OnInit {
   private _iconRegistry: MatIconRegistry;
   private _authenticationService: AuthenticationService;
 
-  private _hidePassword: boolean = true;
-
   constructor(authenticationService: AuthenticationService, router: Router, iconRegistry: MatIconRegistry, sanitizer: DomSanitizer) {
     this._router = router;
     this._sanitizer = sanitizer;
     this._iconRegistry = iconRegistry;
     this._authenticationService = authenticationService;
-    this._email = new FormControl('', [Validators.required, Validators.email]);
-    this._password = new FormControl('', [Validators.required]);
   }
 
   public login(): void {
-    this._authenticationService.login(this._email.value, this._password.value).subscribe(value => console.log(value));
+    this._authenticationService.login(this._email.value, this._password.value).subscribe(this.postLogin.bind(this));
   }
 
   public facebook(): void {
-    this._authenticationService.facebook().subscribe(value => console.log(value));
+    this._authenticationService.facebook().subscribe(this.postLogin.bind(this));
   }
 
   public google(): void {
-    this._authenticationService.google().subscribe((authentication: Authentication) => {
-      this._router.navigate(['']);
-    });
+    this._authenticationService.google().subscribe(this.postLogin.bind(this));
   }
 
   public github(): void {
-    this._authenticationService.github().subscribe(value => console.log(value));
+    this._authenticationService.github().subscribe(this.postLogin.bind(this));
   }
 
   ngOnInit(): void {
+    this._email = new FormControl('', [Validators.required, Validators.email]);
+    this._password = new FormControl('', [Validators.required]);
     Array.of('google', 'facebook', 'github').forEach(icon => {
       this._iconRegistry.addSvgIcon(
         icon,
         this._sanitizer.bypassSecurityTrustResourceUrl('assets/icons/' + icon + '.svg')
       );
     });
+  }
+
+  private postLogin(authentication: Authentication): void {
+    if (authentication.authenticated) {
+      this._router.navigate(['']);
+    }
   }
 
   get email(): FormControl {
@@ -74,15 +74,6 @@ export class LoginFormComponent implements OnInit {
 
   set password(value: FormControl) {
     this._password = value;
-  }
-
-
-  get hidePassword(): boolean {
-    return this._hidePassword;
-  }
-
-  set hidePassword(value: boolean) {
-    this._hidePassword = value;
   }
 
 }

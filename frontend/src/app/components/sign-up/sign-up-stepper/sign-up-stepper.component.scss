@@ -1,0 +1,74 @@
+:host {
+  display: block;
+}
+
+.sign-up-logo-container {
+  text-align: center;
+}
+
+.sign-up-logo {
+  width: 100%;
+  max-width: 100px;
+  padding: 10px;
+  filter: drop-shadow(0px 2px 1px rgba(0, 0, 0, 0.2));
+}
+
+.logo-divider {
+  margin-bottom: 30px !important;
+}
+
+
+.description {
+  font-size: 17px;
+  font-weight: 500;
+  padding-top: 15px;
+  text-align: center;
+}
+
+.email-field, .username-field {
+  padding-top: 50px;
+}
+
+.login, .terms {
+  font-size: 14px;
+}
+
+.login {
+  padding-top: 15px;
+  text-align: center;
+}
+
+.next-button {
+  background-color: #a23737;
+}
+
+.login-link {
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.terms {
+  padding-top: 50px;
+  text-align: center;
+}
+
+.choose-username-description {
+  text-align: center;
+  padding-top: 10px;
+}
+
+.actions {
+  padding: 0 0 2px 2px;
+}
+
+.login-button{
+  padding: 0 0 2px 2px;
+  background-color: #a23737;
+}
+
+@media only screen and (max-width: 639px) {
+  mat-horizontal-stepper {
+    background: none !important;
+    box-shadow: none !important;
+  }
+}

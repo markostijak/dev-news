@@ -2,11 +2,13 @@ package com.stijaktech.devnews.domain.user;
 
 import com.stijaktech.devnews.domain.ModelException.ModelAlreadyPresentException;
 import com.stijaktech.devnews.domain.Status;
+import com.stijaktech.devnews.features.authentication.Provider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.security.crypto.keygen.StringKeyGenerator;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -15,11 +17,13 @@ import java.util.Set;
 public class UserService implements UserDetailsService {
 
     private UserRepository userRepository;
+    private PasswordEncoder passwordEncoder;
     private StringKeyGenerator stringKeyGenerator;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
         this.stringKeyGenerator = KeyGenerators.string();
     }
 
@@ -34,8 +38,18 @@ public class UserService implements UserDetailsService {
 
         String activationCode = stringKeyGenerator.generateKey();
 
+        user.setRole(Role.USER);
+        user.setProvider(Provider.LOCAL);
         user.setActivationCode(activationCode);
         user.setStatus(Status.AWAITING_ACTIVATION);
+        user.setPrivileges(Set.of(Privilege.READ));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userRepository.save(user);
+    }
+
+    public User activate(User user, String activationCode) {
+        user.setActivationCode(null);
+        user.setPrivileges(Set.of(Privilege.READ, Privilege.WRITE, Privilege.DELETE));
         return userRepository.save(user);
     }
 

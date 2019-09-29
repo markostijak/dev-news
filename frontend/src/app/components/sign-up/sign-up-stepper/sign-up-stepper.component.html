@@ -1,0 +1,126 @@
+<div class="sign-up-logo-container">
+  <img class="sign-up-logo" src="assets/icons/logo.svg" alt="Logo">
+</div>
+
+<hr class="w-100 h-line logo-divider">
+
+<form [formGroup]="signUpFormGroup">
+  <mat-horizontal-stepper class="stepper" labelPosition="bottom" linear #stepper>
+    <mat-step [stepControl]="signUpFormGroup.get('email')" errorMessage="Email is required.">
+      <div class="description">
+        By having a dev-news account, you can join and comment on all your favorite content.
+      </div>
+      <mat-form-field class="email-field w-100" appearance="fill" color="accent">
+        <mat-label>Email</mat-label>
+        <input type="email" matInput placeholder="" formControlName="email" required>
+        <mat-hint></mat-hint>
+      </mat-form-field>
+      <div>
+        <button class="next-button w-100" mat-raised-button matStepperNext type="button">Next</button>
+      </div>
+      <div class="login">
+        Already a member? <a mat-button class="login-link" routerLink="/login">Log in</a>
+      </div>
+      <div class="terms">
+        By clicking next, you agree to our Terms and that you have read our Privacy Policy and Content Policy.
+      </div>
+    </mat-step>
+    <mat-step [stepControl]="signUpFormGroup.get('username') && signUpFormGroup.get('password')"
+              errorMessage="Username is required.">
+      <div>
+        <div class="description">Choose your username</div>
+        <div class="choose-username-description">Your username is how other members will see you. This name will be used
+          to credit you for things you share
+          on dev news. What should we call you?
+        </div>
+      </div>
+      <mat-form-field class="username-field w-100" appearance="fill" color="accent">
+        <mat-label>Choose a username</mat-label>
+        <input type="text" matInput placeholder="" formControlName="username" required>
+        <mat-hint></mat-hint>
+      </mat-form-field>
+      <mat-form-field class="password-field w-100" appearance="fill" color="accent">
+        <mat-label>Password</mat-label>
+        <input type="password" matInput placeholder="" formControlName="password" required>
+        <mat-hint></mat-hint>
+      </mat-form-field>
+      <div fxLayout="row" fxLayoutGap="10px" class="actions">
+        <div fxFlex="50%">
+          <button class="back-button w-100" mat-raised-button matStepperPrevious type="button">Back</button>
+        </div>
+        <div fxFlex="50%">
+          <button class="next-button w-100" mat-raised-button type="button" (click)="checkUsername()">Next</button>
+        </div>
+      </div>
+    </mat-step>
+    <mat-step [stepControl]="signUpFormGroup.get('firstName') && signUpFormGroup.get('lastName')"
+              errorMessage="User info is required.">
+      <div>
+        <div class="description">Tell us about you</div>
+        <div class="choose-username-description">Enter your full name.</div>
+      </div>
+      <mat-form-field class="username-field w-100" appearance="fill" color="accent">
+        <mat-label>First name</mat-label>
+        <input type="text" matInput placeholder="" formControlName="firstName" required>
+        <mat-hint></mat-hint>
+      </mat-form-field>
+      <mat-form-field class="password-field w-100" appearance="fill" color="accent">
+        <mat-label>Last name</mat-label>
+        <input type="text" matInput placeholder="" formControlName="lastName" required>
+        <mat-hint></mat-hint>
+      </mat-form-field>
+      <div fxLayout="row" fxLayoutGap="10px" class="actions">
+        <div fxFlex="50%">
+          <button class="back-button w-100" mat-raised-button matStepperPrevious type="button">Back</button>
+        </div>
+        <div fxFlex="50%">
+          <button class="next-button w-100" mat-raised-button type="button" (click)="signUp()">Sign up</button>
+        </div>
+      </div>
+    </mat-step>
+    <mat-step [stepControl]="signUpFormGroup.get('activationCode')" errorMessage="Activation code is required.">
+      <div>
+        <div class="description">Almost done</div>
+        <div class="choose-username-description">An email with activation code has ben sent
+          to {{signUpFormGroup.get('email').value}}. Enter your activation code to finish sign up process.
+        </div>
+      </div>
+      <mat-form-field class="username-field w-100" appearance="fill" color="accent">
+        <mat-label>Activation code</mat-label>
+        <input type="text" matInput placeholder="" formControlName="activationCode" required>
+        <mat-hint></mat-hint>
+      </mat-form-field>
+      <div fxLayout="row" fxLayoutGap="10px" class="actions">
+        <div fxFlex="50%">
+          <button class="back-button w-100" mat-raised-button matStepperPrevious type="button">Back</button>
+        </div>
+        <div fxFlex="50%">
+          <button class="next-button w-100" mat-raised-button type="button" (click)="activate()">Finish</button>
+        </div>
+      </div>
+    </mat-step>
+    <mat-step [stepControl]="signUpFormGroup.get('login')" errorMessage="Invalid credentials.">
+      <div>
+        <div class="description">All done</div>
+        <div class="choose-username-description">Enter your email and password, proceed with login and start writing
+          your posts and comments.
+        </div>
+      </div>
+      <mat-form-field class="username-field w-100" appearance="fill" color="accent">
+        <mat-label>Email</mat-label>
+        <input type="text" matInput placeholder="" formControlName="email" required>
+        <mat-icon matSuffix>person</mat-icon>
+        <mat-hint></mat-hint>
+      </mat-form-field>
+      <mat-form-field class="password-field w-100" appearance="fill" color="accent">
+        <mat-label>Password</mat-label>
+        <input type="password" matInput placeholder="" formControlName="password" required>
+        <mat-icon matSuffix>lock</mat-icon>
+        <mat-hint></mat-hint>
+      </mat-form-field>
+      <div class="actions">
+        <button class="next-button w-100" mat-raised-button (click)="login()">Log in</button>
+      </div>
+    </mat-step>
+  </mat-horizontal-stepper>
+</form>

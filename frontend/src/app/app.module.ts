@@ -68,6 +68,7 @@ import { CommentComponent } from './components/comment/comment/comment.component
 import { ReplyEditorComponent } from './components/comment/reply-editor/reply-editor.component';
 import { PostEditEditorComponent } from './components/post/post-edit-editor/post-edit-editor.component';
 import {AppEditorModule} from './modules/editor/app-editor.module';
+import { SignUpStepperComponent } from './components/sign-up/sign-up-stepper/sign-up-stepper.component';
 
 @NgModule({
   declarations: [
@@ -106,7 +107,8 @@ import {AppEditorModule} from './modules/editor/app-editor.module';
     CommentEditorComponent,
     CommentComponent,
     ReplyEditorComponent,
-    PostEditEditorComponent
+    PostEditEditorComponent,
+    SignUpStepperComponent
   ],
   imports: [
     BrowserModule,

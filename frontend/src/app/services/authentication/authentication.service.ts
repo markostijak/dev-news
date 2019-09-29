@@ -116,15 +116,15 @@ export class AuthenticationService {
   }
 
   public login(email: string, password: string): Observable<Authentication> {
-    return this.authenticate('api/v1/auth/login', email, password);
+    return this.authenticate('api/auth/login', email, password);
   }
 
   private socialLogin(socialUser: SocialUser): Observable<Authentication> {
-    return this.authenticate('api/v1/auth/social-login', socialUser.provider, socialUser.authorizationCode);
+    return this.authenticate('api/auth/social-login', socialUser.provider, socialUser.authorizationCode);
   }
 
   public jwtRefresh(credentials: Credentials): Observable<Authentication> {
-    return this.authenticate('api/v1/auth/refresh', credentials.accessToken, credentials.refreshToken);
+    return this.authenticate('api/auth/refresh', credentials.accessToken, credentials.refreshToken);
   }
 
   public authenticate(url: string, principal: string, credentials: string): Observable<Authentication> {

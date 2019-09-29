@@ -44,7 +44,7 @@ export class CommunityService {
   }
 
   public memberOf(community: Community): boolean {
-    return this._communities.find(c => c.id === community.id) != null;
+    return this._communities.find(c => c.alias === community.alias) != null;
   }
 
   public myCommunities(): Observable<Community[]> {

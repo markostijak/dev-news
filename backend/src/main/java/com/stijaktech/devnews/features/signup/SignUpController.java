@@ -4,6 +4,8 @@ import com.stijaktech.devnews.domain.ProjectionService;
 import com.stijaktech.devnews.domain.user.User;
 import com.stijaktech.devnews.domain.user.projections.UserPreviewProjection;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.RepresentationModelAssembler;
+import org.springframework.hateoas.server.SimpleRepresentationModelAssembler;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,13 +27,13 @@ public class SignUpController {
     }
 
     @PostMapping("/create")
-    public EntityModel<UserPreviewProjection> signUp(@RequestBody User user) {
+    public UserPreviewProjection signUp(@RequestBody User user) {
         user = signUpService.create(user);
         return project(user);
     }
 
     @PostMapping("/activation/activate")
-    public EntityModel<UserPreviewProjection> activate(@RequestParam("user") User user, @RequestBody String activationCode) {
+    public UserPreviewProjection activate(@RequestParam("user") User user, @RequestBody String activationCode) {
         user = signUpService.activate(user, activationCode);
         return project(user);
     }
@@ -42,8 +44,8 @@ public class SignUpController {
         return ResponseEntity.ok(HttpStatus.NO_CONTENT);
     }
 
-    private EntityModel<UserPreviewProjection> project(User user) {
-        return projectionService.createProjection(user, User.class, "user-preview");
+    private UserPreviewProjection project(User user) {
+        return projectionService.createProjection(user, User.class, "preview");
     }
 
 }

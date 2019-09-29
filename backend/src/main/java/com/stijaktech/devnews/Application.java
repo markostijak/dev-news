@@ -42,7 +42,7 @@ public class Application implements CommandLineRunner {
     @Controller
     @SuppressWarnings("MVCPathVariableInspection")
     public static class AngularController {
-        @RequestMapping(value = "/{[path:[^.]*}")
+        @RequestMapping(value = "{path:(?:(?!api|.).)*}/**")
         public String forward() {
             // forward to angular
             return "forward:/";

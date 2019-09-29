@@ -6,6 +6,8 @@
 /out-tsc
 
 # dependencies
+/node
+/target
 /node_modules
 
 # profiling files

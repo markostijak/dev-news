@@ -10,7 +10,7 @@ import {
 } from 'angularx-social-login';
 import {GitHubLoginProvider} from './git-hub-login-provider';
 import {BehaviorSubject, Observable, of} from 'rxjs';
-import {map, switchMap} from 'rxjs/operators';
+import {catchError, map, switchMap} from 'rxjs/operators';
 import {fromPromise} from 'rxjs/internal-compatibility';
 import {JwtHelperService} from '@auth0/angular-jwt';
 

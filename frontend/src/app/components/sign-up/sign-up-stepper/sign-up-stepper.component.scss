@@ -29,6 +29,10 @@
   padding-top: 50px;
 }
 
+.password-field, .last-name-field {
+  margin-top: 7px;
+}
+
 .login, .terms {
   font-size: 14px;
 }
@@ -58,6 +62,7 @@
 }
 
 .actions {
+  margin-top: 7px;
   padding: 0 0 2px 2px;
 }
 

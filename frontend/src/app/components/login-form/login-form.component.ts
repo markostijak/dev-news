@@ -1,9 +1,15 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {MatIconRegistry} from '@angular/material';
-import {FormControl, Validators} from '@angular/forms';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {DomSanitizer} from '@angular/platform-browser';
 import {Authentication, AuthenticationService} from '../../services/authentication/authentication.service';
-import {Router} from '@angular/router';
+import {catchError} from 'rxjs/operators';
+import {of} from 'rxjs';
+
+interface Login {
+  email: string;
+  password: string;
+}
 
 @Component({
   selector: 'app-login-form',
@@ -12,23 +18,42 @@ import {Router} from '@angular/router';
 })
 export class LoginFormComponent implements OnInit {
 
-  private _email: FormControl;
-  private _password: FormControl;
+  @Output()
+  success: EventEmitter<Authentication>;
 
-  private _router: Router;
   private _sanitizer: DomSanitizer;
+  private _formBuilder: FormBuilder;
   private _iconRegistry: MatIconRegistry;
   private _authenticationService: AuthenticationService;
 
-  constructor(authenticationService: AuthenticationService, router: Router, iconRegistry: MatIconRegistry, sanitizer: DomSanitizer) {
-    this._router = router;
+  private loginForm: FormGroup;
+
+  constructor(sanitizer: DomSanitizer,
+              formBuilder: FormBuilder,
+              iconRegistry: MatIconRegistry,
+              authenticationService: AuthenticationService) {
+
     this._sanitizer = sanitizer;
+    this._formBuilder = formBuilder;
     this._iconRegistry = iconRegistry;
     this._authenticationService = authenticationService;
+    this.success = new EventEmitter<Authentication>();
   }
 
   public login(): void {
-    this._authenticationService.login(this._email.value, this._password.value).subscribe(this.postLogin.bind(this));
+    if (this.loginForm.valid) {
+      const login = this.loginForm.value as Login;
+      this._authenticationService.login(login.email, login.password).pipe(catchError(error => {
+        return of({authenticated: false});
+      })).subscribe(authentication => {
+        if (authentication.authenticated) {
+          this.success.emit(authentication);
+        } else {
+          this.loginForm.get('email').setErrors({invalidCredentials: true});
+          this.loginForm.get('password').setErrors({invalidCredentials: true});
+        }
+      });
+    }
   }
 
   public facebook(): void {
@@ -44,36 +69,23 @@ export class LoginFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this._email = new FormControl('', [Validators.required, Validators.email]);
-    this._password = new FormControl('', [Validators.required]);
     Array.of('google', 'facebook', 'github').forEach(icon => {
       this._iconRegistry.addSvgIcon(
         icon,
         this._sanitizer.bypassSecurityTrustResourceUrl('assets/icons/' + icon + '.svg')
       );
     });
+
+    this.loginForm = this._formBuilder.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', Validators.required, Validators.minLength(8)],
+    });
   }
 
   private postLogin(authentication: Authentication): void {
     if (authentication.authenticated) {
-      this._router.navigate(['']);
+      this.success.emit(authentication);
     }
-  }
-
-  get email(): FormControl {
-    return this._email;
-  }
-
-  set email(value: FormControl) {
-    this._email = value;
-  }
-
-  get password(): FormControl {
-    return this._password;
-  }
-
-  set password(value: FormControl) {
-    this._password = value;
   }
 
 }

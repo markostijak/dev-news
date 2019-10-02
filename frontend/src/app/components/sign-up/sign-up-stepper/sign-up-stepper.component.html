@@ -1,22 +1,32 @@
+<!--suppress AngularInvalidExpressionResultType -->
 <div class="sign-up-logo-container">
   <img class="sign-up-logo" src="assets/icons/logo.svg" alt="Logo">
 </div>
 
 <hr class="w-100 h-line logo-divider">
 
-<form [formGroup]="signUpFormGroup">
+<form [formGroup]="signUpForm">
   <mat-horizontal-stepper class="stepper" labelPosition="bottom" linear #stepper>
-    <mat-step [stepControl]="signUpFormGroup.get('email')" errorMessage="Email is required.">
+    <!--    Email step    -->
+    <mat-step [stepControl]="signUpForm.get('email')">
       <div class="description">
         By having a dev-news account, you can join and comment on all your favorite content.
       </div>
       <mat-form-field class="email-field w-100" appearance="fill" color="accent">
         <mat-label>Email</mat-label>
-        <input type="email" matInput placeholder="" formControlName="email" required>
-        <mat-hint></mat-hint>
+        <input matInput type="email" formControlName="email">
+        <mat-error *ngIf="signUpForm.get('email').hasError('required')">
+          Email is required
+        </mat-error>
+        <mat-error *ngIf="signUpForm.get('email').hasError('email')">
+          Email is invalid
+        </mat-error>
+        <mat-error *ngIf="signUpForm.get('email').hasError('alreadyTaken')">
+          Email is already taken
+        </mat-error>
       </mat-form-field>
-      <div>
-        <button class="next-button w-100" mat-raised-button matStepperNext type="button">Next</button>
+      <div class="actions">
+        <button type="button" class="next-button w-100" mat-raised-button matStepperNext>Next</button>
       </div>
       <div class="login">
         Already a member? <a mat-button class="login-link" routerLink="/login">Log in</a>
@@ -25,8 +35,9 @@
         By clicking next, you agree to our Terms and that you have read our Privacy Policy and Content Policy.
       </div>
     </mat-step>
-    <mat-step [stepControl]="signUpFormGroup.get('username') && signUpFormGroup.get('password')"
-              errorMessage="Username is required.">
+
+    <!--    Username and password step    -->
+    <mat-step formGroupName="usernameAndPassword" [stepControl]="signUpForm.get('usernameAndPassword')">
       <div>
         <div class="description">Choose your username</div>
         <div class="choose-username-description">Your username is how other members will see you. This name will be used
@@ -36,25 +47,39 @@
       </div>
       <mat-form-field class="username-field w-100" appearance="fill" color="accent">
         <mat-label>Choose a username</mat-label>
-        <input type="text" matInput placeholder="" formControlName="username" required>
-        <mat-hint></mat-hint>
+        <input type="text" matInput placeholder="" formControlName="username">
+        <mat-error *ngIf="signUpForm.get('usernameAndPassword').get('username').hasError('required')">
+          Username is required
+        </mat-error>
+        <mat-error *ngIf="signUpForm.get('usernameAndPassword').get('username').hasError('minlength')">
+          Username should be longer than 5 characters
+        </mat-error>
+        <mat-error *ngIf="signUpForm.get('usernameAndPassword').get('username').hasError('alreadyTaken')">
+          Username is already taken
+        </mat-error>
       </mat-form-field>
       <mat-form-field class="password-field w-100" appearance="fill" color="accent">
         <mat-label>Password</mat-label>
-        <input type="password" matInput placeholder="" formControlName="password" required>
-        <mat-hint></mat-hint>
+        <input type="password" matInput placeholder="" formControlName="password">
+        <mat-error *ngIf="signUpForm.get('usernameAndPassword').get('password').hasError('required')">
+          Password is required
+        </mat-error>
+        <mat-error *ngIf="signUpForm.get('usernameAndPassword').get('password').hasError('minlength')">
+          Password must contain at least 8 characters
+        </mat-error>
       </mat-form-field>
       <div fxLayout="row" fxLayoutGap="10px" class="actions">
         <div fxFlex="50%">
-          <button class="back-button w-100" mat-raised-button matStepperPrevious type="button">Back</button>
+          <button type="button" class="back-button w-100" mat-raised-button matStepperPrevious>Back</button>
         </div>
         <div fxFlex="50%">
-          <button class="next-button w-100" mat-raised-button type="button" (click)="checkUsername()">Next</button>
+          <button type="button" class="next-button w-100" mat-raised-button matStepperNext>Next</button>
         </div>
       </div>
     </mat-step>
-    <mat-step [stepControl]="signUpFormGroup.get('firstName') && signUpFormGroup.get('lastName')"
-              errorMessage="User info is required.">
+
+    <!--    User info step    -->
+    <mat-step formGroupName="userInfo" [stepControl]="signUpForm.get('userInfo')">
       <div>
         <div class="description">Tell us about you</div>
         <div class="choose-username-description">Enter your full name.</div>
@@ -62,12 +87,16 @@
       <mat-form-field class="username-field w-100" appearance="fill" color="accent">
         <mat-label>First name</mat-label>
         <input type="text" matInput placeholder="" formControlName="firstName" required>
-        <mat-hint></mat-hint>
+        <mat-error *ngIf="signUpForm.get('userInfo').get('firstName').hasError('required')">
+          First name is required
+        </mat-error>
       </mat-form-field>
       <mat-form-field class="password-field w-100" appearance="fill" color="accent">
         <mat-label>Last name</mat-label>
         <input type="text" matInput placeholder="" formControlName="lastName" required>
-        <mat-hint></mat-hint>
+        <mat-error *ngIf="signUpForm.get('userInfo').get('lastName').hasError('required')">
+          Last name is required
+        </mat-error>
       </mat-form-field>
       <div fxLayout="row" fxLayoutGap="10px" class="actions">
         <div fxFlex="50%">
@@ -78,17 +107,24 @@
         </div>
       </div>
     </mat-step>
-    <mat-step [stepControl]="signUpFormGroup.get('activationCode')" errorMessage="Activation code is required.">
+
+    <!--    Activation step    -->
+    <mat-step [stepControl]="signUpForm.get('activation')">
       <div>
         <div class="description">Almost done</div>
-        <div class="choose-username-description">An email with activation code has ben sent
-          to {{signUpFormGroup.get('email').value}}. Enter your activation code to finish sign up process.
+        <div class="choose-username-description">An email with activation code has been sent
+          to {{signUpForm.get('email').value}}. Enter your activation code to finish sign up process.
         </div>
       </div>
       <mat-form-field class="username-field w-100" appearance="fill" color="accent">
         <mat-label>Activation code</mat-label>
-        <input type="text" matInput placeholder="" formControlName="activationCode" required>
-        <mat-hint></mat-hint>
+        <input type="text" matInput placeholder="" formControlName="activation">
+        <mat-error *ngIf="signUpForm.get('activation').hasError('required')">
+          Activation code is required
+        </mat-error>
+        <mat-error *ngIf="signUpForm.get('activation').hasError('invalidCode')">
+          Invalid activation code
+        </mat-error>
       </mat-form-field>
       <div fxLayout="row" fxLayoutGap="10px" class="actions">
         <div fxFlex="50%">
@@ -99,28 +135,49 @@
         </div>
       </div>
     </mat-step>
-    <mat-step [stepControl]="signUpFormGroup.get('login')" errorMessage="Invalid credentials.">
-      <div>
-        <div class="description">All done</div>
-        <div class="choose-username-description">Enter your email and password, proceed with login and start writing
-          your posts and comments.
+
+    <!--    Login step    -->
+    <ng-template *ngIf="!signUpForm.get('login').valid">
+      <mat-step formGroupName="login" [stepControl]="signUpForm.get('login')">
+        <div>
+          <div class="description">All done</div>
+          <div class="choose-username-description">Enter your email and password, proceed with login and start writing
+            your posts and comments.
+          </div>
         </div>
-      </div>
-      <mat-form-field class="username-field w-100" appearance="fill" color="accent">
-        <mat-label>Email</mat-label>
-        <input type="text" matInput placeholder="" formControlName="email" required>
-        <mat-icon matSuffix>person</mat-icon>
-        <mat-hint></mat-hint>
-      </mat-form-field>
-      <mat-form-field class="password-field w-100" appearance="fill" color="accent">
-        <mat-label>Password</mat-label>
-        <input type="password" matInput placeholder="" formControlName="password" required>
-        <mat-icon matSuffix>lock</mat-icon>
-        <mat-hint></mat-hint>
-      </mat-form-field>
-      <div class="actions">
-        <button class="next-button w-100" mat-raised-button (click)="login()">Log in</button>
-      </div>
-    </mat-step>
+        <mat-form-field appearance="fill" color="accent" class="w-100 username-field">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" formControlName="email">
+          <mat-icon matSuffix>person</mat-icon>
+          <mat-error *ngIf="signUpForm.get('login').get('email').hasError('required')">
+            Email is required
+          </mat-error>
+          <mat-error *ngIf="signUpForm.get('login').get('email').hasError('email')">
+            Email is invalid
+          </mat-error>
+          <mat-error *ngIf="signUpForm.get('login').get('email').hasError('invalidCredentials')">
+            Email may be invalid
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="fill" color="accent" class="w-100 password-field">
+          <mat-label>Password</mat-label>
+          <input matInput type="password" formControlName="password">
+          <mat-icon matSuffix>lock</mat-icon>
+          <mat-error *ngIf="signUpForm.get('login').get('password').hasError('required')">
+            Password is required
+          </mat-error>
+          <mat-error *ngIf="signUpForm.get('login').get('password').hasError('minlength')">
+            Password must contain at least 8 characters
+          </mat-error>
+          <mat-error *ngIf="signUpForm.get('login').get('password').hasError('invalidCredentials')">
+            Password may be invalid
+          </mat-error>
+        </mat-form-field>
+        <div class="actions">
+          <button class="next-button w-100" mat-raised-button (click)="login()">Log in</button>
+        </div>
+      </mat-step>
+    </ng-template>
+
   </mat-horizontal-stepper>
 </form>

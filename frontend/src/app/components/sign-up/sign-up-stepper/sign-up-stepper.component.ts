@@ -1,10 +1,12 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {Component, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
+import {AbstractControl, AsyncValidatorFn, FormBuilder, FormGroup, ValidationErrors, Validators} from '@angular/forms';
 import {STEPPER_GLOBAL_OPTIONS} from '@angular/cdk/stepper';
 import {SignUpService} from '../../../services/sign-up/sign-up.service';
-import {Router} from '@angular/router';
-import {User} from '../../../models/user';
 import {MatStepper} from '@angular/material';
+import {Authentication} from '../../../services/authentication/authentication.service';
+import {catchError, map} from 'rxjs/operators';
+import {Observable, of} from 'rxjs';
+import {User} from '../../../models/user';
 
 @Component({
   selector: 'app-sign-up-stepper',
@@ -16,72 +18,144 @@ import {MatStepper} from '@angular/material';
 })
 export class SignUpStepperComponent implements OnInit {
 
-  private _user: User;
+  @Output()
+  success: EventEmitter<Authentication>;
 
-  private _router: Router;
-  private _signUpFormGroup: FormGroup;
+  private signUpForm: FormGroup;
+
+  private _user: User;
+  private _formBuilder: FormBuilder;
   private _signUpService: SignUpService;
 
   @ViewChild('stepper', {static: false})
   private _stepper: MatStepper;
 
-  constructor(router: Router, signUpService: SignUpService) {
-    this._router = router;
+  constructor(signUpService: SignUpService, formBuilder: FormBuilder) {
+    this._formBuilder = formBuilder;
     this._signUpService = signUpService;
+    this.success = new EventEmitter<Authentication>();
   }
 
   ngOnInit(): void {
-    this._signUpFormGroup = new FormGroup({
-      email: new FormControl(null, [Validators.required, Validators.email]),
-      username: new FormControl(null, [Validators.required, Validators.min(5)]),
-      password: new FormControl(null, [Validators.required, Validators.min(8)]),
-      firstName: new FormControl(null, [Validators.required]),
-      lastName: new FormControl(null, [Validators.required]),
-      activationCode: new FormControl(null, [Validators.required])
+    this.signUpForm = this._formBuilder.group({
+      email: ['', [Validators.required, Validators.email], this.emailValidator()],
+      usernameAndPassword: this._formBuilder.group({
+        username: ['', [Validators.required, Validators.minLength(5)], this.usernameValidator()],
+        password: ['', [Validators.required, Validators.minLength(8)]],
+      }),
+      userInfo: this._formBuilder.group({
+        firstName: ['', Validators.required],
+        lastName: ['', Validators.required],
+      }),
+      activation: ['', Validators.required],
+      login: this._formBuilder.group({
+        email: ['', [Validators.required, Validators.email]],
+        password: ['', Validators.required],
+      }),
     });
+  }
+
+  private emailValidator(): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<ValidationErrors | null> => {
+      return this._signUpService.checkEmailAvailability(control.value)
+        .pipe(map(exists => {
+          return exists ? {alreadyTaken: true} : null;
+        }));
+    };
+  }
+
+  private usernameValidator(): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<ValidationErrors | null> => {
+      return this._signUpService.checkUsernameAvailability(control.value)
+        .pipe(map(exists => {
+          return exists ? {alreadyTaken: true} : null;
+        }));
+    };
   }
 
   public signUp(): void {
-    const form = {
-      email: this.signUpFormGroup.get('email').value,
-      username: this.signUpFormGroup.get('username').value,
-      password: this.signUpFormGroup.get('password').value,
-      firstName: this.signUpFormGroup.get('firstName').value,
-      lastName: this.signUpFormGroup.get('lastName').value
-    };
+    const userInfo = this.signUpForm.get('userInfo') as FormGroup;
+    for (const control in userInfo.controls) {
+      if (userInfo.controls.hasOwnProperty(control)) {
+        userInfo.get(control).markAsTouched();
+        userInfo.get(control).updateValueAndValidity();
+      }
+    }
 
-    this._signUpService.signUp(form).subscribe(user => {
-      this._user = user;
-      this._stepper.next();
-    });
+    userInfo.markAsTouched();
+    userInfo.updateValueAndValidity();
+
+    if (userInfo.valid) {
+      const form = {
+        email: this.signUpForm.get('email').value,
+        username: this.signUpForm.get('usernameAndPassword').get('username').value,
+        password: this.signUpForm.get('usernameAndPassword').get('password').value,
+        firstName: this.signUpForm.get('userInfo').get('firstName').value,
+        lastName: this.signUpForm.get('userInfo').get('lastName').value
+      };
+
+      this._signUpService.signUp(form).subscribe(user => {
+        this._user = user;
+        this._stepper.next();
+      });
+    }
   }
 
   public activate(): void {
-    const activationCode = this.signUpFormGroup.get('activationCode').value;
-    this._signUpService.activate(this._user, activationCode).subscribe(user => {
-      this._user = user;
-      this._stepper.next();
-    });
-  }
+    const activation = this.signUpForm.get('activation');
+    activation.markAsTouched();
+    activation.updateValueAndValidity();
 
-  public checkUsername(): void {
-    const username = this.signUpFormGroup.get('username').value;
-    console.log(username);
-    this._stepper.next();
+    if (this._user && activation.valid) {
+      this._signUpService.activate(this._user, activation.value)
+        .pipe(catchError(error => of(null)))
+        .subscribe(user => {
+          if (user) {
+            this._user = user;
+            this.tryFinish(
+              this.signUpForm.get('login'),
+              this.signUpForm.get('email').value,
+              this.signUpForm.get('usernameAndPassword').get('password').value
+            );
+          } else {
+            activation.setErrors({
+              invalidCode: true
+            });
+          }
+        });
+    }
   }
 
   public login(): void {
-    const email = this.signUpFormGroup.get('email').value;
-    const password = this.signUpFormGroup.get('password').value;
-    this._signUpService.login(email, password).subscribe(authentication => {
-      if (authentication.authenticated) {
-        this._router.navigate(['']);
+    const login = this.signUpForm.get('login') as FormGroup;
+    for (const control in login.controls) {
+      if (login.controls.hasOwnProperty(control)) {
+        login.get(control).markAsTouched();
+        login.get(control).updateValueAndValidity();
       }
-    });
+    }
+
+    login.markAsTouched();
+    login.updateValueAndValidity();
+
+    if (login.valid) {
+      const email = login.get('email').value;
+      const password = login.get('password').value;
+      this.tryFinish(login, email, password);
+    }
   }
 
-  get signUpFormGroup(): FormGroup {
-    return this._signUpFormGroup;
+  public tryFinish(login: AbstractControl, email: string, password: string): void {
+    this._signUpService.login(email, password).pipe(catchError(error => {
+      return of({authenticated: false});
+    })).subscribe(authentication => {
+      if (authentication.authenticated) {
+        this.success.emit(authentication);
+      } else {
+        login.get('email').setErrors({invalidCredentials: true});
+        login.get('password').setErrors({invalidCredentials: true});
+      }
+    });
   }
 
 }

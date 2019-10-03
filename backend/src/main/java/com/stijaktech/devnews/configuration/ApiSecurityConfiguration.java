@@ -1,6 +1,7 @@
 package com.stijaktech.devnews.configuration;
 
 import com.stijaktech.devnews.features.authentication.jwt.JwtAuthenticationFilter;
+import com.stijaktech.devnews.features.authentication.jwt.JwtAwareAuthenticationFailureHandler;
 import com.stijaktech.devnews.features.authentication.jwt.JwtAwareAuthenticationSuccessHandler;
 import com.stijaktech.devnews.features.authentication.login.LoginAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
@@ -24,10 +25,16 @@ import java.util.List;
 public class ApiSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private JwtAwareAuthenticationSuccessHandler successHandler;
+    private JwtAwareAuthenticationFailureHandler failureHandler;
     private List<AuthenticationProvider> authenticationProviders;
 
-    public ApiSecurityConfiguration(JwtAwareAuthenticationSuccessHandler successHandler, List<AuthenticationProvider> authenticationProviders) {
+    public ApiSecurityConfiguration(
+            JwtAwareAuthenticationSuccessHandler successHandler,
+            JwtAwareAuthenticationFailureHandler failureHandler,
+            List<AuthenticationProvider> authenticationProviders) {
+
         this.successHandler = successHandler;
+        this.failureHandler = failureHandler;
         this.authenticationProviders = authenticationProviders;
     }
 
@@ -76,7 +83,7 @@ public class ApiSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
-        return new JwtAuthenticationFilter(authenticationManager());
+        return new JwtAuthenticationFilter(authenticationManager(), failureHandler);
     }
 
     @Bean

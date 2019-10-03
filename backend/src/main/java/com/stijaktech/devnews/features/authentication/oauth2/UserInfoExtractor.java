@@ -9,16 +9,12 @@ import org.springframework.stereotype.Component;
 public class UserInfoExtractor {
 
     public User extract(Provider provider, JsonNode userInfo) {
-        switch (provider) {
-            case FACEBOOK:
-                return extractFacebookUserInfo(userInfo);
-            case GOOGLE:
-                return extractGoogleUserInfo(userInfo);
-            case GITHUB:
-                return extractGitHubUserInfo(userInfo);
-            default:
-                throw new IllegalArgumentException("Unsupported provider: " + provider.getName());
-        }
+        return switch (provider) {
+            case FACEBOOK -> extractFacebookUserInfo(userInfo);
+            case GOOGLE -> extractGoogleUserInfo(userInfo);
+            case GITHUB -> extractGitHubUserInfo(userInfo);
+            default -> throw new IllegalArgumentException("Unsupported provider: " + provider.getName());
+        };
     }
 
     private User extractGoogleUserInfo(JsonNode jsonNode) {

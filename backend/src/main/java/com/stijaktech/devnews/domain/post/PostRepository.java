@@ -1,6 +1,5 @@
 package com.stijaktech.devnews.domain.post;
 
-import com.stijaktech.devnews.domain.comment.Comment;
 import com.stijaktech.devnews.domain.community.Community;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

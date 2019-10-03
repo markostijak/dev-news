@@ -1,6 +1,5 @@
 package com.stijaktech.devnews.domain.community;
 
-import com.stijaktech.devnews.domain.comment.Comment;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;

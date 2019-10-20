@@ -9,11 +9,16 @@ import {PostViewComponent} from './views/post/post-view.component';
 import {HomeViewComponent} from './views/home/home-view.component';
 import {IndexViewComponent} from './views/index/index-view.component';
 import {TopCommunitiesViewComponent} from './views/top-communities/top-communities-view.component';
+import {SearchViewComponent} from './views/search/search-view.component';
 
 const routes: Routes = [
   {
     path: '',
     component: IndexViewComponent
+  },
+  {
+    path: 'search',
+    component: SearchViewComponent
   },
   {
     path: 'login',

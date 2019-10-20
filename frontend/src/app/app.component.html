@@ -7,7 +7,7 @@
         <img class="logo" src="assets/icons/logo.svg" alt="Logo">
       </a>
       <app-navigation class="ml-30"></app-navigation>
-      <app-search class="search-container ml-30 mr-30"></app-search>
+      <app-search class="search-container ml-30 mr-30" (search)="onSearch($event)"></app-search>
       <ng-container *ngIf="authentication | async as authentication">
         <ng-container *ngIf="authentication.authenticated; then user else login"></ng-container>
         <ng-template #user>

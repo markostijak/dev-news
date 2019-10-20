@@ -152,6 +152,7 @@ export class SignUpStepperComponent implements OnInit {
       if (authentication.authenticated) {
         this.success.emit(authentication);
       } else {
+        login.setErrors({invalidCredentials: true});
         login.get('email').setErrors({invalidCredentials: true});
         login.get('password').setErrors({invalidCredentials: true});
       }

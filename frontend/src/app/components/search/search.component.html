@@ -1,4 +1,6 @@
 <div class="search-container">
-  <input class="search" label="Search box" placeholder="Search">
-  <div class="search-result-container"></div>
+  <form (ngSubmit)="onSubmit($event)">
+    <input [formControl]="searchInput" class="search" label="Search box" placeholder="Search">
+    <div class="search-result-container"></div>
+  </form>
 </div>

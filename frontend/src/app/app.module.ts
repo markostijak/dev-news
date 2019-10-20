@@ -69,6 +69,8 @@ import { ReplyEditorComponent } from './components/comment/reply-editor/reply-ed
 import { PostEditEditorComponent } from './components/post/post-edit-editor/post-edit-editor.component';
 import {AppEditorModule} from './modules/editor/app-editor.module';
 import { SignUpStepperComponent } from './components/sign-up/sign-up-stepper/sign-up-stepper.component';
+import { ShowProgressDirective } from './directives/show-progress/show-progress.directive';
+import { SearchViewComponent } from './views/search/search-view.component';
 
 @NgModule({
   declarations: [
@@ -108,7 +110,9 @@ import { SignUpStepperComponent } from './components/sign-up/sign-up-stepper/sig
     CommentComponent,
     ReplyEditorComponent,
     PostEditEditorComponent,
-    SignUpStepperComponent
+    SignUpStepperComponent,
+    ShowProgressDirective,
+    SearchViewComponent
   ],
   imports: [
     BrowserModule,

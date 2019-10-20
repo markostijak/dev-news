@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {User} from '../../models/user';
 import {HttpClient, HttpParams} from '@angular/common/http';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject, Observable, of} from 'rxjs';
 import {AuthenticationService} from '../authentication/authentication.service';
 import {Post} from '../../models/post';
 import {CommunityService} from '../community/community.service';
@@ -9,6 +9,7 @@ import {Community} from '../../models/community';
 import {Comment} from '../../models/comment';
 import {CommentService} from '../comment/comment.service';
 import {map} from 'rxjs/operators';
+import {Hal, Page} from '../../models/hal';
 
 @Injectable({
   providedIn: 'root'
@@ -91,6 +92,10 @@ export class PostService {
     return this._httpClient.get(resource, {
       params: params
     });
+  }
+
+  public search(term: string): Observable<Post[]> {
+    return of([]);
   }
 
 }

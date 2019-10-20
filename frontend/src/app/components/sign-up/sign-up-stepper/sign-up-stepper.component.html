@@ -137,47 +137,45 @@
     </mat-step>
 
     <!--    Login step    -->
-    <ng-template *ngIf="!signUpForm.get('login').valid">
-      <mat-step formGroupName="login" [stepControl]="signUpForm.get('login')">
-        <div>
-          <div class="description">All done</div>
-          <div class="choose-username-description">Enter your email and password, proceed with login and start writing
-            your posts and comments.
-          </div>
+    <mat-step formGroupName="login" [stepControl]="signUpForm.get('login')" *ngIf="signUpForm.get('login').get('email').hasError('invalidCredentials')">
+      <div>
+        <div class="description">All done</div>
+        <div class="choose-username-description">Enter your email and password, proceed with login and start writing
+          your posts and comments.
         </div>
-        <mat-form-field appearance="fill" color="accent" class="w-100 username-field">
-          <mat-label>Email</mat-label>
-          <input matInput type="email" formControlName="email">
-          <mat-icon matSuffix>person</mat-icon>
-          <mat-error *ngIf="signUpForm.get('login').get('email').hasError('required')">
-            Email is required
-          </mat-error>
-          <mat-error *ngIf="signUpForm.get('login').get('email').hasError('email')">
-            Email is invalid
-          </mat-error>
-          <mat-error *ngIf="signUpForm.get('login').get('email').hasError('invalidCredentials')">
-            Email may be invalid
-          </mat-error>
-        </mat-form-field>
-        <mat-form-field appearance="fill" color="accent" class="w-100 password-field">
-          <mat-label>Password</mat-label>
-          <input matInput type="password" formControlName="password">
-          <mat-icon matSuffix>lock</mat-icon>
-          <mat-error *ngIf="signUpForm.get('login').get('password').hasError('required')">
-            Password is required
-          </mat-error>
-          <mat-error *ngIf="signUpForm.get('login').get('password').hasError('minlength')">
-            Password must contain at least 8 characters
-          </mat-error>
-          <mat-error *ngIf="signUpForm.get('login').get('password').hasError('invalidCredentials')">
-            Password may be invalid
-          </mat-error>
-        </mat-form-field>
-        <div class="actions">
-          <button class="next-button w-100" mat-raised-button (click)="login()">Log in</button>
-        </div>
-      </mat-step>
-    </ng-template>
+      </div>
+      <mat-form-field appearance="fill" color="accent" class="w-100 username-field">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" formControlName="email">
+        <mat-icon matSuffix>person</mat-icon>
+        <mat-error *ngIf="signUpForm.get('login').get('email').hasError('required')">
+          Email is required
+        </mat-error>
+        <mat-error *ngIf="signUpForm.get('login').get('email').hasError('email')">
+          Email is invalid
+        </mat-error>
+        <mat-error *ngIf="signUpForm.get('login').get('email').hasError('invalidCredentials')">
+          Email may be invalid
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="fill" color="accent" class="w-100 password-field">
+        <mat-label>Password</mat-label>
+        <input matInput type="password" formControlName="password">
+        <mat-icon matSuffix>lock</mat-icon>
+        <mat-error *ngIf="signUpForm.get('login').get('password').hasError('required')">
+          Password is required
+        </mat-error>
+        <mat-error *ngIf="signUpForm.get('login').get('password').hasError('minlength')">
+          Password must contain at least 8 characters
+        </mat-error>
+        <mat-error *ngIf="signUpForm.get('login').get('password').hasError('invalidCredentials')">
+          Password may be invalid
+        </mat-error>
+      </mat-form-field>
+      <div class="actions">
+        <button class="next-button w-100" mat-raised-button (click)="login()">Log in</button>
+      </div>
+    </mat-step>
 
   </mat-horizontal-stepper>
 </form>

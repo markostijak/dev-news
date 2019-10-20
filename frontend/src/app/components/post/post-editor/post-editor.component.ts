@@ -8,6 +8,7 @@ import {FormControl} from '@angular/forms';
 import {Post} from '../../../models/post';
 import {CommunityService} from '../../../services/community/community.service';
 import {PostService} from '../../../services/post/post.service';
+import {debounceTime, startWith, switchMap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-post-editor',
@@ -17,10 +18,10 @@ import {PostService} from '../../../services/post/post.service';
 export class PostEditorComponent implements OnInit, OnDestroy {
 
   @Output()
-  private save: EventEmitter<Post>;
+  private save: EventEmitter<Post> = new EventEmitter<Post>();
 
   @Output()
-  private discard: EventEmitter<any>;
+  private discard: EventEmitter<any> = new EventEmitter<any>();
 
   private _title: string;
   private _selected: Community;
@@ -41,8 +42,6 @@ export class PostEditorComponent implements OnInit, OnDestroy {
               authenticationService: AuthenticationService) {
 
     this._postService = postService;
-    this.save = new EventEmitter<any>();
-    this.discard = new EventEmitter<any>();
     this._autocomplete = new FormControl();
     this._communityService = communityService;
     this._authentication = authenticationService.authentication;
@@ -57,6 +56,15 @@ export class PostEditorComponent implements OnInit, OnDestroy {
         this.selected = community;
       } else {
         this._communities = this._communityService.myCommunities();
+      }
+    });
+
+    this._communities = this._autocomplete.valueChanges.pipe(startWith(this.communities))
+      .pipe(debounceTime(300), switchMap(value => this._communityService.search(value)));
+
+    this._autocomplete.valueChanges.subscribe(value => {
+      if (this._selected && this._selected.title !== value) {
+        this._selected = null;
       }
     });
   }

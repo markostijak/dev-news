@@ -47,6 +47,16 @@ export class CommunityService {
     return this._communities.find(c => c.alias === community.alias) != null;
   }
 
+  public search(search: string): Observable<Community[]> {
+    if (search.length === 0) {
+      return this.myCommunities();
+    }
+
+    return this.fetchResource('/api/v1/communities/search/findByTitleStartsWithIgnoreCase',
+      new HttpParams().set('term', search).set('projection', 'preview'))
+      .pipe(map((response: Hal<Community[]>) => response._embedded.communities));
+  }
+
   public myCommunities(): Observable<Community[]> {
     if (!this._communitiesSubject) {
       return this._httpClient.get('/api/v1/users/' + this._user.id + '/communities').pipe(switchMap((hal: Hal<Community[]>) => {

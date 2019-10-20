@@ -23,7 +23,6 @@ public class AuthorAwarePermissionEvaluator implements PermissionEvaluator {
 
         User principal = (User) authentication.getPrincipal();
 
-
         if (targetDomainObject instanceof Blamable) {
             return handleBlamable(principal, (Blamable) targetDomainObject);
         }

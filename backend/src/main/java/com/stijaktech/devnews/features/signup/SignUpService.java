@@ -17,12 +17,10 @@ public class SignUpService {
 
     private UserService userService;
     private JavaMailSender mailSender;
-    private UserRepository userRepository;
 
-    public SignUpService(UserService userService, @Nullable JavaMailSender mailSender, UserRepository userRepository) {
+    public SignUpService(UserService userService, @Nullable JavaMailSender mailSender) {
         this.mailSender = mailSender;
         this.userService = userService;
-        this.userRepository = userRepository;
     }
 
     public User activate(User user, String activationCode) {

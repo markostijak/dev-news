@@ -23,6 +23,14 @@ services:
     ports:
       - '27017:27017'
 
+  nginx:
+    container_name: 'cdn'
+    image: 'nginx'
+    volumes:
+      - c:/public/:/usr/share/nginx/html
+    ports:
+      - '9000:80'
+
   devnews:
     container_name: 'devnews'
     image: 'stijak/devnews'

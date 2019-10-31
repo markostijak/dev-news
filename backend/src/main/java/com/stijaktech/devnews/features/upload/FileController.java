@@ -1,12 +1,12 @@
 package com.stijaktech.devnews.features.upload;
 
 import org.springframework.data.rest.webmvc.BasePathAwareController;
-import org.springframework.hateoas.Link;
+import org.springframework.data.rest.webmvc.RepositoryRestController;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.net.URI;
 
 @BasePathAwareController
 public class FileController {
@@ -18,18 +18,18 @@ public class FileController {
     }
 
     @PostMapping("/files/image")
-    public String upload(@RequestParam("file") MultipartFile image) {
-        return fileService.storeImage(image);
+    public ResponseEntity<String> upload(@RequestParam("file") MultipartFile image) {
+        return ResponseEntity.ok(fileService.storeImage(image));
     }
 
     @PostMapping("/files/video")
-    public String video(@RequestParam("file") MultipartFile video) {
-        return fileService.storeVideo(video);
+    public ResponseEntity<String> video(@RequestParam("file") MultipartFile video) {
+        return ResponseEntity.ok(fileService.storeVideo(video));
     }
 
     @PostMapping("/files/document")
-    public String document(@RequestParam("file") MultipartFile document) {
-        return fileService.storeDocument(document);
+    public ResponseEntity<String> document(@RequestParam("file") MultipartFile document) {
+        return ResponseEntity.ok(fileService.storeDocument(document));
     }
 
 }

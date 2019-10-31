@@ -40,9 +40,8 @@ public class Application implements CommandLineRunner {
     private CommunityRepository communityRepository;
 
     @Controller
-    @SuppressWarnings("MVCPathVariableInspection")
     public static class AngularController {
-        @RequestMapping(value = "{path:(?:(?!api|.).)*}/**")
+        @RequestMapping(value = "")
         public String forward() {
             // forward to angular
             return "forward:/";
@@ -84,19 +83,19 @@ public class Application implements CommandLineRunner {
                             .title("Java")
                             .alias("java")
                             .description("News, Technical discussions, research papers and assorted things of interest related to the Java programming language.")
-                            .logo("http://localhost:9000/image_2844365315f87d17bfeab0c6e01da893.png")
+                            .logo("http://localhost:9000/java.png")
                             .build(),
                     Community.builder()
                             .title("Angular")
                             .alias("angular")
                             .description("Content specific to Angular. Angular is Google's open source framework for crafting high-quality front-end web applications. This community exists to help spread news, discuss current developments and new features. Welcome!")
-                            .logo("http://localhost:9000/image_ca26f009281bfb43a21797b018e0c0dc.png")
+                            .logo("http://localhost:9000/angular.png")
                             .build(),
                     Community.builder()
                             .title("Spring Framework")
                             .alias("spring-framework")
                             .description("The Spring Framework provides a comprehensive programming and configuration model for modern Java-based enterprise applications - on any kind of deployment platform. A key element of Spring is infrastructural support at the application level: Spring focuses on the \"plumbing\" of enterprise applications so that teams can focus on application-level business logic, without unnecessary ties to specific deployment environments.")
-                            .logo("http://localhost:9000/image_8bbf24dad5367d1821caa35ad5d07f38.png")
+                            .logo("http://localhost:9000/spring.png")
                             .build()
             ));
         }

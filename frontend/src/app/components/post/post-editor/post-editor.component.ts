@@ -3,12 +3,13 @@ import {NavigationService} from '../../../services/navigation/navigation.service
 import {Community} from '../../../models/community';
 import {Authentication, AuthenticationService} from '../../../services/authentication/authentication.service';
 import {MatAutocompleteSelectedEvent} from '@angular/material';
-import {Observable, of, Subscription} from 'rxjs';
+import {forkJoin, Observable, of, Subscription} from 'rxjs';
 import {FormControl} from '@angular/forms';
 import {Post} from '../../../models/post';
 import {CommunityService} from '../../../services/community/community.service';
 import {PostService} from '../../../services/post/post.service';
-import {debounceTime, startWith, switchMap} from 'rxjs/operators';
+import {debounceTime, map, startWith, switchMap} from 'rxjs/operators';
+import {FileService} from '../../../services/file/file.service';
 
 @Component({
   selector: 'app-post-editor',
@@ -28,6 +29,7 @@ export class PostEditorComponent implements OnInit, OnDestroy {
   private _content: object;
 
   private _postService: PostService;
+  private _fileService: FileService;
   private _navigation: Observable<Community>;
   private _communityService: CommunityService;
   private _communities: Observable<Community[]>;
@@ -37,11 +39,13 @@ export class PostEditorComponent implements OnInit, OnDestroy {
   private _subscription: Subscription;
 
   constructor(postService: PostService,
+              fileService: FileService,
               communityService: CommunityService,
               navigationService: NavigationService,
               authenticationService: AuthenticationService) {
 
     this._postService = postService;
+    this._fileService = fileService;
     this._autocomplete = new FormControl();
     this._communityService = communityService;
     this._authentication = authenticationService.authentication;
@@ -83,17 +87,26 @@ export class PostEditorComponent implements OnInit, OnDestroy {
 
   onContentChanged($event: any): any {
     this._content = $event.content;
-    console.log(JSON.stringify($event.content));
   }
 
   onSave(): void {
-    this._postService.create({
-      title: this._title,
-      content: JSON.stringify(this._content),
-      community: this._selected._links.self.href as unknown
-    } as Post).subscribe((post: Post) => {
-      post.community = this._selected;
-      this.save.emit(post);
+    const observables: Observable<string>[] = [];
+    // @ts-ignore
+    for (const op of this._content.ops) {
+      if (op.insert && op.insert.image && op.insert.image.startsWith('data')) {
+        observables.push(this._fileService.uploadDataUrl(op.insert.image).pipe(map(url => op.insert.image = url)));
+      }
+    }
+
+    forkJoin(observables).subscribe(() => {
+      this._postService.create({
+        title: this._title,
+        content: JSON.stringify(this._content),
+        community: this._selected._links.self.href as any
+      } as Post).subscribe((post: Post) => {
+        post.community = this._selected;
+        this.save.emit(post);
+      });
     });
   }
 

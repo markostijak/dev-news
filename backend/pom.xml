@@ -122,11 +122,6 @@
             <artifactId>thumbnailator</artifactId>
             <version>0.4.8</version>
         </dependency>
-        <dependency>
-            <groupId>com.stijaktech.devnews</groupId>
-            <artifactId>frontend</artifactId>
-            <version>1.0.0</version>
-        </dependency>
     </dependencies>
 
     <build>
@@ -142,6 +137,15 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
+                <configuration>
+                    <buildArgs>
+                        <JAR>${project.build.finalName}.jar</JAR>
+                    </buildArgs>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

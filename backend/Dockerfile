@@ -1,7 +1,7 @@
-FROM openjdk:13
+FROM openjdk:13.0.1
 
 ARG JAR
 
-ADD backend/target/${JAR} /app/application.jar
+ADD target/${JAR} /app/application.jar
 
 ENTRYPOINT ["java", "--enable-preview", "-parameters", "-jar", "/app/application.jar"]

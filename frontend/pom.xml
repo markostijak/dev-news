@@ -15,18 +15,14 @@
   <artifactId>frontend</artifactId>
   <version>1.0.0</version>
 
-  <packaging>jar</packaging>
-
   <build>
     <finalName>frontend</finalName>
     <plugins>
-      <!-- Frontend build plugin -->
       <plugin>
         <groupId>com.github.eirslett</groupId>
         <artifactId>frontend-maven-plugin</artifactId>
         <version>1.6</version>
         <executions>
-          <!-- Install our node and npm version to run npm/node scripts-->
           <execution>
             <id>install node and npm</id>
             <goals>
@@ -37,7 +33,6 @@
               <npmVersion>6.9.0</npmVersion>
             </configuration>
           </execution>
-          <!-- Install all project dependencies -->
           <execution>
             <id>npm install</id>
             <goals>
@@ -48,17 +43,20 @@
               <arguments>install</arguments>
             </configuration>
           </execution>
-          <!-- Build and minify static files -->
           <execution>
             <id>npm run build</id>
             <goals>
               <goal>npm</goal>
             </goals>
             <configuration>
-              <arguments>run build</arguments>
+              <arguments>ng build --prod</arguments>
             </configuration>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.spotify</groupId>
+        <artifactId>dockerfile-maven-plugin</artifactId>
       </plugin>
     </plugins>
   </build>

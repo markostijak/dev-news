@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+spec:
+  selector:
+    app: backend
+  ports:
+    - port: 8080
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  labels:
+    app: backend
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: backend
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: stijaktech/backend:latest
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: /public
+              name: public
+              readOnly: false
+      volumes:
+        - name: public
+          hostPath:
+            path: c:/home/marko_stijak/application/public
+            type: Directory
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: backend

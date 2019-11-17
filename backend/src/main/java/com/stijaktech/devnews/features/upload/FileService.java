@@ -1,23 +1,19 @@
 package com.stijaktech.devnews.features.upload;
 
 import lombok.SneakyThrows;
-import net.coobird.thumbnailator.Thumbnailator;
 import net.coobird.thumbnailator.Thumbnails;
-import net.coobird.thumbnailator.builders.BufferedImageBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.security.crypto.codec.Hex;
 import org.springframework.security.crypto.keygen.BytesKeyGenerator;
 import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.stereotype.Service;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -45,10 +41,13 @@ public class FileService {
         String filename = generateFileName("image_", extractExtension(image));
         File destination = storeLocation.resolve(filename).toFile();
 
-        Thumbnails.of(image.getInputStream())
-                .size(1280, 720)
-                .keepAspectRatio(true)
-                .toFile(destination);
+        BufferedImage bufferedImage = ImageIO.read(image.getInputStream());
+
+        if (bufferedImage.getWidth() < 1280 && bufferedImage.getHeight() < 720) {
+            image.transferTo(destination);
+        } else {
+            Thumbnails.of(bufferedImage).size(1280, 720).keepAspectRatio(true).toFile(destination);
+        }
 
         return host + filename;
     }

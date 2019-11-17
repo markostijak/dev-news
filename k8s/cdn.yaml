@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: cdn
+spec:
+  selector:
+    app: cdn
+  ports:
+    - port: 8080
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cdn
+  labels:
+    app: cdn
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: cdn
+      labels:
+        app: cdn
+    spec:
+      containers:
+        - name: cdn
+          image: nginx:latest
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: /usr/share/nginx/html
+              name: public
+              readOnly: true
+      volumes:
+        - name: public
+          hostPath:
+            path: c:/home/marko_stijak/application/public
+            type: Directory
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: cdn

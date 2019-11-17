@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: elk
+spec:
+  selector:
+    app: elk
+  ports:
+    - port: 8080
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: elk
+  labels:
+    app: elk
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: elk
+      labels:
+        app: elk
+    spec:
+      containers:
+        - name: elk
+          image: sebp/elk:latest
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: elk

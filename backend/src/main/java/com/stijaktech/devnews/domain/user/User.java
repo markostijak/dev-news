@@ -36,10 +36,9 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import static java.util.stream.Collectors.*;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Document("users")
-@JsonInclude(NON_NULL)
+@NoArgsConstructor
+@EqualsAndHashCode(of = "id")
 public class User implements UserDetails {
 
     @Id
@@ -78,7 +77,6 @@ public class User implements UserDetails {
     @JsonIgnore
     @DBRef(lazy = true)
     @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     private Set<Community> communities = Set.of();
 
     @JsonProperty(access = Access.WRITE_ONLY)

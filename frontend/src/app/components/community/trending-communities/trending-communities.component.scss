@@ -1,0 +1,18 @@
+:host {
+  display: block;
+}
+
+.community-title {
+  text-decoration: none;
+  color: inherit;
+}
+
+.community-title:hover {
+  text-decoration: underline;
+}
+
+.community-members {
+  font-size: 12px;
+  opacity: 0.6;
+  margin-top: 3px;
+}

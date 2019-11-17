@@ -3,7 +3,6 @@ import {NavigationService, TOP_COMMUNITIES} from '../../services/navigation/navi
 import {Community} from '../../models/community';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {Hal, Page} from '../../models/hal';
-import {Post} from '../../models/post';
 
 @Component({
   selector: 'app-top-communities-view',
@@ -32,12 +31,18 @@ export class TopCommunitiesViewComponent implements OnInit {
     this._httpClient.get('api/v1/communities', {
       params: new HttpParams()
         .set('page', String(start))
-        .set('sort', 'members,desc')
+        .set('sort', 'postsCount,desc')
         .set('projection', 'include-stats')
     }).subscribe((hal: Hal<Community[]>) => {
       this._communities.push(...hal._embedded.communities);
       this._page = hal.page;
     });
+  }
+
+  public onScroll($event): void {
+    if (this._page && (this._page.number + 1 < this._page.totalPages)) {
+      this.fetchCommunities(this._page.number + 1);
+    }
   }
 
   get communities(): Community[] {

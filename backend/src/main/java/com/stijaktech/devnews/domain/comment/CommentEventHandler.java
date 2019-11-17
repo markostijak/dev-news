@@ -26,10 +26,12 @@ public class CommentEventHandler {
 
     @HandleBeforeCreate
     public void beforeCreate(Comment comment) {
+        Post post = comment.getPost();
         Comment parent = comment.getParent();
         String slug = generateKey();
         String fullSlug = String.format("%s:%s", Instant.now().toEpochMilli(), slug);
 
+        comment.setPostId(post.getId());
         comment.setSlug((parent != null ? parent.getSlug() + "/" : "") + slug);
         comment.setFullSlug((parent != null ? parent.getFullSlug() + "/" : "") + fullSlug);
         comment.setParentId(parent != null ? parent.getId() : null);

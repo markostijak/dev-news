@@ -14,8 +14,10 @@ import {Post} from '../../models/post';
 export class CommunityService {
 
   private _user: User;
-  private _httpClient: HttpClient;
   private _communities: Community[] = [];
+
+  private _httpClient: HttpClient;
+
   private _communitiesObservable: Observable<Community[]>;
   private _communitiesSubject: BehaviorSubject<Community[]>;
 
@@ -36,7 +38,7 @@ export class CommunityService {
     return this._httpClient.delete('/api/v1/users/' + this._user.id + '/communities/' + community.id)
       .pipe(map(() => {
         for (let i = 0; i < this._communities.length; i++) {
-          if (this._communities[i].id === community.id) {
+          if (this._communities[i].alias === community.alias) {
             this._communities.splice(i, 1);
           }
         }
@@ -97,17 +99,17 @@ export class CommunityService {
     return this.fetchResource('/api/v1/communities/search/findByAlias', params.set('alias', alias)) as Observable<Community>;
   }
 
-  public fetchPosts(communityResource: string, page?: Page, projection?: string): Observable<Hal<Post[]>> {
-    let params = new HttpParams();
-    if (projection) {
-      params = params.set('projection', projection);
-    }
+  public fetchTrending(): Observable<Community[]> {
+    return this.fetchResource('/api/v1/communities/search/findTrending', new HttpParams()
+      .set('projection', 'include-stats')
+    ).pipe(map((response: Hal<Community[]>) => response._embedded.communities));
+  }
 
-    return this.fetchResource('api/v1/posts/search/findAllByCommunity', params
-      .set('page', String(page ? page.number : 0))
-      .set('community', communityResource)
-      .set('sort', 'createdAt,desc')
-    ) as Observable<Hal<Post[]>>;
+  public fetchUpAndComing(): Observable<Community[]> {
+    return this.fetchResource('/api/v1/communities/search/findUpAndComing', new HttpParams()
+      .set('projection', 'preview')
+      .set('size', '5')
+    ).pipe(map((response: Hal<Community[]>) => response._embedded.communities));
   }
 
   private fetchResource(resource: string, params: HttpParams): Observable<object> {

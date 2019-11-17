@@ -17,9 +17,9 @@
               <span class="separator">•</span>
             </div>
             <div fxFlex="0 0 auto" class="user">Posted
-              by {{post.createdBy.username}} {{timeFormatter.format(post.createdAt)}}</div>
+              by {{post.createdBy.username}} {{post.createdAt | timeAgo}}</div>
             <div *ngIf="post.updatedAt && post.createdAt != post.updatedAt" fxFlex="0 0 auto" class="user">
-              (edited {{timeFormatter.format(post.updatedAt)}})
+              (edited {{post.updatedAt | timeAgo}})
             </div>
             <div fxFlex="1 1 auto"></div>
           </div>
@@ -76,10 +76,10 @@
     </div>
   </div>
   <div class="main-right" fxFlex fxHide.lt-md>
-    <div>
-      <div>
-        <app-community *ngIf="community" [community]="community" [showCreatePostButton]="false"></app-community>
-      </div>
-    </div>
+    <app-community class="mb-10" *ngIf="community" [community]="community"
+                   [showCreatePostButton]="false"></app-community>
+    <app-trending-posts *ngIf="trending.length" class="mb-10" [posts]="trending"></app-trending-posts>
+    <app-dev-news class="mb-10"></app-dev-news>
+    <app-back-to-top></app-back-to-top>
   </div>
 </div>

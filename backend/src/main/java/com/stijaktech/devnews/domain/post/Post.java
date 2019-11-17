@@ -1,8 +1,10 @@
 package com.stijaktech.devnews.domain.post;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.stijaktech.devnews.domain.Blamable;
+import com.stijaktech.devnews.domain.comment.Comment;
 import com.stijaktech.devnews.domain.community.Community;
 import com.stijaktech.devnews.domain.user.User;
 import lombok.AllArgsConstructor;
@@ -23,21 +25,25 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotBlank;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import static com.fasterxml.jackson.annotation.JsonProperty.Access.READ_ONLY;
 import static org.hibernate.validator.constraints.SafeHtml.WhiteListType.NONE;
 
 @Data
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
 @Document("posts")
-@JsonInclude(NON_NULL)
+@EqualsAndHashCode(of = "id")
 public class Post implements Blamable {
 
     @Id
     private String id;
+
+    @JsonIgnore
+    private String communityId;
 
     @NotBlank
     @SafeHtml(whitelistType = NONE)
@@ -52,18 +58,16 @@ public class Post implements Blamable {
     private String content;
 
     @JsonProperty(access = READ_ONLY)
-    private long commentsCount;
+    private int commentsCount;
 
     @CreatedBy
-    @DBRef(lazy = true)
     @ToString.Exclude
-    @EqualsAndHashCode.Exclude
+    @DBRef(lazy = true)
     private User createdBy;
 
     @LastModifiedBy
-    @DBRef(lazy = true)
     @ToString.Exclude
-    @EqualsAndHashCode.Exclude
+    @DBRef(lazy = true)
     private User updatedBy;
 
     @CreatedDate
@@ -74,7 +78,6 @@ public class Post implements Blamable {
 
     @DBRef
     @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     private Community community;
 
 }

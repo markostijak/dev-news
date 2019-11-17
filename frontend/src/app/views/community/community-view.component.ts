@@ -2,10 +2,11 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Community} from '../../models/community';
 import {NavigationService} from '../../services/navigation/navigation.service';
 import {ActivatedRoute} from '@angular/router';
-import {Observable, Subscription} from 'rxjs';
+import {Subscription} from 'rxjs';
 import {Post} from '../../models/post';
-import {Hal, Page} from '../../models/hal';
+import {Page} from '../../models/hal';
 import {CommunityService} from '../../services/community/community.service';
+import {PostService} from '../../services/post/post.service';
 
 @Component({
   selector: 'app-community-view',
@@ -17,14 +18,21 @@ export class CommunityViewComponent implements OnInit, OnDestroy {
   private _page: Page;
   private _posts: Post[] = [];
   private _community: Community;
+  private _trending: Post[] = [];
 
-  private _activatedRoute: ActivatedRoute;
+  private _postService: PostService;
   private _communityService: CommunityService;
   private _navigationService: NavigationService;
 
+  private _loading: boolean = false;
+  private _activatedRoute: ActivatedRoute;
   private _subscription: Subscription = new Subscription();
 
-  constructor(navigationService: NavigationService, activatedRoute: ActivatedRoute, communityService: CommunityService) {
+  constructor(postService: PostService,
+              activatedRoute: ActivatedRoute,
+              communityService: CommunityService,
+              navigationService: NavigationService) {
+    this._postService = postService;
     this._activatedRoute = activatedRoute;
     this._communityService = communityService;
     this._navigationService = navigationService;
@@ -44,19 +52,32 @@ export class CommunityViewComponent implements OnInit, OnDestroy {
   }
 
   private reload(alias: string): void {
-    this._communityService.fetchByAlias(alias, 'include-stats')
-      .subscribe(community => {
-        this._navigationService.navigate(community);
-        this.fetchPosts(community, 0).subscribe(hal => {
-          this._posts.push(...hal._embedded.posts);
-          this._community = community;
-          this._page = hal.page;
-        });
+    this._communityService.fetchByAlias(alias, 'include-stats').subscribe(community => {
+      this._navigationService.navigate(community);
+      this.fetchPosts(community, 0);
+      this._postService.fetchTrendingByCommunity(community, 5).subscribe(posts => {
+        this._trending = posts;
       });
+    });
   }
 
-  private fetchPosts(community: Community, page: number): Observable<Hal<Post[]>> {
-    return this._communityService.fetchPosts(community._links.self.href, {number: page} as Page, 'include-stats');
+  private fetchPosts(community: Community, page: number): void {
+    if (!this._loading) {
+      this._postService.fetchPage('api/v1/posts/search/findAllByCommunity', page, 'include-stats', {
+        community: community._links.self.href
+      }).subscribe(hal => {
+        this._posts.push(...hal._embedded.posts);
+        this._community = community;
+        this._page = hal.page;
+        this._loading = false;
+      }, () => this._loading = false);
+    }
+  }
+
+  public onScrollEnd($event: UIEvent): void {
+    if (this._page.number + 1 < this._page.totalPages) {
+      this.fetchPosts(this.community, this._page.number + 1);
+    }
   }
 
   get community(): Community {
@@ -65,6 +86,10 @@ export class CommunityViewComponent implements OnInit, OnDestroy {
 
   get posts(): Post[] {
     return this._posts;
+  }
+
+  get trending(): Post[] {
+    return this._trending;
   }
 
 }

@@ -5,6 +5,7 @@ import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import {VirtualScrollerModule} from 'ngx-virtual-scroller';
 
 import {
   MatAutocompleteModule,
@@ -62,15 +63,25 @@ import {IndexViewComponent} from './views/index/index-view.component';
 import {NotFoundViewComponent} from './views/not-found/not-found-view.component';
 import {TopCommunitiesViewComponent} from './views/top-communities/top-communities-view.component';
 import {UserMenuItemComponent} from './components/user-menu-item/user-menu-item.component';
-import { LoginSignUpMenuItemComponent } from './components/login-sign-up-menu-item/login-sign-up-menu-item.component';
-import { CommentEditorComponent } from './components/comment/comment-editor/comment-editor.component';
-import { CommentComponent } from './components/comment/comment/comment.component';
-import { ReplyEditorComponent } from './components/comment/reply-editor/reply-editor.component';
-import { PostEditEditorComponent } from './components/post/post-edit-editor/post-edit-editor.component';
+import {LoginSignUpMenuItemComponent} from './components/login-sign-up-menu-item/login-sign-up-menu-item.component';
+import {CommentEditorComponent} from './components/comment/comment-editor/comment-editor.component';
+import {CommentComponent} from './components/comment/comment/comment.component';
+import {ReplyEditorComponent} from './components/comment/reply-editor/reply-editor.component';
+import {PostEditEditorComponent} from './components/post/post-edit-editor/post-edit-editor.component';
 import {AppEditorModule} from './modules/editor/app-editor.module';
-import { SignUpStepperComponent } from './components/sign-up/sign-up-stepper/sign-up-stepper.component';
-import { ShowProgressDirective } from './directives/show-progress/show-progress.directive';
-import { SearchViewComponent } from './views/search/search-view.component';
+import {SignUpStepperComponent} from './components/sign-up/sign-up-stepper/sign-up-stepper.component';
+import {ShowProgressDirective} from './directives/show-progress/show-progress.directive';
+import {SearchViewComponent} from './views/search/search-view.component';
+import {TrendingCommunitiesComponent} from './components/community/trending-communities/trending-communities.component';
+import {TrendingPostsComponent} from './components/post/trending-posts/trending-posts.component';
+import {UpAndComingCommunitiesComponent} from './components/community/up-and-coming-communities/up-and-coming-communities.component';
+import {BackToTopComponent} from './components/back-to-top/back-to-top.component';
+import {DevNewsComponent} from './components/dev-news/dev-news.component';
+import {ShortNumberPipe} from './pipes/short-number.pipe';
+import {TimeAgoPipe} from './pipes/time-ago.pipe';
+import {TimePipe} from './pipes/time.pipe';
+import {ShortTimePipe} from './pipes/twitter-time.pipe';
+import {InfiniteScrollerComponent} from './components/infinite-scroller/infinite-scroller.component';
 
 @NgModule({
   declarations: [
@@ -112,7 +123,17 @@ import { SearchViewComponent } from './views/search/search-view.component';
     PostEditEditorComponent,
     SignUpStepperComponent,
     ShowProgressDirective,
-    SearchViewComponent
+    SearchViewComponent,
+    TrendingCommunitiesComponent,
+    TrendingPostsComponent,
+    UpAndComingCommunitiesComponent,
+    BackToTopComponent,
+    DevNewsComponent,
+    ShortNumberPipe,
+    TimeAgoPipe,
+    TimePipe,
+    ShortTimePipe,
+    InfiniteScrollerComponent
   ],
   imports: [
     BrowserModule,
@@ -142,7 +163,8 @@ import { SearchViewComponent } from './views/search/search-view.component';
     MatRippleModule,
     MatSelectModule,
     MatStepperModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    VirtualScrollerModule
   ],
   providers: [
     AuthenticationGuardService,

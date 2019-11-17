@@ -27,7 +27,19 @@ public class AuthorAwarePermissionEvaluator implements PermissionEvaluator {
             return handleBlamable(principal, (Blamable) targetDomainObject);
         }
 
+        if (targetDomainObject instanceof User) {
+            return handleUser(principal, (User) targetDomainObject);
+        }
+
         return false;
+    }
+
+    private boolean handleUser(User principal, User author) {
+        if (roles.contains(principal.getRole())) {
+            return true;
+        }
+
+        return Objects.equals(principal, author);
     }
 
     @Override

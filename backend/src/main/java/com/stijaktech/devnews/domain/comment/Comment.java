@@ -29,13 +29,15 @@ import static com.fasterxml.jackson.annotation.JsonProperty.Access.*;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @Document("comments")
-@JsonInclude(NON_NULL)
+@EqualsAndHashCode(of = "id")
 public class Comment implements Blamable {
 
     @Id
     private String id;
+
+    @JsonIgnore
+    private String postId;
 
     private String parentId;
 
@@ -45,13 +47,11 @@ public class Comment implements Blamable {
 
     @Nullable
     @DBRef(lazy = true)
-    @EqualsAndHashCode.Exclude
     @JsonProperty(access = WRITE_ONLY)
     private Comment parent;
 
     @NotNull
     @DBRef(lazy = true)
-    @EqualsAndHashCode.Exclude
     @JsonProperty(access = WRITE_ONLY)
     private Post post;
 
@@ -61,13 +61,11 @@ public class Comment implements Blamable {
 
     @DBRef
     @CreatedBy
-    @EqualsAndHashCode.Exclude
     private User createdBy;
 
     @JsonIgnore
     @LastModifiedBy
     @DBRef(lazy = true)
-    @EqualsAndHashCode.Exclude
     private User updatedBy;
 
     @CreatedDate

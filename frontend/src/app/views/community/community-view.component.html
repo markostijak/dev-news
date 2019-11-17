@@ -1,12 +1,13 @@
 <div *ngIf="community" class="main" fxLayout="row" fxLayoutGap="24px">
   <div class="main-left" fxFlex>
-    <app-post class="mb-10" *ngFor="let post of posts" [post]="post" [showCommunity]="false"></app-post>
+    <app-infinite-scroller (end)="onScrollEnd($event)">
+      <app-post class="mb-10" *ngFor="let post of posts" [post]="post" [showCommunity]="false"></app-post>
+    </app-infinite-scroller>
   </div>
   <div class="main-right" fxFlex fxHide.lt-md>
-    <div>
-      <div>
-        <app-community [community]="community"></app-community>
-      </div>
-    </div>
+    <app-community [community]="community" class="mb-10"></app-community>
+    <app-trending-posts *ngIf="trending.length" class="mb-10" [posts]="trending"></app-trending-posts>
+    <app-dev-news class="mb-10"></app-dev-news>
+    <app-back-to-top></app-back-to-top>
   </div>
 </div>

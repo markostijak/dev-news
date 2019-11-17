@@ -1,0 +1,30 @@
+<mat-card>
+  <mat-card-content>
+    Trending communities
+  </mat-card-content>
+  <mat-card-content>
+    <ng-container *ngFor="let community of communities; last as isLast">
+      <div [class]="isLast ? '' : 'mb-10'" fxLayout="row" fxLayoutGap="15px" fxLayoutAlign="center center">
+        <div fxFlex="0 0 30px">
+          <a [routerLink]="['/c', community.alias]">
+            <img class="avatar w-100" [src]="community.logo ? community.logo : 'assets/icons/community.svg'"
+                 [alt]="community.alias">
+          </a>
+        </div>
+        <div fxFlex="1 1 100%">
+          <a [routerLink]="['/c', community.alias]" class="community-title">{{community.title}}</a>
+          <div class="community-members">{{community.membersCount | shortNumber}} members</div>
+        </div>
+        <div fxFlex="0 0 80px" *ngIf="authorizationService.canView(community)">
+          <ng-container *ngIf="communityService.memberOf(community); then leaveButton else joinButton"></ng-container>
+          <ng-template #joinButton>
+            <button class="w-100" mat-raised-button color="primary" (click)="join(community)">Join</button>
+          </ng-template>
+          <ng-template #leaveButton>
+            <button class="w-100" mat-stroked-button color="primary" (click)="leave(community)">Leave</button>
+          </ng-template>
+        </div>
+      </div>
+    </ng-container>
+  </mat-card-content>
+</mat-card>

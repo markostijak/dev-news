@@ -1,0 +1,25 @@
+<mat-card>
+  <mat-card-content>
+    Trending posts
+  </mat-card-content>
+  <mat-card-content>
+    <ng-container *ngFor="let post of posts; last as isLast">
+      <div [class]="isLast ? '' : 'h-line'" fxLayout="row" fxLayoutGap="15px" fxLayoutAlign="center center">
+        <div fxFlex="0 0 30px">
+          <a [routerLink]="['/c', post.community.alias, 'p', post.alias]">
+            <img class="avatar w-100" [src]="post.community.logo ? post.community.logo : 'assets/icons/community.svg'"
+                 [alt]="post.community.alias">
+          </a>
+        </div>
+        <div fxFlex="1 1 100%">
+          <a [routerLink]="['/c', post.community.alias, 'p', post.alias]" class="post-title">{{post.title}}</a>
+          <div class="post-stats">
+            <span>{{post.commentsCount}} comments</span>
+            <span class="separator">•</span>
+            <span>{{post.createdAt | shortTime}}</span>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </mat-card-content>
+</mat-card>

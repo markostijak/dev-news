@@ -1,0 +1,22 @@
+<mat-card>
+  <mat-card-content>
+    Up-and-coming communities
+  </mat-card-content>
+  <mat-card-content class="mb-10">
+    <ng-container *ngFor="let community of communities; index as i; last as isLast">
+      <a class="list-item" [routerLink]="['/c', community.alias]">
+        <div fxLayout="row" fxLayoutAlign="center center">
+          <div class="index" fxFlex="0 0 30px">{{i + 1}}</div>
+          <div class="community-logo" fxFlex="0 0 30px">
+            <img class="avatar w-100 community-logo" [src]="community.logo ? community.logo : 'assets/icons/community.svg'" [alt]="community.alias">
+          </div>
+          <div class="community-title" fxFlex="1 1 100%">{{community.title}}</div>
+        </div>
+      </a>
+      <mat-divider *ngIf="!isLast"></mat-divider>
+    </ng-container>
+  </mat-card-content>
+  <mat-card-content>
+    <button class="w-100" mat-raised-button color="primary">View all</button>
+  </mat-card-content>
+</mat-card>

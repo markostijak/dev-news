@@ -1,14 +1,17 @@
-<div class="main" fxLayout="row" fxLayoutGap="24px">
+<div *ngIf="posts.length" class="main" fxLayout="row" fxLayoutGap="24px">
   <div class="main-left" fxFlex>
-    <app-post class="mb-10" *ngFor="let post of posts" [post]="post"></app-post>
+    <app-infinite-scroller (end)="onScrollEnd($event)">
+      <app-post class="mb-10" *ngFor="let post of posts" [post]="post"></app-post>
+    </app-infinite-scroller>
   </div>
   <div class="main-right" fxFlex fxHide.lt-md>
-    <div>
-      <div>
-        <app-overview title="Home">
-          Your personal page. Come here to check in with your favorite communities.
-        </app-overview>
-      </div>
-    </div>
+    <app-up-and-coming-communities class="mb-10" [communities]="upAndComingCommunities"></app-up-and-coming-communities>
+    <app-trending-communities *ngIf="trendingCommunities.length" class="mb-10" [communities]="trendingCommunities"></app-trending-communities>
+    <app-overview class="mb-10" title="Home">
+      Your personal page. Come here to check in with your favorite communities.
+    </app-overview>
+    <app-trending-posts *ngIf="trendingPosts.length" class="mb-10" [posts]="trendingPosts"></app-trending-posts>
+    <app-dev-news class="mb-10"></app-dev-news>
+    <app-back-to-top></app-back-to-top>
   </div>
 </div>

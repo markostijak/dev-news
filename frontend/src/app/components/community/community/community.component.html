@@ -25,11 +25,11 @@
   <mat-card-content class="numbers-container">
     <div fxLayout="row" fxLayoutAlign="center center">
       <div fxFlex>
-        <div class="numbers">{{community.membersCount || 0}}</div>
+        <div class="numbers">{{community.membersCount | shortNumber}}</div>
         <div class="numbers-description">Members</div>
       </div>
       <div fxFlex>
-        <div class="numbers">{{community.postsCount || 0}}</div>
+        <div class="numbers">{{community.postsCount | shortNumber}}</div>
         <div class="numbers-description">Posts</div>
       </div>
     </div>
@@ -39,7 +39,7 @@
   </mat-card-content>
   <mat-card-content *ngIf="authorizationService.canView(community)">
     <button *ngIf="!member" class="w-100 mb-10" mat-raised-button color="primary" (click)="join()">Join</button>
-    <button *ngIf="member" class="w-100 mb-10" mat-raised-button color="primary" (click)="leave()">Leave</button>
+    <button *ngIf="member" class="w-100 mb-10" mat-stroked-button color="primary" (click)="leave()">Leave</button>
     <button *ngIf="showCreatePostButton" class="w-100" mat-raised-button color="primary" (click)="showPostDialog()">Create Post</button>
   </mat-card-content>
 </mat-card>

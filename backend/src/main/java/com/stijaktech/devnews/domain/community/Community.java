@@ -33,10 +33,10 @@ import static org.hibernate.validator.constraints.SafeHtml.WhiteListType.NONE;
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Document("communities")
-@JsonInclude(NON_NULL)
+@EqualsAndHashCode(of = "id")
 public class Community implements Blamable {
 
     @Id
@@ -53,21 +53,22 @@ public class Community implements Blamable {
     private String alias;
 
     @JsonProperty(access = READ_ONLY)
-    private long postsCount;
+    private int postsCount;
+
+    @JsonProperty(access = READ_ONLY)
+    private int membersCount;
 
     private Status status;
 
     @DBRef
     @CreatedBy
     @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     private User createdBy;
 
-    @DBRef
     @JsonIgnore
     @LastModifiedBy
     @ToString.Exclude
-    @EqualsAndHashCode.Exclude
+    @DBRef(lazy = true)
     private User updatedBy;
 
     @NotBlank

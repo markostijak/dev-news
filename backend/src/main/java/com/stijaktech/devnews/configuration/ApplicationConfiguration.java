@@ -1,12 +1,19 @@
 package com.stijaktech.devnews.configuration;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.stijaktech.devnews.domain.user.User;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.boot.web.servlet.MultipartConfigFactory;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.caffeine.CaffeineCacheManager;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.projection.ProjectionFactory;
@@ -33,6 +40,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import javax.servlet.MultipartConfigElement;
+import java.time.Duration;
 import java.util.Optional;
 
 @Configuration
@@ -119,6 +127,31 @@ public class ApplicationConfiguration {
     @Bean
     public ProjectionDefinitions projectionDefinitions(RepositoryRestConfiguration configuration) {
         return configuration.getProjectionConfiguration();
+    }
+
+    @Configuration
+    public static class CacheConfiguration extends CachingConfigurerSupport {
+
+        @Bean
+        public CacheManager cacheManager() {
+            return new ConcurrentMapCacheManager();
+        }
+
+        @Autowired
+        @Bean("ttlCache")
+        public CacheManager ttlCacheManager(TaskExecutor taskExecutor) {
+            CaffeineCacheManager cacheManager = new CaffeineCacheManager();
+            cacheManager.setCaffeine(Caffeine.newBuilder()
+                    .initialCapacity(100)
+                    .maximumSize(1000)
+                    .executor(taskExecutor)
+                    .expireAfterWrite(Duration.ofMinutes(5))
+                    .recordStats()
+            );
+
+            return cacheManager;
+        }
+
     }
 
 }

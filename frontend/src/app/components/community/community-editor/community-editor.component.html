@@ -4,19 +4,19 @@
       <div class="editor-placeholder" fxLayout="row" fxLayoutGap="10px">
         <div fxFlex="0 1 auto" class="avatar-container">
           <!--          <div class="avatar"></div>-->
-          <label *ngIf="!logoPreview" class="avatar pointer" mat-ripple matTooltip="Click here to choose logo for community">
-            <mat-icon class="logo-upload-icon">add_photo_alternate</mat-icon>
+          <label class="avatar pointer" mat-ripple matTooltip="Click here to choose logo for community">
             <input type="file" accept=".png, .jpg, .svg" class="logo-upload" (change)="onImageSelect($event)">
+            <span *ngIf="!logoPreview" class="logo-upload-icon-wrapper">
+              <mat-icon class="logo-upload-icon">add_photo_alternate</mat-icon>
+            </span>
+            <img *ngIf="logoPreview" class="w-100 preview" [src]="logoPreview" alt="Logo">
           </label>
-          <img *ngIf="logoPreview" class="avatar preview" [src]="logoPreview" alt="Logo">
         </div>
         <div fxFlex="1 1 100%">
           <!--suppress HtmlFormInputWithoutLabel -->
           <input type="text" [(ngModel)]="title" class="community-title" placeholder="Community title...">
         </div>
       </div>
-
-      <!--suppress AngularUndefinedBinding, HtmlUnknownAttribute -->
       <textarea class="text" placeholder="Community description..." [(ngModel)]="description"></textarea>
     </div>
 

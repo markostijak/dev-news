@@ -18,4 +18,12 @@ export class TimeAgoService {
     return this._formatter.format(new Date(date));
   }
 
+  public formatShort(date: string): String {
+    return this._formatter.format(new Date(date), 'twitter');
+  }
+
+  public formatSimple(date: string): String {
+    return this._formatter.format(new Date(date), 'time');
+  }
+
 }

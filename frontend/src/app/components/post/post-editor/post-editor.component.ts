@@ -98,6 +98,10 @@ export class PostEditorComponent implements OnInit, OnDestroy {
       }
     }
 
+    if (observables.length === 0) {
+      observables.push(of(null));
+    }
+
     forkJoin(observables).subscribe(() => {
       this._postService.create({
         title: this._title,

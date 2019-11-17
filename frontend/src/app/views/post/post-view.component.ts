@@ -4,7 +4,6 @@ import {Post} from '../../models/post';
 import {ActivatedRoute} from '@angular/router';
 import {NavigationService} from '../../services/navigation/navigation.service';
 import {forkJoin, Subscription} from 'rxjs';
-import {TimeAgoService} from '../../services/time-ago/time-ago.service';
 import {Data} from '../../components/comment/comment-editor/comment-editor.component';
 import {Comment} from '../../models/comment';
 import {PostService} from '../../services/post/post.service';
@@ -19,25 +18,23 @@ export class PostViewComponent implements OnInit, OnDestroy {
 
   private _post: Post;
   private _community: Community;
+  private _trending: Post[] = [];
   private _comments: Comment[] = [];
 
   private _postService: PostService;
-  private _timeFormatter: TimeAgoService;
   private _activatedRoute: ActivatedRoute;
   private _navigationService: NavigationService;
-  private _authorizationService: AuthorizationService;
 
+  private _authorizationService: AuthorizationService;
   private _startEditing: boolean = false;
   private _subscription: Subscription = new Subscription();
 
   constructor(postService: PostService,
-              timeFormatter: TimeAgoService,
               activatedRoute: ActivatedRoute,
               navigationService: NavigationService,
               authorizationService: AuthorizationService) {
 
     this._postService = postService;
-    this._timeFormatter = timeFormatter;
     this._activatedRoute = activatedRoute;
     this._navigationService = navigationService;
     this._authorizationService = authorizationService;
@@ -60,11 +57,13 @@ export class PostViewComponent implements OnInit, OnDestroy {
 
       forkJoin({
         community: this._postService.fetchCommunity(post, 'include-stats'),
-        comments: this._postService.fetchComments(post, 'preview')
+        comments: this._postService.fetchComments(post, 'preview'),
+        trending: this._postService.fetchTrending()
       }).subscribe(result => {
         this._post = post;
         this._community = result.community;
         this._comments.push(...result.comments);
+        this._trending.push(...result.trending);
       });
     });
   }
@@ -108,10 +107,6 @@ export class PostViewComponent implements OnInit, OnDestroy {
     return this._community;
   }
 
-  get timeFormatter(): TimeAgoService {
-    return this._timeFormatter;
-  }
-
   get comments(): Comment[] {
     return this._comments;
   }
@@ -123,4 +118,9 @@ export class PostViewComponent implements OnInit, OnDestroy {
   get authorizationService(): AuthorizationService {
     return this._authorizationService;
   }
+
+  get trending(): Post[] {
+    return this._trending;
+  }
+
 }

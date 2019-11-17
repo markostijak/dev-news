@@ -16,7 +16,7 @@
             </div>
           </ng-container>
           <div fxFlex="1 1 auto" class="user">Posted
-            by {{post.createdBy.username}} {{timeFormatter.format(post.createdAt)}}</div>
+            by {{post.createdBy.username}} {{post.createdAt | timeAgo}}</div>
         </div>
         <div class="title">{{post.title}}</div>
         <div [class]="showMask(post.content) ? 'content content-mask' : 'content'">
@@ -25,7 +25,7 @@
         <div class="actions">
           <button mat-raised-button class="mr-10">
             <mat-icon>mode_comment</mat-icon>
-            {{post.commentsCount}} Comments
+            {{post.commentsCount | shortNumber}} Comments
           </button>
           <button mat-raised-button class="mr-10">
             <mat-icon>share</mat-icon>

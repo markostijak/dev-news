@@ -9,9 +9,14 @@
         <ng-container *ngFor="let community of communities; index as index; last as last">
           <a class="decoration-none" mat-list-item [routerLink]="['/c', community.alias]" (click)="navigate(community)">
             <span mat-list-icon class="index">{{index + 1}}.</span>
-            <img mat-list-avatar [src]="community.logo ? community.logo : 'assets/icons/community.svg'" [alt]="community.title">
+            <img mat-list-avatar [src]="community.logo ? community.logo : 'assets/icons/community.svg'"
+                 [alt]="community.title">
             <h4 mat-line class="title">{{community.title}}</h4>
-            <p mat-line class="subtitle">Members: {{community.membersCount}} </p>
+            <p mat-line class="subtitle">
+              <span>{{community.membersCount | shortNumber}} members</span>
+              <span class="separator">•</span>
+              <span>{{community.postsCount | shortNumber}} posts</span>
+            </p>
           </a>
           <mat-divider *ngIf="!last"></mat-divider>
         </ng-container>
@@ -19,12 +24,10 @@
     </mat-card>
   </div>
   <div class="main-right" fxFlex fxHide.lt-md>
-    <div>
-      <div>
-        <app-overview title="To be implemented">
-          Don't have idea for content.
-        </app-overview>
-      </div>
-    </div>
+    <app-overview class="mb-10" title="To be implemented">
+      Don't have idea for content.
+    </app-overview>
+    <app-dev-news class="mb-10"></app-dev-news>
+    <app-back-to-top></app-back-to-top>
   </div>
 </div>

@@ -8,7 +8,6 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SigningKeyResolver;
-import org.springframework.cache.Cache;
 import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -16,6 +15,7 @@ import org.springframework.stereotype.Component;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
 import java.sql.Date;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.List;
@@ -25,8 +25,8 @@ import java.util.Random;
 @Component
 public class JwtProvider {
 
-    private static final int TEN_MINUTES = 600000;
-    private static final int ONE_MONTH = 2592000;
+    private static final Duration ONE_MONTH = Duration.ofDays(30);
+    private static final Duration TEN_MINUTES = Duration.ofMinutes(10);
 
     private Random random;
     private JwtSecretRepository jwtSecretRepository;
@@ -36,23 +36,23 @@ public class JwtProvider {
         this.jwtSecretRepository = jwtSecretRepository;
     }
 
-    public String generateAccessToken(Authentication authentication) {
+    public String generateAccessToken(Authentication authentication, Instant issuedAt) {
         User user = (User) authentication.getPrincipal();
-        return generateToken(user, TEN_MINUTES);
+        return generateToken(user, issuedAt, issuedAt.plus(TEN_MINUTES));
     }
 
-    public String generateRefreshToken(Authentication authentication) {
+    public String generateRefreshToken(Authentication authentication, Instant issuedAt) {
         User user = (User) authentication.getPrincipal();
-        return generateToken(user, ONE_MONTH);
+        return generateToken(user, issuedAt, issuedAt.plus(ONE_MONTH));
     }
 
-    private String generateToken(User user, int expireAfter) {
+    private String generateToken(User user, Instant issuedAt, Instant expiration) {
         JwtSecret secret = random(jwtSecretRepository.findAll());
         return Jwts.builder()
                 .signWith(SignatureAlgorithm.HS256, secret.getValue())
                 .setSubject(user.getId())
-                .setIssuedAt(Date.from(Instant.now()))
-                .setExpiration(Date.from(Instant.now().plusSeconds(expireAfter)))
+                .setIssuedAt(Date.from(issuedAt))
+                .setExpiration(Date.from(expiration))
                 .setIssuer("dev-news")
                 .setHeaderParam(JwsHeader.KEY_ID, secret.getId())
                 .compact();

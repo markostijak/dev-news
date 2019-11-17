@@ -1,6 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Comment} from '../../../models/comment';
-import {TimeAgoService} from '../../../services/time-ago/time-ago.service';
 import {Data, ReplyEditorComponent} from '../reply-editor/reply-editor.component';
 import {CommentService} from '../../../services/comment/comment.service';
 import {Post} from '../../../models/post';
@@ -26,11 +25,9 @@ export class CommentComponent implements OnInit {
   private _startEditing: boolean = false;
 
   private _commentService: CommentService;
-  private readonly _timeFormatter: TimeAgoService;
   private _authorizationService: AuthorizationService;
 
-  constructor(commentService: CommentService, timeFormatter: TimeAgoService, authorizationService: AuthorizationService) {
-    this._timeFormatter = timeFormatter;
+  constructor(commentService: CommentService, authorizationService: AuthorizationService) {
     this._commentService = commentService;
     this._authorizationService = authorizationService;
   }
@@ -89,10 +86,6 @@ export class CommentComponent implements OnInit {
 
   public onReply(reply: Comment): void {
     this.reply.emit(reply);
-  }
-
-  get timeFormatter(): TimeAgoService {
-    return this._timeFormatter;
   }
 
   get showEditor(): boolean {

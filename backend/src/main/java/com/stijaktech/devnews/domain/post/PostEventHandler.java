@@ -26,6 +26,7 @@ public class PostEventHandler {
 
     @HandleBeforeCreate
     public void beforeCreate(Post post) {
+        Community community = post.getCommunity();
         String original = post.getTitle().toLowerCase();
         original = original.replaceAll("[^\\p{IsAlphabetic}\\p{IsDigit}\\- ]", "");
         original = original.replace(" ", "-");
@@ -36,6 +37,7 @@ public class PostEventHandler {
         }
 
         post.setAlias(alias);
+        post.setCommunityId(community.getId());
     }
 
     @HandleAfterCreate
@@ -48,10 +50,10 @@ public class PostEventHandler {
         updateCommentsCount(post, c -> c - 1);
     }
 
-    private void updateCommentsCount(Post post, UnaryOperator<Long> operator) {
+    private void updateCommentsCount(Post post, UnaryOperator<Integer> operator) {
         Community community = post.getCommunity();
-        long count = operator.apply(post.getCommentsCount());
-        community.setPostsCount(Math.min(count, 0));
+        int count = operator.apply(post.getCommentsCount());
+        community.setPostsCount(Math.max(count, 0));
         communityRepository.save(community);
     }
 

@@ -1,15 +1,22 @@
 package com.stijaktech.devnews.features.upload;
 
 import lombok.SneakyThrows;
+import net.coobird.thumbnailator.Thumbnailator;
+import net.coobird.thumbnailator.Thumbnails;
+import net.coobird.thumbnailator.builders.BufferedImageBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.security.crypto.codec.Hex;
 import org.springframework.security.crypto.keygen.BytesKeyGenerator;
 import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -33,7 +40,17 @@ public class FileService {
 
     @SneakyThrows
     public String storeImage(@NonNull MultipartFile image) {
-        return store("image_", image);
+        assertThatFileIsPresent(image);
+
+        String filename = generateFileName("image_", extractExtension(image));
+        File destination = storeLocation.resolve(filename).toFile();
+
+        Thumbnails.of(image.getInputStream())
+                .size(1280, 720)
+                .keepAspectRatio(true)
+                .toFile(destination);
+
+        return host + filename;
     }
 
     @SneakyThrows
@@ -47,18 +64,36 @@ public class FileService {
     }
 
     private String store(String prefix, MultipartFile file) throws IOException {
+        assertThatFileIsPresent(file);
+
+        String filename = generateFileName(prefix, extractExtension(file));
+        file.transferTo(storeLocation.resolve(filename));
+
+        return host + filename;
+    }
+
+    private void assertThatFileIsPresent(MultipartFile file) {
         if (file == null || file.getOriginalFilename() == null) {
             throw new FileNotPresentException();
         }
-
-        String original = file.getOriginalFilename();
-        String filename = generateFileName(prefix, original.substring(original.lastIndexOf(".")));
-        file.transferTo(storeLocation.resolve(filename));
-        return host + filename;
     }
 
     private String generateFileName(String prefix, String fileType) {
         return prefix + new String(Hex.encode(keyGenerator.generateKey())) + fileType;
+    }
+
+    private String extractExtension(MultipartFile file) {
+        String original = file.getOriginalFilename();
+        if (original != null && original.contains(".")) {
+            return original.substring(original.lastIndexOf("."));
+        }
+
+        String contentType = file.getContentType();
+        if (contentType != null && contentType.contains("/")) {
+            return "." + contentType.split("/")[1];
+        }
+
+        return ".unknown";
     }
 
     private void createIfNotExists(Path... paths) throws IOException {

@@ -24,7 +24,7 @@ export class CommentService {
   }
 
   public create(comment: Comment): Observable<Comment> {
-    return this._httpClient.post('/api/v1/comments', comment) as Observable<Comment>;
+    return this._httpClient.post('api/v1/comments', comment) as Observable<Comment>;
   }
 
   public update(comment: Comment): Observable<Comment> {
@@ -39,7 +39,7 @@ export class CommentService {
       params = params.set('projection', projection);
     }
 
-    return this.fetchResource('/api/v1/comments/search/findAllByPost', params
+    return this.fetchResource('api/v1/comments/search/findAllByPost', params
       .set('post', post._links.self.href)
       .set('sort', 'fullSlug,asc')
     ).pipe(map((hal: Hal<Comment[]>) => hal._embedded.comments)) as Observable<Comment[]>;

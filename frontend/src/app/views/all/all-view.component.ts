@@ -51,7 +51,7 @@ export class AllViewComponent implements OnInit {
   public fetchPosts(page: number): void {
     if (!this._loading) {
       this._loading = true;
-      this._postService.fetchPage('/api/v1/posts', page, 'include-stats').subscribe(response => {
+      this._postService.fetchPage('api/v1/posts', page, 'include-stats').subscribe(response => {
         this._posts.push(...response._embedded.posts);
         this._page = response.page;
         this._loading = false;

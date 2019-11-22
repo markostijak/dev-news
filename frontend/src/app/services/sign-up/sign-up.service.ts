@@ -19,23 +19,23 @@ export class SignUpService {
   }
 
   public checkEmailAvailability(email: string): Observable<boolean> {
-    return this._httpClient.get('/api/v1/users/search/existsByEmail', {
+    return this._httpClient.get('api/v1/users/search/existsByEmail', {
       params: new HttpParams().set('email', email)
     }) as Observable<boolean>;
   }
 
   public checkUsernameAvailability(username: string): Observable<boolean> {
-    return this._httpClient.get('/api/v1/users/search/existsByUsername', {
+    return this._httpClient.get('api/v1/users/search/existsByUsername', {
       params: new HttpParams().set('username', username)
     }) as Observable<boolean>;
   }
 
   public signUp(user: object): Observable<User> {
-    return this._httpClient.post('/api/sign-up/create', user) as Observable<User>;
+    return this._httpClient.post('api/sign-up/create', user) as Observable<User>;
   }
 
   public activate(user: User, activationCode: string): Observable<User> {
-    return this._httpClient.post('/api/sign-up/activation/activate', activationCode, {
+    return this._httpClient.post('api/sign-up/activation/activate', activationCode, {
       params: new HttpParams().set('user', user.id)
     }) as Observable<User>;
   }

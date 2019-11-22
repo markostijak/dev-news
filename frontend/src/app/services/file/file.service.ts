@@ -21,7 +21,7 @@ export class FileService {
     const form = new FormData();
     form.append('file', image);
 
-    return this._httpClient.post('/api/v1/files/image', form) as Observable<string>;
+    return this._httpClient.post('api/v1/files/image', form) as Observable<string>;
   }
 
   public uploadDataUrl(dataUrl: string): Observable<string> {

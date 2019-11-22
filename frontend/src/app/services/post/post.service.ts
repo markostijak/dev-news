@@ -57,17 +57,17 @@ export class PostService {
       params = params.set('projection', projection);
     }
 
-    return this.fetchResource('/api/v1/posts/search/findByAlias', params.set('alias', alias)) as Observable<Post>;
+    return this.fetchResource('api/v1/posts/search/findByAlias', params.set('alias', alias)) as Observable<Post>;
   }
 
   public fetchTrending(): Observable<Post[]> {
-    return this.fetchResource('/api/v1/posts/search/findTrending', new HttpParams()
+    return this.fetchResource('api/v1/posts/search/findTrending', new HttpParams()
       .set('projection', 'trending'))
       .pipe(map((response: Hal<Post[]>) => response._embedded.posts));
   }
 
   public fetchTrendingByCommunity(community: Community, size: number): Observable<Post[]> {
-    return this.fetchResource('/api/v1/posts/search/findTrendingByCommunityId', new HttpParams()
+    return this.fetchResource('api/v1/posts/search/findTrendingByCommunityId', new HttpParams()
       .set('communityId', community.id)
       .set('size', String(size))
       .set('projection', 'trending'))

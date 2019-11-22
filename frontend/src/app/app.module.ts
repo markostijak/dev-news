@@ -82,6 +82,7 @@ import {TimeAgoPipe} from './pipes/time-ago.pipe';
 import {TimePipe} from './pipes/time.pipe';
 import {ShortTimePipe} from './pipes/twitter-time.pipe';
 import {InfiniteScrollerComponent} from './components/infinite-scroller/infinite-scroller.component';
+import {BaseUrlAwareInterceptorService} from './services/navigation/base-url-aware-interceptor.service';
 
 @NgModule({
   declarations: [
@@ -171,6 +172,11 @@ import {InfiniteScrollerComponent} from './components/infinite-scroller/infinite
     {
       provide: HTTP_INTERCEPTORS,
       useClass: JwtInterceptorService,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: BaseUrlAwareInterceptorService,
       multi: true
     }
   ],

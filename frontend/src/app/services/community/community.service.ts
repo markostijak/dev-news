@@ -29,13 +29,13 @@ export class CommunityService {
   }
 
   public join(community: Community): Observable<any> {
-    return this._httpClient.patch('/api/v1/users/' + this._user.id + '/communities', '/api/v1/users/communities/' + community.id, {
+    return this._httpClient.patch('api/v1/users/' + this._user.id + '/communities', 'api/v1/users/communities/' + community.id, {
       headers: new HttpHeaders({'Content-Type': 'text/uri-list; charset=utf-8'})
     }).pipe(map(() => this._communities.push(community)));
   }
 
   public leave(community: Community): Observable<any> {
-    return this._httpClient.delete('/api/v1/users/' + this._user.id + '/communities/' + community.id)
+    return this._httpClient.delete('api/v1/users/' + this._user.id + '/communities/' + community.id)
       .pipe(map(() => {
         for (let i = 0; i < this._communities.length; i++) {
           if (this._communities[i].alias === community.alias) {
@@ -54,14 +54,14 @@ export class CommunityService {
       return this.myCommunities();
     }
 
-    return this.fetchResource('/api/v1/communities/search/findByTitleStartsWithIgnoreCase',
+    return this.fetchResource('api/v1/communities/search/findByTitleStartsWithIgnoreCase',
       new HttpParams().set('term', search).set('projection', 'preview'))
       .pipe(map((response: Hal<Community[]>) => response._embedded.communities));
   }
 
   public myCommunities(): Observable<Community[]> {
     if (!this._communitiesSubject) {
-      return this._httpClient.get('/api/v1/users/' + this._user.id + '/communities').pipe(switchMap((hal: Hal<Community[]>) => {
+      return this._httpClient.get('api/v1/users/' + this._user.id + '/communities').pipe(switchMap((hal: Hal<Community[]>) => {
         this._communities = hal._embedded.communities;
         this._communitiesSubject = new BehaviorSubject<Community[]>(this._communities);
         return this._communitiesObservable = this._communitiesSubject.asObservable();
@@ -96,17 +96,17 @@ export class CommunityService {
       params = params.set('projection', projection);
     }
 
-    return this.fetchResource('/api/v1/communities/search/findByAlias', params.set('alias', alias)) as Observable<Community>;
+    return this.fetchResource('api/v1/communities/search/findByAlias', params.set('alias', alias)) as Observable<Community>;
   }
 
   public fetchTrending(): Observable<Community[]> {
-    return this.fetchResource('/api/v1/communities/search/findTrending', new HttpParams()
+    return this.fetchResource('api/v1/communities/search/findTrending', new HttpParams()
       .set('projection', 'include-stats')
     ).pipe(map((response: Hal<Community[]>) => response._embedded.communities));
   }
 
   public fetchUpAndComing(): Observable<Community[]> {
-    return this.fetchResource('/api/v1/communities/search/findUpAndComing', new HttpParams()
+    return this.fetchResource('api/v1/communities/search/findUpAndComing', new HttpParams()
       .set('projection', 'preview')
       .set('size', '5')
     ).pipe(map((response: Hal<Community[]>) => response._embedded.communities));

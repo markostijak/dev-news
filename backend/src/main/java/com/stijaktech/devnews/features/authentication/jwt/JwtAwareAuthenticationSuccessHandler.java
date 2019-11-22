@@ -43,6 +43,7 @@ public class JwtAwareAuthenticationSuccessHandler implements AuthenticationSucce
         response.setStatus(HttpStatus.OK.value());
         response.setHeader("X-Auth-Token", accessToken);
         response.setHeader("X-Refresh-Token", refreshToken);
+        response.setHeader("Access-Control-Expose-Headers", "X-Auth-Token, X-Refresh-Token");
         jackson.writeValue(response.getWriter(), user);
     }
 

@@ -10,9 +10,10 @@ import {
 } from 'angularx-social-login';
 import {GitHubLoginProvider} from './git-hub-login-provider';
 import {BehaviorSubject, Observable, of} from 'rxjs';
-import {delay, map, switchMap} from 'rxjs/operators';
+import {catchError, map, switchMap} from 'rxjs/operators';
 import {fromPromise} from 'rxjs/internal-compatibility';
 import {JwtHelperService} from '@auth0/angular-jwt';
+import {environment} from '../../../environments/environment';
 
 export interface Credentials {
   accessToken?: string;
@@ -23,7 +24,6 @@ export interface Authentication {
   principal?: User;
   credentials?: Credentials;
   authenticated?: boolean;
-  expiresAt?: Date;
 }
 
 @Injectable({
@@ -128,36 +128,36 @@ export class AuthenticationService {
   }
 
   public authenticate(url: string, principal: string, credentials: string): Observable<Authentication> {
-    return this._httpClient.get(url, {
+    return this._httpClient.get(environment.baseUrl + url, {
       headers: new HttpHeaders({
         'Authorization': 'Basic ' + btoa(principal + ':' + credentials)
       }), observe: 'response'
     }).pipe(map((response: HttpResponse<User>) => {
-        const accessToken = response.headers.get('X-Auth-Token');
-        const refreshToken = response.headers.get('X-Refresh-Token');
+      const accessToken = response.headers.get('X-Auth-Token');
+      const refreshToken = response.headers.get('X-Refresh-Token');
 
-        const user: User = response.body;
-        const expirationDate = this._jwtProvider.getTokenExpirationDate(accessToken);
-        const authenticated = !this._jwtProvider.isTokenExpired(accessToken) && !this._jwtProvider.isTokenExpired(refreshToken);
+      const user: User = response.body;
+      const authenticated = !this._jwtProvider.isTokenExpired(accessToken) && !this._jwtProvider.isTokenExpired(refreshToken);
 
-        const authentication: Authentication = {
-          principal: user,
-          credentials: {
-            accessToken: accessToken,
-            refreshToken: refreshToken
-          },
-          expiresAt: expirationDate,
-          authenticated: authenticated
-        };
+      const authentication: Authentication = {
+        principal: user,
+        credentials: {
+          accessToken: accessToken,
+          refreshToken: refreshToken
+        },
+        authenticated: authenticated
+      };
 
-        if (authenticated) {
-          localStorage.setItem(AuthenticationService.KEY, JSON.stringify(authentication));
-        }
+      if (authenticated) {
+        localStorage.setItem(AuthenticationService.KEY, JSON.stringify(authentication));
+      }
 
-        this._authenticationSource.next(authentication);
+      this._authenticationSource.next(authentication);
 
-        return authentication;
-      }));
+      return authentication;
+    }), catchError(() => {
+      return this.logout();
+    }));
   }
 
   public logout(): Observable<Authentication> {

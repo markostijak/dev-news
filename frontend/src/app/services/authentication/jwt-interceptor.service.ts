@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
 import {BehaviorSubject, Observable, of, throwError} from 'rxjs';
 import {Authentication, AuthenticationService, Credentials} from './authentication.service';
-import {catchError, filter, map, switchMap, take, tap} from 'rxjs/operators';
+import {catchError, filter, switchMap, take} from 'rxjs/operators';
 import {JwtHelperService} from '@auth0/angular-jwt';
 import {Router} from '@angular/router';
 
@@ -38,13 +38,17 @@ export class JwtInterceptorService implements HttpInterceptor {
   }
 
   public intercept(request: HttpRequest<any>, next: HttpHandler): Observable<any> {
+    if (request.url.indexOf('assets') !== -1) {
+      return next.handle(request);
+    }
+
     const credentials = this._authentication.credentials;
 
     if (credentials) {
       const accessToken = credentials.accessToken;
       const refreshToken = credentials.refreshToken;
 
-      if (true || this._jwtHelper.isTokenExpired(refreshToken, 10)) {
+      if (this._jwtHelper.isTokenExpired(refreshToken, 10)) {
         return this.logout();
       }
 

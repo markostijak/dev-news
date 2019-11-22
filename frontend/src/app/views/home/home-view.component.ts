@@ -61,7 +61,7 @@ export class HomeViewComponent implements OnInit {
   }
 
   private fetchPosts(page: number): void {
-    this._postService.fetchPage('/api/v1/posts/search/findForUser', page, 'include-stats', {
+    this._postService.fetchPage('api/v1/posts/search/findForUser', page, 'include-stats', {
       user: this._user.id
     }).subscribe(response => {
       if (response._embedded) {

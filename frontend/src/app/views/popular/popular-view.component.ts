@@ -51,7 +51,7 @@ export class PopularViewComponent implements OnInit {
 
   private fetchPosts(page: number): void {
     if (!this._loading) {
-      this._postService.fetchPage('/api/v1/posts/search/findPopular', page, 'include-stats').subscribe(response => {
+      this._postService.fetchPage('api/v1/posts/search/findPopular', page, 'include-stats').subscribe(response => {
         const posts = response._embedded.posts;
         this._posts.push(...posts);
 

@@ -10,6 +10,9 @@ import {HomeViewComponent} from './views/home/home-view.component';
 import {IndexViewComponent} from './views/index/index-view.component';
 import {TopCommunitiesViewComponent} from './views/top-communities/top-communities-view.component';
 import {SearchViewComponent} from './views/search/search-view.component';
+import {NonAuthenticatedOnlyGuard} from './services/authorization/non-authenticated-only.guard';
+import {AuthenticatedOnlyGuard} from './services/authorization/authenticated-only.guard';
+import {NotFoundViewComponent} from './views/not-found/not-found-view.component';
 
 const routes: Routes = [
   {
@@ -22,15 +25,18 @@ const routes: Routes = [
   },
   {
     path: 'login',
-    component: LoginViewComponent
+    component: LoginViewComponent,
+    canActivate: [NonAuthenticatedOnlyGuard]
   },
   {
     path: 'sign-up',
-    component: SignUpViewComponent
+    component: SignUpViewComponent,
+    canActivate: [NonAuthenticatedOnlyGuard]
   },
   {
     path: 'c/home',
-    component: HomeViewComponent
+    component: HomeViewComponent,
+    canActivate: [AuthenticatedOnlyGuard]
   },
   {
     path: 'c/all',
@@ -51,6 +57,14 @@ const routes: Routes = [
   {
     path: 'c/:community/p/:post',
     component: PostViewComponent
+  },
+  {
+    path: 'page-not-found',
+    component: NotFoundViewComponent
+  },
+  {
+    path: '**',
+    redirectTo: '/page-not-found'
   }
 ];
 

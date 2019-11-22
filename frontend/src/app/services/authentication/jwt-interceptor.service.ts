@@ -1,20 +1,27 @@
 import {Injectable} from '@angular/core';
 import {HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
-import {BehaviorSubject, Observable, throwError} from 'rxjs';
+import {BehaviorSubject, Observable, of, throwError} from 'rxjs';
 import {Authentication, AuthenticationService, Credentials} from './authentication.service';
-import {catchError, filter, switchMap, take} from 'rxjs/operators';
+import {catchError, filter, map, switchMap, take, tap} from 'rxjs/operators';
+import {JwtHelperService} from '@auth0/angular-jwt';
+import {Router} from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class JwtInterceptorService implements HttpInterceptor {
 
-  private _refreshing = false;
   private _authentication: Authentication;
-  private _refreshTokenSubject: BehaviorSubject<Authentication>;
   private _authenticationService: AuthenticationService;
 
-  constructor(authenticationService: AuthenticationService) {
+  private _router: Router;
+  private _refreshing = false;
+  private _jwtHelper: JwtHelperService;
+  private _refreshTokenSubject: BehaviorSubject<Authentication>;
+
+  constructor(router: Router, authenticationService: AuthenticationService) {
+    this._router = router;
+    this._jwtHelper = new JwtHelperService();
     this._authenticationService = authenticationService;
     this._refreshTokenSubject = new BehaviorSubject<any>(null);
     authenticationService.authentication.subscribe(authentication => {
@@ -32,20 +39,32 @@ export class JwtInterceptorService implements HttpInterceptor {
 
   public intercept(request: HttpRequest<any>, next: HttpHandler): Observable<any> {
     const credentials = this._authentication.credentials;
-    if (credentials && credentials.accessToken) {
-      request = JwtInterceptorService.addToken(request, credentials.accessToken);
+
+    if (credentials) {
+      const accessToken = credentials.accessToken;
+      const refreshToken = credentials.refreshToken;
+
+      if (true || this._jwtHelper.isTokenExpired(refreshToken, 10)) {
+        return this.logout();
+      }
+
+      if (this._jwtHelper.isTokenExpired(accessToken, 10)) {
+        return this.refreshAccessToken(request, next, credentials);
+      }
+
+      request = JwtInterceptorService.addToken(request, accessToken);
     }
 
     return next.handle(request).pipe(catchError((error: HttpErrorResponse) => {
       if (error.status === 401 && credentials && credentials.refreshToken) {
-        return this.handle401Error(request, next, credentials);
+        return this.refreshAccessToken(request, next, credentials);
       }
 
       return throwError(error);
     }));
   }
 
-  private handle401Error(request: HttpRequest<any>, next: HttpHandler, credentials: Credentials): Observable<HttpEvent<any>> {
+  private refreshAccessToken(request: HttpRequest<any>, next: HttpHandler, credentials: Credentials): Observable<HttpEvent<any>> {
     if (!this._refreshing) {
       this._refreshing = true;
       this._refreshTokenSubject.next(null);
@@ -65,6 +84,14 @@ export class JwtInterceptorService implements HttpInterceptor {
           return next.handle(JwtInterceptorService.addToken(request, authentication.credentials.accessToken));
         }));
     }
+  }
+
+  private logout(): Observable<any> {
+    this._authenticationService.logout().subscribe(() => {
+      this._router.navigate(['login']);
+    });
+
+    return of();
   }
 
 }

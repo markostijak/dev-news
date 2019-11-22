@@ -51,6 +51,12 @@ export const SIGN_UP: NavigationItem = {
   route: 'sign-up'
 };
 
+export const PAGE_NOT_FOUND: NavigationItem = {
+  icon: 'error_outline',
+  title: 'Page Not Found',
+  route: 'page-not-found'
+};
+
 @Injectable({
   providedIn: 'root'
 })

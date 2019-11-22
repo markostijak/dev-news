@@ -26,7 +26,7 @@ import java.util.Random;
 public class JwtProvider {
 
     private static final Duration ONE_MONTH = Duration.ofDays(30);
-    private static final Duration TEN_MINUTES = Duration.ofMinutes(10);
+    private static final Duration TEN_MINUTES = Duration.ofSeconds(5);
 
     private Random random;
     private JwtSecretRepository jwtSecretRepository;

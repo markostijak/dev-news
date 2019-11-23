@@ -4,4 +4,4 @@ ARG JAR
 
 ADD target/${JAR} /app/application.jar
 
-ENTRYPOINT ["java", "--enable-preview", "-parameters", "-jar", "/app/application.jar"]
+ENTRYPOINT ["java", "--enable-preview", "-jar", "/app/application.jar"]

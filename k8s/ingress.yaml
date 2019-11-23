@@ -1,0 +1,36 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: virtual-host-ingress
+spec:
+  rules:
+    - host: 'dev-news.ga'
+      http:
+        paths:
+          - backend:
+              serviceName: frontend
+              servicePort: 8080
+    - host: 'www.dev-news.ga'
+      http:
+        paths:
+          - backend:
+              serviceName: frontend
+              servicePort: 8080
+    - host: 'api.dev-news.ga'
+      http:
+        paths:
+          - backend:
+              serviceName: backend
+              servicePort: 8080
+    - host: 'cdn.dev-news.ga'
+      http:
+        paths:
+          - backend:
+              serviceName: cdn
+              servicePort: 8080
+    - host: 'kibana.dev-news.ga'
+      http:
+        paths:
+          - backend:
+              serviceName: elk
+              servicePort: 5601

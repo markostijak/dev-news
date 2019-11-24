@@ -14,17 +14,17 @@ export interface Data {
 export class ReplyEditorComponent extends QuillEditorComponent implements OnInit {
 
   @Output()
-  private save: EventEmitter<Data> = new EventEmitter<Data>();
+  public save: EventEmitter<Data> = new EventEmitter<Data>();
   @Output()
-  private cancel: EventEmitter<ReplyEditorComponent> = new EventEmitter<ReplyEditorComponent>();
+  public cancel: EventEmitter<ReplyEditorComponent> = new EventEmitter<ReplyEditorComponent>();
 
   @Input()
-  private buttonText: string = 'Reply';
+  public buttonText: string = 'Reply';
   @Input()
-  content: string = null;
+  public content: string = null;
 
   @Input()
-  format?: 'object' | 'html' | 'text' | 'json';
+  public format?: 'object' | 'html' | 'text' | 'json';
 
   private _html: object;
   private _toolbar: string = 'rt_' + Math.random().toString(16).substr(3);

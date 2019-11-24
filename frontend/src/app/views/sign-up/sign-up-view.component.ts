@@ -27,7 +27,7 @@ export class SignUpViewComponent implements OnInit {
     this._navigationService.navigate(SIGN_UP);
   }
 
-  private redirect($event: Authentication): void {
+  public redirect($event: Authentication): void {
     this._router.navigate(['']);
   }
 

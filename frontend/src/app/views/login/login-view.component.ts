@@ -22,7 +22,7 @@ export class LoginViewComponent implements OnInit {
     this._navigationService.navigate(LOGIN);
   }
 
-  private redirect($event: Authentication): void {
+  public redirect($event: Authentication): void {
     this._router.navigate(['']);
   }
 

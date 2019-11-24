@@ -11,7 +11,7 @@ import {DialogService} from '../../services/dialog/dialog.service';
 export class UserMenuItemComponent implements OnInit {
 
   @Input()
-  private user: User;
+  public user: User;
 
   private _dialogService: DialogService;
   private _authenticationService: AuthenticationService;

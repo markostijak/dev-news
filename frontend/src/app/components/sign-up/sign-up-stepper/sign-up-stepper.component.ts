@@ -19,9 +19,9 @@ import {User} from '../../../models/user';
 export class SignUpStepperComponent implements OnInit {
 
   @Output()
-  success: EventEmitter<Authentication>;
+  public success: EventEmitter<Authentication>;
 
-  private signUpForm: FormGroup;
+  private _signUpForm: FormGroup;
 
   private _user: User;
   private _formBuilder: FormBuilder;
@@ -37,7 +37,7 @@ export class SignUpStepperComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.signUpForm = this._formBuilder.group({
+    this._signUpForm = this._formBuilder.group({
       email: ['', [Validators.required, Validators.email], this.emailValidator()],
       usernameAndPassword: this._formBuilder.group({
         username: ['', [Validators.required, Validators.minLength(5)], this.usernameValidator()],
@@ -74,7 +74,7 @@ export class SignUpStepperComponent implements OnInit {
   }
 
   public signUp(): void {
-    const userInfo = this.signUpForm.get('userInfo') as FormGroup;
+    const userInfo = this._signUpForm.get('userInfo') as FormGroup;
     for (const control in userInfo.controls) {
       if (userInfo.controls.hasOwnProperty(control)) {
         userInfo.get(control).markAsTouched();
@@ -87,11 +87,11 @@ export class SignUpStepperComponent implements OnInit {
 
     if (userInfo.valid) {
       const form = {
-        email: this.signUpForm.get('email').value,
-        username: this.signUpForm.get('usernameAndPassword').get('username').value,
-        password: this.signUpForm.get('usernameAndPassword').get('password').value,
-        firstName: this.signUpForm.get('userInfo').get('firstName').value,
-        lastName: this.signUpForm.get('userInfo').get('lastName').value
+        email: this._signUpForm.get('email').value,
+        username: this._signUpForm.get('usernameAndPassword').get('username').value,
+        password: this._signUpForm.get('usernameAndPassword').get('password').value,
+        firstName: this._signUpForm.get('userInfo').get('firstName').value,
+        lastName: this._signUpForm.get('userInfo').get('lastName').value
       };
 
       this._signUpService.signUp(form).subscribe(user => {
@@ -102,7 +102,7 @@ export class SignUpStepperComponent implements OnInit {
   }
 
   public activate(): void {
-    const activation = this.signUpForm.get('activation');
+    const activation = this._signUpForm.get('activation');
     activation.markAsTouched();
     activation.updateValueAndValidity();
 
@@ -113,9 +113,9 @@ export class SignUpStepperComponent implements OnInit {
           if (user) {
             this._user = user;
             this.tryFinish(
-              this.signUpForm.get('login'),
-              this.signUpForm.get('email').value,
-              this.signUpForm.get('usernameAndPassword').get('password').value
+              this._signUpForm.get('login'),
+              this._signUpForm.get('email').value,
+              this._signUpForm.get('usernameAndPassword').get('password').value
             );
           } else {
             activation.setErrors({
@@ -127,7 +127,7 @@ export class SignUpStepperComponent implements OnInit {
   }
 
   public login(): void {
-    const login = this.signUpForm.get('login') as FormGroup;
+    const login = this._signUpForm.get('login') as FormGroup;
     for (const control in login.controls) {
       if (login.controls.hasOwnProperty(control)) {
         login.get(control).markAsTouched();
@@ -159,4 +159,7 @@ export class SignUpStepperComponent implements OnInit {
     });
   }
 
+  get signUpForm(): FormGroup {
+    return this._signUpForm;
+  }
 }

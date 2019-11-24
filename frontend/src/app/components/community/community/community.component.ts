@@ -13,9 +13,9 @@ import {AuthorizationService} from '../../../services/authorization/authorizatio
 export class CommunityComponent implements OnInit {
 
   @Input()
-  private community: Community;
+  public community: Community;
   @Input()
-  private showCreatePostButton: boolean = true;
+  public showCreatePostButton: boolean = true;
 
   private _member: boolean;
   private _dialogService: DialogService;

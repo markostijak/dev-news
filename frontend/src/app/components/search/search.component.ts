@@ -12,7 +12,7 @@ export class SearchComponent implements OnInit {
   @Output()
   private search: EventEmitter<string> = new EventEmitter<string>();
 
-  private searchInput: FormControl = new FormControl();
+  private _searchInput: FormControl = new FormControl();
 
   constructor() {
   }
@@ -21,9 +21,13 @@ export class SearchComponent implements OnInit {
   }
 
   onSubmit($event: NgForm): void {
-    const value = this.searchInput.value;
+    const value = this._searchInput.value;
     if (value && value.length > 2) {
       this.search.emit(value);
     }
+  }
+
+  get searchInput(): FormControl {
+    return this._searchInput;
   }
 }

@@ -19,10 +19,10 @@ import {FileService} from '../../../services/file/file.service';
 export class PostEditorComponent implements OnInit, OnDestroy {
 
   @Output()
-  private save: EventEmitter<Post> = new EventEmitter<Post>();
+  public save: EventEmitter<Post> = new EventEmitter<Post>();
 
   @Output()
-  private discard: EventEmitter<any> = new EventEmitter<any>();
+  public discard: EventEmitter<any> = new EventEmitter<any>();
 
   private _title: string;
   private _selected: Community;

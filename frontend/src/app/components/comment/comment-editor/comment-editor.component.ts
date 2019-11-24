@@ -15,10 +15,10 @@ export interface Data {
 export class CommentEditorComponent extends QuillEditorComponent implements OnInit {
 
   @Input()
-  private buttonText: string = 'Comment';
+  public buttonText: string = 'Comment';
 
   @Output()
-  private save: EventEmitter<Data> = new EventEmitter<Data>();
+  public save: EventEmitter<Data> = new EventEmitter<Data>();
 
   private _html: object;
 

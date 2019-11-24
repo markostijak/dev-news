@@ -9,7 +9,7 @@ import {DialogService} from '../../services/dialog/dialog.service';
 export class OverviewComponent {
 
   @Input()
-  private title: string;
+  public title: string;
 
   private _dialogService: DialogService;
 

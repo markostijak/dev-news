@@ -9,15 +9,15 @@ import {Post} from '../../../models/post';
 export class PostComponent implements OnInit {
 
   @Input()
-  private post: Post;
+  public post: Post;
   @Input()
-  private showCommunity: boolean = true;
+  public showCommunity: boolean = true;
 
   ngOnInit(): void {
 
   }
 
-  private showMask(content: string): boolean {
+  public showMask(content: string): boolean {
     return !(content.includes('video') || content.includes('image'));
   }
 

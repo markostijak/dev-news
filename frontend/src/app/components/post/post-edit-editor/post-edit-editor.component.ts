@@ -8,12 +8,12 @@ import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angula
 export class PostEditEditorComponent implements OnInit {
 
   @Input()
-  content: string;
+  public content: string;
 
   @Output()
-  private save: EventEmitter<string> = new EventEmitter<string>();
+  public save: EventEmitter<string> = new EventEmitter<string>();
   @Output()
-  private cancel: EventEmitter<PostEditEditorComponent> = new EventEmitter<PostEditEditorComponent>();
+  public cancel: EventEmitter<PostEditEditorComponent> = new EventEmitter<PostEditEditorComponent>();
 
   @ViewChild('editor', {static: false}) editorElem: HTMLElement;
 

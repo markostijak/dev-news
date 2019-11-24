@@ -13,13 +13,13 @@ import {AuthorizationService} from '../../../services/authorization/authorizatio
 export class CommentComponent implements OnInit {
 
   @Input()
-  private post: Post;
+  public post: Post;
 
   @Input()
-  private comment: Comment;
+  public comment: Comment;
 
   @Output()
-  private reply: EventEmitter<Comment> = new EventEmitter<Comment>();
+  public reply: EventEmitter<Comment> = new EventEmitter<Comment>();
 
   private _showEditor: boolean = false;
   private _startEditing: boolean = false;

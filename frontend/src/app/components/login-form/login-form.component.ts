@@ -26,7 +26,7 @@ export class LoginFormComponent implements OnInit {
   private _iconRegistry: MatIconRegistry;
   private _authenticationService: AuthenticationService;
 
-  private loginForm: FormGroup;
+  private _loginForm: FormGroup;
 
   constructor(sanitizer: DomSanitizer,
               formBuilder: FormBuilder,
@@ -41,16 +41,16 @@ export class LoginFormComponent implements OnInit {
   }
 
   public login(): void {
-    if (this.loginForm.valid) {
-      const login = this.loginForm.value as Login;
+    if (this._loginForm.valid) {
+      const login = this._loginForm.value as Login;
       this._authenticationService.login(login.email, login.password).pipe(catchError(error => {
         return of({authenticated: false});
       })).subscribe(authentication => {
         if (authentication.authenticated) {
           this.success.emit(authentication);
         } else {
-          this.loginForm.get('email').setErrors({invalidCredentials: true});
-          this.loginForm.get('password').setErrors({invalidCredentials: true});
+          this._loginForm.get('email').setErrors({invalidCredentials: true});
+          this._loginForm.get('password').setErrors({invalidCredentials: true});
         }
       });
     }
@@ -76,7 +76,7 @@ export class LoginFormComponent implements OnInit {
       );
     });
 
-    this.loginForm = this._formBuilder.group({
+    this._loginForm = this._formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required, Validators.minLength(8)],
     });
@@ -88,4 +88,7 @@ export class LoginFormComponent implements OnInit {
     }
   }
 
+  get loginForm(): FormGroup {
+    return this._loginForm;
+  }
 }

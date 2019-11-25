@@ -1,11 +1,19 @@
-<div *ngIf="posts.length" class="main" fxLayout="row" fxLayoutGap="24px">
+<div *ngIf="posts" class="main" fxLayout="row" fxLayoutGap="24px">
   <div class="main-left" fxFlex>
-    <app-infinite-scroller (end)="onScrollEnd($event)">
-      <app-post class="mb-10" *ngFor="let post of posts" [post]="post"></app-post>
-    </app-infinite-scroller>
+    <ng-container *ngIf="posts.length then showPosts else showNoPosts"></ng-container>
+    <ng-template #showPosts>
+      <app-infinite-scroller (end)="onScrollEnd($event)">
+        <app-post class="mb-10" *ngFor="let post of posts" [post]="post"></app-post>
+      </app-infinite-scroller>
+    </ng-template>
+    <ng-template #showNoPosts>
+      <app-no-posts>
+        <p>Be the first to share your news!</p>
+      </app-no-posts>
+    </ng-template>
   </div>
   <div class="main-right" fxFlex fxHide.lt-md>
-    <app-up-and-coming-communities class="mb-10" [communities]="trendingCommunities"></app-up-and-coming-communities>
+    <app-up-and-coming-communities *ngIf="upAndComingCommunities.length" class="mb-10" [communities]="upAndComingCommunities"></app-up-and-coming-communities>
     <app-overview class="mb-10" title="Popular">
       The best posts for you, pulled from the most active communities. Check here to see the most shared, upvoted, and
       commented content on the internet.

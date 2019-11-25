@@ -17,7 +17,7 @@ export class HomeViewComponent implements OnInit {
 
   private _user: User;
   private _page: Page;
-  private _posts: Post[] = [];
+  private _posts: Post[];
   private _trendingPosts: Post[] = [];
   private _trendingCommunities: Community[] = [];
   private _upAndComingCommunities: Community[] = [];
@@ -65,7 +65,13 @@ export class HomeViewComponent implements OnInit {
       user: this._user.id
     }).subscribe(response => {
       if (response._embedded) {
-        this._posts.push(...response._embedded.posts);
+        if (this._posts) {
+          this._posts.push(...response._embedded.posts);
+        } else {
+          this._posts = response._embedded.posts;
+        }
+      } else {
+        this._posts = [];
       }
       this._page = response.page;
     });

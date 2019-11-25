@@ -14,3 +14,13 @@
 .item {
   margin-bottom: 16px;
 }
+
+.no-posts {
+  position: sticky;
+  top: 75px;
+  display: flex;
+  height: 500px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}

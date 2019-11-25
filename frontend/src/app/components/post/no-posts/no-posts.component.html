@@ -1,0 +1,12 @@
+<mat-card class="container">
+  <mat-icon>forum</mat-icon>
+  <h3>No Posts Yet</h3>
+
+  <ng-content>
+
+  </ng-content>
+
+  <button class="mt-10" mat-raised-button color="primary" (click)="showDialog('post')">Crete post</button>
+  <button *ngIf="showCreateCommunity" class="mt-10" mat-raised-button color="primary" (click)="showDialog('community')">Crete community</button>
+
+</mat-card>

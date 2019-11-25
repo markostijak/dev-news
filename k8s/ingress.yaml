@@ -3,7 +3,15 @@ kind: Ingress
 metadata:
   name: virtual-host-ingress
   annotations:
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: 'true'
+    nginx.ingress.kubernetes.io/enable-cors: 'true'
+    nginx.ingress.kubernetes.io/cors-allow-headers: '*'
+    nginx.ingress.kubernetes.io/cors-allow-methods: '*'
+    nginx.ingress.kubernetes.io/cors-allow-origin: 'https://www.dev-news.ga'
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      if ($host = 'dev-news.ga' ) {
+        rewrite ^ https://www.$host$request_uri permanent;
+      }
 spec:
   rules:
     - host: 'dev-news.ga'

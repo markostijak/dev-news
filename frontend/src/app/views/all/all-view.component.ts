@@ -14,7 +14,7 @@ import {Community} from '../../models/community';
 export class AllViewComponent implements OnInit {
 
   private _page: Page;
-  private _posts: Post[] = [];
+  private _posts: Post[];
   private _loading: boolean = false;
   private _trendingPosts: Post[] = [];
   private _trendingCommunities: Community[] = [];
@@ -52,7 +52,11 @@ export class AllViewComponent implements OnInit {
     if (!this._loading) {
       this._loading = true;
       this._postService.fetchPage('api/v1/posts', page, 'include-stats').subscribe(response => {
-        this._posts.push(...response._embedded.posts);
+        if (this._posts) {
+          this._posts.push(...response._embedded.posts);
+        } else {
+          this._posts = response._embedded.posts;
+        }
         this._page = response.page;
         this._loading = false;
       }, () => this._loading = false);

@@ -1,8 +1,16 @@
 <div *ngIf="community" class="main" fxLayout="row" fxLayoutGap="24px">
   <div class="main-left" fxFlex>
-    <app-infinite-scroller (end)="onScrollEnd($event)">
-      <app-post class="mb-10" *ngFor="let post of posts" [post]="post" [showCommunity]="false"></app-post>
-    </app-infinite-scroller>
+    <ng-container *ngIf="posts.length then showPosts else showNoPosts"></ng-container>
+    <ng-template #showPosts>
+      <app-infinite-scroller (end)="onScrollEnd($event)">
+        <app-post class="mb-10" *ngFor="let post of posts" [post]="post" [showCommunity]="false"></app-post>
+      </app-infinite-scroller>
+    </ng-template>
+    <ng-template #showNoPosts>
+      <app-no-posts [showCreateCommunity]="false">
+        <p>Be the first to share {{community.title}} news!</p>
+      </app-no-posts>
+    </ng-template>
   </div>
   <div class="main-right" fxFlex fxHide.lt-md>
     <app-community [community]="community" class="mb-10"></app-community>

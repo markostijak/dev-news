@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: elk
-          image: sebp/elk:latest
+          image: sebp/elk:721
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5061

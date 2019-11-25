@@ -13,6 +13,10 @@ export class BaseUrlAwareInterceptorService implements HttpInterceptor {
       return next.handle(request);
     }
 
+    if (request.url.startsWith('http')) {
+      return next.handle(request);
+    }
+
     return next.handle(request.clone({
       url: environment.baseUrl + request.url
     }));

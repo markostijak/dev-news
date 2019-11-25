@@ -20,9 +20,10 @@ export class PopularViewComponent implements OnInit {
     totalElements: 0
   };
 
-  private _posts: Post[] = [];
+  private _posts: Post[];
   private _trendingPosts: Post[] = [];
   private _trendingCommunities: Community[] = [];
+  private _upAndComingCommunities: Community[] = [];
 
   private _loading: boolean = false;
   private _postService: PostService;
@@ -46,6 +47,10 @@ export class PopularViewComponent implements OnInit {
       this._trendingPosts = posts;
     });
 
+    this._communityService.fetchUpAndComing().subscribe(communities => {
+      this._upAndComingCommunities = communities;
+    });
+
     this.fetchPosts(0);
   }
 
@@ -53,7 +58,11 @@ export class PopularViewComponent implements OnInit {
     if (!this._loading) {
       this._postService.fetchPage('api/v1/posts/search/findPopular', page, 'include-stats').subscribe(response => {
         const posts = response._embedded.posts;
-        this._posts.push(...posts);
+        if (this._posts) {
+          this._posts.push(...posts);
+        } else {
+          this._posts = posts;
+        }
 
         this._page.number = this._page.totalPages;
         this._page.totalPages += Math.min(posts.length, 1);
@@ -79,6 +88,10 @@ export class PopularViewComponent implements OnInit {
 
   get trendingPosts(): Post[] {
     return this._trendingPosts;
+  }
+
+  get upAndComingCommunities(): Community[] {
+    return this._upAndComingCommunities;
   }
 
 }

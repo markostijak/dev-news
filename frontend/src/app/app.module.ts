@@ -83,6 +83,8 @@ import {TimePipe} from './pipes/time.pipe';
 import {ShortTimePipe} from './pipes/twitter-time.pipe';
 import {InfiniteScrollerComponent} from './components/infinite-scroller/infinite-scroller.component';
 import {BaseUrlAwareInterceptorService} from './services/navigation/base-url-aware-interceptor.service';
+import {NoCommentsComponent} from './components/comment/no-comments/no-comments.component';
+import {NoPostsComponent} from './components/post/no-posts/no-posts.component';
 
 @NgModule({
   declarations: [
@@ -134,7 +136,9 @@ import {BaseUrlAwareInterceptorService} from './services/navigation/base-url-awa
     TimeAgoPipe,
     TimePipe,
     ShortTimePipe,
-    InfiniteScrollerComponent
+    InfiniteScrollerComponent,
+    NoCommentsComponent,
+    NoPostsComponent
   ],
   imports: [
     BrowserModule,

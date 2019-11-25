@@ -33,7 +33,7 @@ export class AuthenticationService {
 
   private static KEY = 'authentication';
 
-  private _redirectUri: string = 'http://localhost:4200';
+  private _redirectUri: string = environment.oauth2RedirectUri;
 
   private _httpClient: HttpClient;
   private _oauthService: OAuth2Service;

@@ -49,7 +49,7 @@ export class CommentComponent implements OnInit {
       post: this.post._links.self.href,
       parent: this.comment._links.self.href
     } as Comment).subscribe(reply => {
-      reply.createdBy = this.comment.createdBy;
+      reply.createdBy = this._authorizationService.authentication.principal;
 
       if (!this.comment.replies) {
         this.comment.replies = [];

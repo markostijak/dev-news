@@ -2,14 +2,15 @@ package com.stijaktech.devnews.features.signup;
 
 import com.stijaktech.devnews.domain.Status;
 import com.stijaktech.devnews.domain.user.User;
-import com.stijaktech.devnews.domain.user.UserRepository;
 import com.stijaktech.devnews.domain.user.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.Nullable;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.mail.MessagingException;
 import java.util.Objects;
 
 @Service
@@ -50,18 +51,25 @@ public class SignUpService {
     }
 
     private void sendMail(String email, String activationCode) {
-        System.out.println("Activation code: " + email + " -> " + activationCode);
-        /*
         try {
             MimeMessageHelper messageHelper = new MimeMessageHelper(mailSender.createMimeMessage());
             messageHelper.setTo(email);
-            messageHelper.setSubject("Dew-news Activation Code");
+            messageHelper.setSubject("Dew-News Activation Code");
             messageHelper.setText("Your activation code: " + activationCode + ".");
             mailSender.send(messageHelper.getMimeMessage());
         } catch (MessagingException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-         */
+    }
+
+    public static void main(String[] args) {
+        binary(9);
+    }
+
+    static void binary(int n) {
+        if (n == 0) return;
+        System.out.println(n % 2);
+        binary(n / 2);
     }
 
 }

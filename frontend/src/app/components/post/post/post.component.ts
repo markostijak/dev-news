@@ -18,7 +18,14 @@ export class PostComponent implements OnInit {
   }
 
   public showMask(content: string): boolean {
-    return !(content.includes('video') || content.includes('image'));
+    const json = JSON.parse(content);
+
+    if (json.ops.length != 2) {
+      return true;
+    }
+
+    return !((json.ops[0].insert.image || json.ops[0].insert.video) &&
+      json.ops[1].insert === '\n');
   }
 
 }

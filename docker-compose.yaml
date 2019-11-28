@@ -6,8 +6,6 @@ services:
     image: 'sebp/elk:670'
     ports:
       - '5601:5601'
-      - '9200:9200'
-      - '5044:5044'
     environment:
       LOGSTASH_START: 0
 
@@ -23,16 +21,24 @@ services:
     ports:
       - '27017:27017'
 
-  nginx:
+  cdn:
     container_name: 'cdn'
     image: 'nginx'
     volumes:
       - c:/public/:/usr/share/nginx/html
     ports:
-      - '9000:80'
+      - '8080:80'
 
-  devnews:
-    container_name: 'devnews'
-    image: 'stijak/devnews'
+  backend:
+    container_name: 'backend'
+    image: 'stijaktech/backend'
+    volumes:
+      - c:/public/:/public
     ports:
       - '8080:8080'
+
+  frontend:
+    container_name: 'frontend'
+    image: 'stijaktech/frontend'
+    ports:
+      - '8080:80'

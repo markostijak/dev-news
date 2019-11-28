@@ -9,6 +9,7 @@ import org.springframework.data.rest.core.annotation.HandleBeforeCreate;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.function.UnaryOperator;
 
 @Component
@@ -54,7 +55,7 @@ public class PostEventHandler {
         Community community = post.getCommunity();
         int count = operator.apply(post.getCommentsCount());
         community.setPostsCount(Math.max(count, 0));
-        communityRepository.save(community);
+        communityRepository.saveAll(List.of(community));
     }
 
 }

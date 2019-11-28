@@ -53,7 +53,7 @@ public class JwtProvider {
                 .setSubject(user.getId())
                 .setIssuedAt(Date.from(issuedAt))
                 .setExpiration(Date.from(expiration))
-                .setIssuer("dev-news")
+                .setIssuer("stijaktech")
                 .setHeaderParam(JwsHeader.KEY_ID, secret.getId())
                 .compact();
     }

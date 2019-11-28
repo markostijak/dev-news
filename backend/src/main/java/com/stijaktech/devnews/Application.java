@@ -53,7 +53,7 @@ public class Application implements CommandLineRunner {
             webmaster.setUsername("webmaster");
             webmaster.setFirstName("webmaster");
             webmaster.setLastName("");
-            webmaster.setEmail("webmaster@dev-news.com");
+            webmaster.setEmail("webmaster@devnews.com");
             webmaster.setPassword(passwordEncoder.encode("webmaster"));
             webmaster.setPrivileges(Set.of(Privilege.READ));
             webmaster.setProvider(Provider.LOCAL);

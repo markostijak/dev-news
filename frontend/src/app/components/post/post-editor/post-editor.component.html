@@ -4,7 +4,7 @@
       <div class="mb-10" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center center">
         <div fxFlex="0 1 auto" class="avatar-container">
           <ng-container *ngIf="authentication | async as authentication">
-            <img class="avatar" [src]="authentication.principal.picture" [alt]="authentication.principal.username">
+            <img class="avatar" [src]="authentication.principal.picture || 'assets/icons/user.png'" [alt]="authentication.principal.username">
           </ng-container>
         </div>
         <div fxFlex="1 1 100%">

@@ -11,6 +11,7 @@ import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
+import java.util.List;
 
 @Component
 @RepositoryEventHandler
@@ -41,7 +42,7 @@ public class CommentEventHandler {
     public void afterCreate(Comment comment) {
         Post post = comment.getPost();
         post.setCommentsCount(post.getCommentsCount() + 1);
-        postRepository.save(post);
+        postRepository.saveAll(List.of(post));
     }
 
     private String generateKey() {

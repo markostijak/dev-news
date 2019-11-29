@@ -19,28 +19,28 @@ spec:
         paths:
           - backend:
               serviceName: frontend
-              servicePort: frontend-http
+              servicePort: 8080
     - host: 'www.devnews.ga'
       http:
         paths:
           - backend:
               serviceName: frontend
-              servicePort: frontend-http
+              servicePort: 8080
     - host: 'api.devnews.ga'
       http:
         paths:
           - backend:
               serviceName: backend
-              servicePort: backend-http
+              servicePort: 8080
     - host: 'cdn.devnews.ga'
       http:
         paths:
           - backend:
               serviceName: cdn
-              servicePort: cdn-http
+              servicePort: 8080
     - host: 'kibana.devnews.ga'
       http:
         paths:
           - backend:
               serviceName: elk
-              servicePort: kibana-http
+              servicePort: 5601

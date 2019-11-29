@@ -32,9 +32,6 @@ metadata:
 spec:
   selector:
     app: frontend
-  type: NodePort
   ports:
-    - name: frontend-http
-      port: 8080
-      protocol: TCP
+    - port: 8080
       targetPort: 80

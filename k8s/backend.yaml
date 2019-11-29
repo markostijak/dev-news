@@ -42,9 +42,6 @@ metadata:
 spec:
   selector:
     app: backend
-  type: NodePort
   ports:
-    - name: backend-http
-      port: 8080
-      protocol: TCP
+    - port: 8080
       targetPort: 8080

@@ -36,13 +36,17 @@ metadata:
 spec:
   selector:
     app: elk
+  type: NodePort
   ports:
-    - name: kibana
+    - name: kibana-http
       port: 5601
+      protocol: TCP
       targetPort: 5601
-    - name: elastic
+    - name: elastic-http
       port: 9200
+      protocol: TCP
       targetPort: 9200
-    - name: logstash
+    - name: logstash-http
       port: 5044
+      protocol: TCP
       targetPort: 5044

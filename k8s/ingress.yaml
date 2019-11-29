@@ -7,40 +7,40 @@ metadata:
     nginx.ingress.kubernetes.io/enable-cors: 'true'
     nginx.ingress.kubernetes.io/cors-allow-headers: '*'
     nginx.ingress.kubernetes.io/cors-allow-methods: '*'
-    nginx.ingress.kubernetes.io/cors-allow-origin: 'https://www.dev-news.ga'
+    nginx.ingress.kubernetes.io/cors-allow-origin: 'https://www.devnews.ga'
     nginx.ingress.kubernetes.io/configuration-snippet: |
-      if ($host = 'dev-news.ga' ) {
+      if ($host = 'devnews.ga' ) {
         rewrite ^ https://www.$host$request_uri permanent;
       }
 spec:
   rules:
-    - host: 'dev-news.ga'
+    - host: 'devnews.ga'
       http:
         paths:
           - backend:
               serviceName: frontend
-              servicePort: 8080
-    - host: 'www.dev-news.ga'
+              servicePort: frontend-http
+    - host: 'www.devnews.ga'
       http:
         paths:
           - backend:
               serviceName: frontend
-              servicePort: 8080
-    - host: 'api.dev-news.ga'
+              servicePort: frontend-http
+    - host: 'api.devnews.ga'
       http:
         paths:
           - backend:
               serviceName: backend
-              servicePort: 8080
-    - host: 'cdn.dev-news.ga'
+              servicePort: backend-http
+    - host: 'cdn.devnews.ga'
       http:
         paths:
           - backend:
               serviceName: cdn
-              servicePort: 8080
-    - host: 'kibana.dev-news.ga'
+              servicePort: cdn-http
+    - host: 'kibana.devnews.ga'
       http:
         paths:
           - backend:
               serviceName: elk
-              servicePort: 5601
+              servicePort: kibana-http

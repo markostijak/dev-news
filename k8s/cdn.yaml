@@ -39,6 +39,9 @@ metadata:
 spec:
   selector:
     app: cdn
+  type: NodePort
   ports:
-    - port: 8080
+    - name: cdn-http
+      port: 8080
+      protocol: TCP
       targetPort: 80

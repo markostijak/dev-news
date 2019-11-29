@@ -25,7 +25,7 @@ spec:
       volumes:
         - name: public
           hostPath:
-            path: /c/home/marko_stijak/application/public
+            path: /home/marko_stijak/application/public
       restartPolicy: Always
   selector:
     matchLabels:

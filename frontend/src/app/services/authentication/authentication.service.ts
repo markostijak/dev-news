@@ -49,7 +49,7 @@ export class AuthenticationService {
     this._oauthService = new OAuth2Service(new OAuth2ServiceConfig([
       {
         id: GoogleLoginProvider.PROVIDER_ID,
-        provider: new GoogleLoginProvider('879461385833-dnjff3q4ja3o2m3s78btdcevfdk2hvof.apps.googleusercontent.com', {
+        provider: new GoogleLoginProvider('406447323616-d7q5d681g1jnpua58ipj002tl6piu8jq.apps.googleusercontent.com', {
           redirect_uri: this._redirectUri,
           offline_access: true
         })
@@ -58,7 +58,7 @@ export class AuthenticationService {
         id: FacebookLoginProvider.PROVIDER_ID,
         provider: new FacebookLoginProvider('838239883050275', {
           redirect_uri: this._redirectUri
-        }, 'en', '', 'v4.0')
+        }, 'en', '', 'v5.0')
       },
       {
         id: GitHubLoginProvider.PROVIDER_ID,

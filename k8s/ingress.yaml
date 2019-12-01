@@ -15,7 +15,7 @@ metadata:
       }
 spec:
   tls:
-    - secretName: devnews-ga-tls
+    - secretName: devnews-xyz-tls
       hosts:
         - 'devnews.xyz'
         - 'www.devnews.xyz'

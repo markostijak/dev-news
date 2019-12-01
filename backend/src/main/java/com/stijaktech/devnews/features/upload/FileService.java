@@ -16,6 +16,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.PosixFilePermission;
+import java.util.Set;
 
 @Service
 public class FileService {
@@ -49,6 +51,8 @@ public class FileService {
             Thumbnails.of(bufferedImage).size(1280, 720).keepAspectRatio(true).toFile(destination);
         }
 
+        destination.setReadable(true, false);
+
         return host + filename;
     }
 
@@ -66,7 +70,9 @@ public class FileService {
         assertThatFileIsPresent(file);
 
         String filename = generateFileName(prefix, extractExtension(file));
-        file.transferTo(storeLocation.resolve(filename));
+        Path destination = storeLocation.resolve(filename);
+        Files.setPosixFilePermissions(destination, Set.of(PosixFilePermission.OTHERS_READ));
+        file.transferTo(destination);
 
         return host + filename;
     }

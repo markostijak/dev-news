@@ -23,6 +23,9 @@ spec:
               name: elastic
             - containerPort: 5044
               name: logstash
+          env:
+            - name: LOGSTASH_START
+              value: '0'
       restartPolicy: Always
   selector:
     matchLabels:

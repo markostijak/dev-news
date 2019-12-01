@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  baseUrl: 'https://api.dev-news.ga/',
-  oauth2RedirectUri: 'https://www.dev-news.ga'
+  baseUrl: 'https://api.devnews.xyz/',
+  oauth2RedirectUri: 'https://www.devnews.xyz'
 };

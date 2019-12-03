@@ -23,8 +23,9 @@ public class CommentEventHandler {
     private PostRepository postRepository;
     private CommentRepository commentRepository;
 
-    public CommentEventHandler(PostRepository postRepository) {
+    public CommentEventHandler(PostRepository postRepository, CommentRepository commentRepository) {
         this.postRepository = postRepository;
+        this.commentRepository = commentRepository;
         this.generator = KeyGenerators.secureRandom(3);
     }
 

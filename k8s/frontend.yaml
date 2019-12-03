@@ -15,7 +15,7 @@ spec:
       containers:
         - name: frontend
           image: eu.gcr.io/stijaktech-260513/stijaktech/frontend:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - name: frontend
               containerPort: 80

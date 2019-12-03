@@ -15,7 +15,7 @@ spec:
       containers:
         - name: backend
           image: eu.gcr.io/stijaktech-260513/stijaktech/backend:latest
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
               name: cdn

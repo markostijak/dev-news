@@ -55,21 +55,11 @@ public class SignUpService {
             MimeMessageHelper messageHelper = new MimeMessageHelper(mailSender.createMimeMessage());
             messageHelper.setTo(email);
             messageHelper.setSubject("Dew-News Activation Code");
-            messageHelper.setText("Your activation code: " + activationCode + ".");
+            messageHelper.setText("Your activation code: " + activationCode);
             mailSender.send(messageHelper.getMimeMessage());
         } catch (MessagingException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
-
-    public static void main(String[] args) {
-        binary(9);
-    }
-
-    static void binary(int n) {
-        if (n == 0) return;
-        System.out.println(n % 2);
-        binary(n / 2);
     }
 
 }

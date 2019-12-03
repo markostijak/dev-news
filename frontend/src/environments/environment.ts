@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  baseUrl: 'http://localhost:8080/',
-  oauth2RedirectUri: 'http://localhost:4200'
+  baseUrl: 'https://api.devnews.xyz/',
+  oauth2RedirectUri: 'https://www.devnews.xyz'
 };
 
 /*

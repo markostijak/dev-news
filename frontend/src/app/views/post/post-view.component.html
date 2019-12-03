@@ -18,9 +18,6 @@
             </div>
             <div fxFlex="0 0 auto" class="user">Posted
               by {{post.createdBy.username}} {{post.createdAt | timeAgo}}</div>
-            <div *ngIf="post.updatedAt && post.createdAt != post.updatedAt" fxFlex="0 0 auto" class="user">
-              (edited {{post.updatedAt | timeAgo}})
-            </div>
             <div fxFlex="1 1 auto"></div>
           </div>
           <div class="title">{{post.title}}</div>
@@ -43,7 +40,7 @@
                 <mat-icon>edit</mat-icon>
                 Edit
               </button>
-              <button *ngIf="authorizationService.canDelete(post)" mat-raised-button>
+              <button *ngIf="authorizationService.canDelete(post)" mat-raised-button (click)="delete(post)">
                 <mat-icon>delete</mat-icon>
                 Delete
               </button>
@@ -65,7 +62,7 @@
             <ng-container *ngIf="comments.length; then commentsTemplate else emptyTemplate"></ng-container>
             <ng-template #commentsTemplate>
               <app-comment *ngFor="let comment of comments" [comment]="comment" [post]="post"
-                           (reply)="onReply($event)"></app-comment>
+                           (reply)="onReply($event)" (delete)="deleteComment(comment)"></app-comment>
             </ng-template>
             <ng-template #emptyTemplate>
               <app-no-comments></app-no-comments>

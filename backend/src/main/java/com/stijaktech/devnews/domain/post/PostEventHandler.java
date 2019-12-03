@@ -43,17 +43,18 @@ public class PostEventHandler {
 
     @HandleAfterCreate
     public void afterCreate(Post post) {
-        updateCommentsCount(post, c -> c + 1);
+        updatePostsCount(post, c -> c + 1);
     }
 
     @HandleAfterDelete
     public void afterDelete(Post post) {
-        updateCommentsCount(post, c -> c - 1);
+        updatePostsCount(post, c -> c - 1);
     }
 
-    private void updateCommentsCount(Post post, UnaryOperator<Integer> operator) {
+    private void updatePostsCount(Post post, UnaryOperator<Integer> operator) {
         Community community = post.getCommunity();
-        int count = operator.apply(post.getCommentsCount());
+        //int count = operator.apply(community.getPostsCount());
+        int count = postRepository.countByCommunity(community);
         community.setPostsCount(Math.max(count, 0));
         communityRepository.saveAll(List.of(community));
     }

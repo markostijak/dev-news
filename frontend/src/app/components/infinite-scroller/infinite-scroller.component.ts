@@ -29,7 +29,8 @@ export class InfiniteScrollerComponent {
       return;
     }
 
-    const window = $event.view;
+    // @ts-ignore
+    const window = $event.target.defaultView;
     const scrollHeight = this._document.documentElement.scrollHeight;
 
     if ((window.innerHeight + window.scrollY) > (scrollHeight - this.offset)) {

@@ -3,6 +3,7 @@ package com.stijaktech.devnews.domain.comment;
 import com.stijaktech.devnews.domain.post.Post;
 import com.stijaktech.devnews.domain.post.PostRepository;
 import org.springframework.data.rest.core.annotation.HandleAfterCreate;
+import org.springframework.data.rest.core.annotation.HandleAfterDelete;
 import org.springframework.data.rest.core.annotation.HandleBeforeCreate;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.security.crypto.codec.Hex;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.function.UnaryOperator;
 
 @Component
 @RepositoryEventHandler
@@ -19,6 +21,7 @@ public class CommentEventHandler {
 
     private BytesKeyGenerator generator;
     private PostRepository postRepository;
+    private CommentRepository commentRepository;
 
     public CommentEventHandler(PostRepository postRepository) {
         this.postRepository = postRepository;
@@ -40,8 +43,19 @@ public class CommentEventHandler {
 
     @HandleAfterCreate
     public void afterCreate(Comment comment) {
+        updateCommentsCount(comment, c -> c + 1);
+    }
+
+    @HandleAfterDelete
+    public void afterDelete(Comment comment) {
+        updateCommentsCount(comment, c -> c - 1);
+    }
+
+    private void updateCommentsCount(Comment comment, UnaryOperator<Integer> operator) {
         Post post = comment.getPost();
-        post.setCommentsCount(post.getCommentsCount() + 1);
+        //int count = operator.apply(post.getCommentsCount());
+        int count = commentRepository.countByPost(post);
+        post.setCommentsCount(Math.max(count, 0));
         postRepository.saveAll(List.of(post));
     }
 

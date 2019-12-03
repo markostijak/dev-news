@@ -21,6 +21,9 @@ export class CommentComponent implements OnInit {
   @Output()
   public reply: EventEmitter<Comment> = new EventEmitter<Comment>();
 
+  @Output()
+  public delete: EventEmitter<Comment> = new EventEmitter<Comment>();
+
   private _showEditor: boolean = false;
   private _startEditing: boolean = false;
 
@@ -98,6 +101,20 @@ export class CommentComponent implements OnInit {
 
   get authorizationService(): AuthorizationService {
     return this._authorizationService;
+  }
+
+  onDelete(comment: Comment) {
+    this.delete.emit(comment);
+  }
+
+  deleteReply(deleted: Comment) {
+    this._commentService.delete(deleted).subscribe(() => {
+      if (this.comment.replies) {
+        const index = this.comment.replies.indexOf(deleted);
+        this.comment.replies.splice(index, 1);
+        this.post.commentsCount--;
+      }
+    });
   }
 
 }

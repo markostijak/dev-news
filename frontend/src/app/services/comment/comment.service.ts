@@ -51,4 +51,8 @@ export class CommentService {
     });
   }
 
+  public delete(comment: Comment) {
+    return this._httpClient.delete(comment._links.self.href);
+  }
+
 }

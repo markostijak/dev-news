@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Community} from '../../models/community';
 import {Post} from '../../models/post';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {NavigationService} from '../../services/navigation/navigation.service';
 import {forkJoin, Subscription} from 'rxjs';
 import {Data} from '../../components/comment/comment-editor/comment-editor.component';
@@ -21,6 +21,7 @@ export class PostViewComponent implements OnInit, OnDestroy {
   private _trending: Post[] = [];
   private _comments: Comment[] = [];
 
+  private _router: Router;
   private _postService: PostService;
   private _activatedRoute: ActivatedRoute;
   private _navigationService: NavigationService;
@@ -29,11 +30,13 @@ export class PostViewComponent implements OnInit, OnDestroy {
   private _startEditing: boolean = false;
   private _subscription: Subscription = new Subscription();
 
-  constructor(postService: PostService,
+  constructor(router: Router,
+              postService: PostService,
               activatedRoute: ActivatedRoute,
               navigationService: NavigationService,
               authorizationService: AuthorizationService) {
 
+    this._router = router;
     this._postService = postService;
     this._activatedRoute = activatedRoute;
     this._navigationService = navigationService;
@@ -70,7 +73,10 @@ export class PostViewComponent implements OnInit, OnDestroy {
 
   onSave($event: Data): void {
     if (this._authorizationService.canCreate()) {
-      this._postService.addComment({content: $event.content, post: this._post._links.self.href} as Comment).subscribe(comment => {
+      this._postService.addComment({
+        content: $event.content,
+        post: this._post._links.self.href
+      } as Comment).subscribe(comment => {
         comment.createdBy = this._authorizationService.authentication.principal;
         this._comments.push(comment);
         this.post.commentsCount++;
@@ -121,6 +127,20 @@ export class PostViewComponent implements OnInit, OnDestroy {
 
   get trending(): Post[] {
     return this._trending;
+  }
+
+  delete(post: Post) {
+    this._postService.delete(post).subscribe(() => {
+      this._router.navigate(['/c', post.community.alias]);
+    });
+  }
+
+  deleteComment(deleted: Comment) {
+    this._postService.deleteComment(deleted).subscribe(() => {
+      const index = this.comments.indexOf(deleted);
+      this.comments.splice(index, 1);
+      this.post.commentsCount--;
+    });
   }
 
 }

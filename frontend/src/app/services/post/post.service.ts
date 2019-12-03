@@ -93,7 +93,8 @@ export class PostService {
       const buildTree = (items: Comment[], id: string = null) => {
         /* tslint:disable:triple-equals */
         return items.filter(item => item.parentId == id)
-          .map(item => ({...item, replies: buildTree(items, item.id)})); };
+          .map(item => ({...item, replies: buildTree(items, item.id)}));
+      };
 
       return buildTree(comments);
     }));
@@ -115,6 +116,14 @@ export class PostService {
     return this._httpClient.get(resource, {
       params: params
     });
+  }
+
+  public delete(post: Post) {
+    return this._httpClient.delete(post._links.self.href);
+  }
+
+  public deleteComment(comment: Comment) {
+    return this._commentService.delete(comment);
   }
 
 }

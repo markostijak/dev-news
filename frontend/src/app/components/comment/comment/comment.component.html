@@ -26,7 +26,7 @@
     <a *ngIf="authorizationService.canEdit(comment)" class="mr-10" (click)="toggleEditEditor()">
       Edit
     </a>
-    <a *ngIf="authorizationService.canDelete(comment)">
+    <a *ngIf="authorizationService.canDelete(comment) && (!comment.replies || !comment.replies.length)" (click)="onDelete(comment)">
       Delete
     </a>
   </div>
@@ -45,5 +45,5 @@
 </ng-template>
 <div *ngIf="comment.replies && comment.replies.length" class="comment-replies">
   <app-comment *ngFor="let reply of comment.replies" [comment]="reply" [post]="post"
-               (reply)="onReply($event)"></app-comment>
+               (reply)="onReply($event)" (delete)="deleteReply(reply)"></app-comment>
 </div>

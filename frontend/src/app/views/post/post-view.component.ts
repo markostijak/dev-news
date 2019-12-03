@@ -129,13 +129,13 @@ export class PostViewComponent implements OnInit, OnDestroy {
     return this._trending;
   }
 
-  delete(post: Post) {
+  public delete(post: Post) {
     this._postService.delete(post).subscribe(() => {
       this._router.navigate(['/c', post.community.alias]);
     });
   }
 
-  deleteComment(deleted: Comment) {
+  public deleteComment(deleted: Comment) {
     this._postService.deleteComment(deleted).subscribe(() => {
       const index = this.comments.indexOf(deleted);
       this.comments.splice(index, 1);

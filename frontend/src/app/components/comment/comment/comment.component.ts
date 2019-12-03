@@ -103,11 +103,11 @@ export class CommentComponent implements OnInit {
     return this._authorizationService;
   }
 
-  onDelete(comment: Comment) {
+  public onDelete(comment: Comment) {
     this.delete.emit(comment);
   }
 
-  deleteReply(deleted: Comment) {
+  public deleteReply(deleted: Comment) {
     this._commentService.delete(deleted).subscribe(() => {
       if (this.comment.replies) {
         const index = this.comment.replies.indexOf(deleted);

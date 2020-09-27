@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtAuthenticationProvider implements AuthenticationProvider {
 
-    private JwtProvider jwtProvider;
-    private UserRepository userRepository;
+    private final JwtProvider jwtProvider;
+    private final UserRepository userRepository;
 
     @Autowired
     public JwtAuthenticationProvider(JwtProvider jwtProvider, UserRepository userRepository) {
@@ -24,8 +24,8 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         String jwt = (String) authentication.getCredentials();
 
         return jwtProvider.parse(jwt)
-                .flatMap(jws -> userRepository.findById(jws.getBody().getSubject()))
-                .map(user -> new JwtAuthenticationToken(user, jwt, user.getAuthorities()))
+                .flatMap(jws -> userRepository.findById(jws.getBody().getSubject())
+                        .map(user -> new JwtAuthenticationToken(user, jws, user.getAuthorities())))
                 .orElseThrow(() -> new JwtAuthenticationException("Invalid access token", jwt));
     }
 

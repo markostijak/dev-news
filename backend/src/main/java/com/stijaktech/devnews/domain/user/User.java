@@ -1,13 +1,11 @@
 package com.stijaktech.devnews.domain.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import com.stijaktech.devnews.domain.Status;
 import com.stijaktech.devnews.domain.community.Community;
 import com.stijaktech.devnews.features.authentication.Provider;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -28,12 +26,11 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.time.Instant;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toSet;
 
 @Data
 @Document("users")
@@ -90,7 +87,7 @@ public class User implements UserDetails {
     private Provider provider;
 
     @JsonProperty(access = Access.WRITE_ONLY)
-    private String refreshToken;
+    private Map<Long, Device> devices;
 
     @JsonProperty(access = Access.WRITE_ONLY)
     private String activationCode;

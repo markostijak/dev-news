@@ -16,8 +16,8 @@ import java.io.IOException;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private AuthenticationManager authenticationManager;
-    private AuthenticationFailureHandler failureHandler;
+    private final AuthenticationManager authenticationManager;
+    private final AuthenticationFailureHandler failureHandler;
 
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager, AuthenticationFailureHandler failureHandler) {
         this.authenticationManager = authenticationManager;

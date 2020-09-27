@@ -1,15 +1,16 @@
 package com.stijaktech.devnews.features.authentication.jwt;
 
+import com.stijaktech.devnews.domain.user.Device;
 import com.stijaktech.devnews.domain.user.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwsHeader;
+import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SigningKeyResolver;
 import org.springframework.lang.NonNull;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -25,28 +26,32 @@ import java.util.Random;
 @Component
 public class JwtProvider {
 
+    public static final String DEVICE_KEY = "device";
+    public static final String DEVICE_TOKEN = "hash";
     private static final Duration ONE_MONTH = Duration.ofDays(30);
     private static final Duration TEN_MINUTES = Duration.ofMinutes(10);
 
-    private Random random;
-    private JwtSecretRepository jwtSecretRepository;
+    private final Random random;
+    private final JwtSecretRepository jwtSecretRepository;
 
     public JwtProvider(JwtSecretRepository jwtSecretRepository) {
         this.random = new Random();
         this.jwtSecretRepository = jwtSecretRepository;
     }
 
-    public String generateAccessToken(Authentication authentication, Instant issuedAt) {
-        User user = (User) authentication.getPrincipal();
-        return generateToken(user, issuedAt, issuedAt.plus(TEN_MINUTES));
+    public String generateAccessToken(User user, Instant issuedAt) {
+        return generateToken(user, issuedAt, issuedAt.plus(TEN_MINUTES))
+                .compact();
     }
 
-    public String generateRefreshToken(Authentication authentication, Instant issuedAt) {
-        User user = (User) authentication.getPrincipal();
-        return generateToken(user, issuedAt, issuedAt.plus(ONE_MONTH));
+    public String generateRefreshToken(User user, Device device, Instant issuedAt) {
+        return generateToken(user, issuedAt, issuedAt.plus(ONE_MONTH))
+                .claim(DEVICE_KEY, device.getId())
+                .claim(DEVICE_TOKEN, device.getToken())
+                .compact();
     }
 
-    private String generateToken(User user, Instant issuedAt, Instant expiration) {
+    private JwtBuilder generateToken(User user, Instant issuedAt, Instant expiration) {
         JwtSecret secret = random(jwtSecretRepository.findAll());
         return Jwts.builder()
                 .signWith(SignatureAlgorithm.HS256, secret.getValue())
@@ -54,8 +59,7 @@ public class JwtProvider {
                 .setIssuedAt(Date.from(issuedAt))
                 .setExpiration(Date.from(expiration))
                 .setIssuer("stijaktech")
-                .setHeaderParam(JwsHeader.KEY_ID, secret.getId())
-                .compact();
+                .setHeaderParam(JwsHeader.KEY_ID, secret.getId());
     }
 
     public Optional<Jws<Claims>> parse(@NonNull String jwsString) {

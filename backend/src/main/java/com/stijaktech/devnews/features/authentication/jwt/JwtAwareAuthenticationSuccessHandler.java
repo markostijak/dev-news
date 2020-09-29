@@ -50,7 +50,7 @@ public class JwtAwareAuthenticationSuccessHandler implements AuthenticationSucce
         Set<Device> devices = orElseGet(user.getDevices(), HashSet::new);
         Device device = findDevice(authentication, devices).orElseGet(() -> createDevice(now, request));
 
-        device.setLastUsedOn(now);
+        device.setUsedOn(now);
         devices.add(device);
 
         String accessToken = jwtProvider.generateAccessToken(user, now);

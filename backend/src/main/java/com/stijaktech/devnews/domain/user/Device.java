@@ -15,6 +15,6 @@ public class Device {
     private String ip;
     private String name;
     private String token;
+    private Instant usedOn;
     private Instant createdAt;
-    private Instant lastUsedOn;
 }

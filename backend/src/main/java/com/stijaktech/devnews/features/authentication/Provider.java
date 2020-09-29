@@ -6,7 +6,7 @@ public enum Provider {
     GOOGLE("google"),
     GITHUB("github");
 
-    private String name;
+    private final String name;
 
     Provider(String name) {
         this.name = name;

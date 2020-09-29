@@ -13,7 +13,7 @@ import java.util.Optional;
 @Component
 class InMemoryProviderRepository implements ProviderRepository {
 
-    private Map<String, ProviderDetails> providers;
+    private final Map<String, ProviderDetails> providers;
 
     @Autowired
     public InMemoryProviderRepository(@NonNull ProviderProperties providerProperties) {

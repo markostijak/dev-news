@@ -16,4 +16,5 @@ public class Device {
     private String name;
     private String token;
     private Instant createdAt;
+    private Instant lastUsedOn;
 }

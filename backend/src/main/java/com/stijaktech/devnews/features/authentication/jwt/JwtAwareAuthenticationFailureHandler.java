@@ -13,7 +13,7 @@ import java.io.IOException;
 @Component
 public class JwtAwareAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
-    private Counter counter;
+    private final Counter counter;
 
     public JwtAwareAuthenticationFailureHandler(MeterRegistry meterRegistry) {
         this.counter = Counter.builder("authentication.failure").register(meterRegistry);

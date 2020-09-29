@@ -20,10 +20,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class AuthorizationCodeAuthenticationProvider implements AuthenticationProvider {
 
-    private UserService userService;
-    private UserInfoExtractor userInfoExtractor;
-    private ProviderRepository providerRepository;
-    private AuthorizationCodeAccessTokenProvider accessTokenProvider;
+    private final UserService userService;
+    private final UserInfoExtractor userInfoExtractor;
+    private final ProviderRepository providerRepository;
+    private final AuthorizationCodeAccessTokenProvider accessTokenProvider;
 
     @Autowired
     public AuthorizationCodeAuthenticationProvider(

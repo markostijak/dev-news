@@ -16,9 +16,9 @@ import java.util.Set;
 @Service
 public class UserService implements UserDetailsService {
 
-    private UserRepository userRepository;
-    private PasswordEncoder passwordEncoder;
-    private StringKeyGenerator stringKeyGenerator;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final StringKeyGenerator stringKeyGenerator;
 
     @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {

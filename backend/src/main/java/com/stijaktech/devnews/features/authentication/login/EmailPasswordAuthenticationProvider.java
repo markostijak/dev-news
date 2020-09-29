@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class EmailPasswordAuthenticationProvider implements AuthenticationProvider {
 
-    private UserRepository userRepository;
-    private PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public EmailPasswordAuthenticationProvider(UserRepository userRepository, PasswordEncoder passwordEncoder) {

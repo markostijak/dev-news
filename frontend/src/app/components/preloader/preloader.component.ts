@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Inject, Input, OnInit} from '@angular/core';
 
 @Component({
   selector: 'app-preloader',
@@ -6,19 +6,21 @@ import {Component, Input, OnInit} from '@angular/core';
   styleUrls: ['./preloader.component.scss']
 })
 export class PreloaderComponent implements OnInit {
-  private _preloading: boolean = false;
-  @Input() timeout: number = 10000;
+
+  @Input() public element = 'preloader';
+
+  // tslint:disable-next-line:no-input-rename
+  @Input('hide-after') public hideAfter = 10000;
+
+  private document: Document;
+
+  constructor(@Inject('document') document: Document) {
+    this.document = document;
+  }
 
   ngOnInit(): void {
-    this.preloading = true;
-    setInterval(() => this.preloading = false, this.timeout);
+    const preloader = this.document.getElementById(this.element);
+    setTimeout(() => preloader.parentNode.removeChild(preloader), this.hideAfter);
   }
 
-  get preloading(): boolean {
-    return this._preloading;
-  }
-
-  set preloading(value: boolean) {
-    this._preloading = value;
-  }
 }

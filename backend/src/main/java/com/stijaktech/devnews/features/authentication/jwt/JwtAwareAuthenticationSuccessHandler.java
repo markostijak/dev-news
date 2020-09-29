@@ -5,9 +5,9 @@ import com.stijaktech.devnews.domain.user.Device;
 import com.stijaktech.devnews.domain.user.User;
 import com.stijaktech.devnews.domain.user.UserRepository;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.security.crypto.keygen.StringKeyGenerator;
@@ -18,10 +18,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.Instant;
-import java.util.Map;
-import java.util.function.Supplier;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
-import static com.stijaktech.devnews.features.authentication.jwt.JwtProvider.DEVICE_KEY;
+import static com.stijaktech.devnews.features.authentication.jwt.JwtProvider.DEVICE;
+import static org.checkerframework.checker.nullness.Opt.orElseGet;
 import static org.springframework.http.HttpHeaders.USER_AGENT;
 
 @Component
@@ -45,12 +47,14 @@ public class JwtAwareAuthenticationSuccessHandler implements AuthenticationSucce
         Instant now = Instant.now();
         User user = (User) authentication.getPrincipal();
 
-        Device device = extractDevice(authentication, user, () -> createDevice(now, request));
+        Set<Device> devices = orElseGet(user.getDevices(), HashSet::new);
+        Device device = findDevice(authentication, devices).orElseGet(() -> createDevice(now, request));
+        devices.add(device);
 
         String accessToken = jwtProvider.generateAccessToken(user, now);
         String refreshToken = jwtProvider.generateRefreshToken(user, device, now);
 
-        user.getDevices().put(device.getId(), device);
+        user.setDevices(devices);
         userRepository.save(user);
 
         response.setStatus(HttpStatus.OK.value());
@@ -60,25 +64,20 @@ public class JwtAwareAuthenticationSuccessHandler implements AuthenticationSucce
         jackson.writeValue(response.getWriter(), user);
     }
 
-    @SuppressWarnings("unchecked")
-    private Device extractDevice(Authentication authentication, User user, Supplier<Device> orElseGet) {
+    private Optional<Device> findDevice(Authentication authentication, @NonNull Set<Device> devices) {
         if (authentication instanceof JwtRefreshAuthenticationToken) {
-            Jws<Claims> jws = (Jws<Claims>) authentication.getCredentials();
-            Long key = jws.getBody().get(DEVICE_KEY, Long.class);
-            Map<Long, Device> devices = user.getDevices();
+            Claims claims = (Claims) authentication.getDetails();
+            String key = claims.get(DEVICE, String.class);
 
-            if (devices.containsKey(key)) {
-                return devices.get(key);
-            }
+            return devices.stream().filter(device -> key.equals(device.getToken())).findFirst();
         }
 
-        return orElseGet.get();
+        return Optional.empty();
     }
 
     private Device createDevice(Instant time, HttpServletRequest request) {
         return Device.builder()
                 .createdAt(time)
-                .id(time.getEpochSecond())
                 .ip(request.getRemoteAddr())
                 .token(keyGenerator.generateKey())
                 .name(request.getHeader(USER_AGENT))

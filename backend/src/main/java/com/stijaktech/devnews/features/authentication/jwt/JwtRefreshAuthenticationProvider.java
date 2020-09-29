@@ -11,10 +11,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
+import java.util.Set;
 
-import static com.stijaktech.devnews.features.authentication.jwt.JwtProvider.DEVICE_KEY;
-import static com.stijaktech.devnews.features.authentication.jwt.JwtProvider.DEVICE_TOKEN;
+import static com.stijaktech.devnews.features.authentication.jwt.JwtProvider.DEVICE;
 
 @Component
 public class JwtRefreshAuthenticationProvider implements AuthenticationProvider {
@@ -35,20 +34,17 @@ public class JwtRefreshAuthenticationProvider implements AuthenticationProvider 
         return jwtProvider.parse(jwt)
                 .flatMap(jws -> userRepository.findById(jws.getBody().getSubject())
                         .filter(user -> validate(jws, user))
-                        .map(user -> new JwtRefreshAuthenticationToken(user, jws, user.getAuthorities())))
+                        .map(user -> new JwtRefreshAuthenticationToken(user, jwt, jws.getBody(), user.getAuthorities())))
                 .orElseThrow(() -> new JwtAuthenticationException("Invalid refresh token", jwt));
     }
 
     private boolean validate(Jws<Claims> jws, User user) {
         Claims claims = jws.getBody();
-        Map<Long, Device> devices = user.getDevices();
+        Set<Device> devices = user.getDevices();
 
-        Long key = claims.get(DEVICE_KEY, Long.class);
-        String token = claims.get(DEVICE_TOKEN, String.class);
+        String key = claims.get(DEVICE, String.class);
 
-        Device device = devices.get(key);
-
-        return device != null && device.getToken().equals(token);
+        return devices.stream().anyMatch(device -> key.equals(device.getToken()));
     }
 
     @Override

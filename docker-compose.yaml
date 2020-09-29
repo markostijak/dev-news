@@ -27,7 +27,7 @@ services:
     volumes:
       - c:/public/:/usr/share/nginx/html
     ports:
-      - '8080:80'
+      - '9000:80'
 
   backend:
     container_name: 'backend'
@@ -41,4 +41,4 @@ services:
     container_name: 'frontend'
     image: 'stijaktech/frontend'
     ports:
-      - '8080:80'
+      - '4200:80'

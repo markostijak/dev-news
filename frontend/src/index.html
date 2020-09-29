@@ -4,13 +4,81 @@
   <meta charset="utf-8">
   <title>Dev News</title>
   <base href="/">
-
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    #preloader {
+      z-index: 1000;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #303030;
+    }
+
+    .preloader-icon-container {
+      margin: auto;
+      width: 128px;
+      height: 128px;
+    }
+
+    .preloader-container {
+      position: absolute;
+      width: 100%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .preloader-icon {
+      width: 100%;
+      height: auto;
+      filter: drop-shadow(5px 6px 6px rgba(0, 0, 0, 0.5));
+    }
+
+    .preloader-progress {
+      margin: 25px auto auto;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
+      background-color: #ffffff;
+      height: 5px;
+      border-radius: 5px;
+      overflow: hidden;
+      position: relative;
+      width: 140px;
+    }
+
+    .preloader-progress-bar {
+      animation: side2side 2s ease-in-out infinite;
+      background-color: #d32f2f;
+      height: 100%;
+      position: absolute;
+      width: 50%;
+    }
+
+    @keyframes side2side {
+      0%, 100% {
+        transform: translateX(-50%);
+      }
+      50% {
+        transform: translateX(150%);
+      }
+    }
+  </style>
 </head>
 <body class="dark-theme mat-app-background">
+<div id="preloader">
+  <div class="preloader-container">
+    <div class="preloader-icon-container">
+      <img class="preloader-icon" alt="Loading..." src="assets/icons/logo.svg"/>
+    </div>
+    <div class="preloader-progress">
+      <div class="preloader-progress-bar"></div>
+    </div>
+  </div>
+</div>
 <app-root></app-root>
 </body>
 </html>

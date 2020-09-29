@@ -182,6 +182,14 @@ import {NoPostsComponent} from './components/post/no-posts/no-posts.component';
       provide: HTTP_INTERCEPTORS,
       useClass: BaseUrlAwareInterceptorService,
       multi: true
+    },
+    {
+      provide: 'window',
+      useValue: window
+    },
+    {
+      provide: 'document',
+      useValue: document
     }
   ],
   entryComponents: [

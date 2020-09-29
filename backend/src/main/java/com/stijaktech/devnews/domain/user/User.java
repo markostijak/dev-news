@@ -87,7 +87,7 @@ public class User implements UserDetails {
     private Provider provider;
 
     @JsonProperty(access = Access.WRITE_ONLY)
-    private Map<Long, Device> devices;
+    private Set<Device> devices;
 
     @JsonProperty(access = Access.WRITE_ONLY)
     private String activationCode;

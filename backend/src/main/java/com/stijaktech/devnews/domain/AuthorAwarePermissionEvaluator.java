@@ -13,7 +13,7 @@ import java.util.Set;
 @Component
 public class AuthorAwarePermissionEvaluator implements PermissionEvaluator {
 
-    private Set<String> roles = Set.of(Role.ADMIN, Role.MODERATOR);
+    private final Set<String> roles = Set.of(Role.ADMIN, Role.MODERATOR);
 
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
@@ -23,8 +23,8 @@ public class AuthorAwarePermissionEvaluator implements PermissionEvaluator {
 
         User principal = (User) authentication.getPrincipal();
 
-        if (targetDomainObject instanceof Blamable) {
-            return handleBlamable(principal, (Blamable) targetDomainObject);
+        if (targetDomainObject instanceof Blameable) {
+            return handleBlamable(principal, (Blameable) targetDomainObject);
         }
 
         if (targetDomainObject instanceof User) {
@@ -47,12 +47,12 @@ public class AuthorAwarePermissionEvaluator implements PermissionEvaluator {
         throw new UnsupportedOperationException("Not yet implemented.");
     }
 
-    private boolean handleBlamable(User principal, Blamable blamable) {
+    private boolean handleBlamable(User principal, Blameable blameable) {
         if (roles.contains(principal.getRole())) {
             return true;
         }
 
-        User author = blamable.getCreatedBy();
+        User author = blameable.getCreatedBy();
 
         if (author == null) {
             return true;

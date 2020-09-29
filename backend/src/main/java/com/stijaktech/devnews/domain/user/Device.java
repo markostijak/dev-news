@@ -12,7 +12,6 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Device {
-    private long id;
     private String ip;
     private String name;
     private String token;

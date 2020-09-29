@@ -26,8 +26,7 @@ import java.util.Random;
 @Component
 public class JwtProvider {
 
-    public static final String DEVICE_KEY = "device";
-    public static final String DEVICE_TOKEN = "hash";
+    public static final String DEVICE = "device";
     private static final Duration ONE_MONTH = Duration.ofDays(30);
     private static final Duration TEN_MINUTES = Duration.ofMinutes(10);
 
@@ -46,8 +45,7 @@ public class JwtProvider {
 
     public String generateRefreshToken(User user, Device device, Instant issuedAt) {
         return generateToken(user, issuedAt, issuedAt.plus(ONE_MONTH))
-                .claim(DEVICE_KEY, device.getId())
-                .claim(DEVICE_TOKEN, device.getToken())
+                .claim(DEVICE, device.getToken())
                 .compact();
     }
 

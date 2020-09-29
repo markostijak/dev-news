@@ -1,4 +1,4 @@
-<app-preloader [timeout]="5000"></app-preloader>
+<!--<app-preloader [timeout]="5000"></app-preloader>-->
 <header class="header">
   <mat-toolbar color="dark" class="toolbar">
     <mat-toolbar-row class="toolbar-row">
@@ -23,3 +23,5 @@
 <main>
   <router-outlet></router-outlet>
 </main>
+
+<app-preloader element="preloader" hide-after="500"></app-preloader>

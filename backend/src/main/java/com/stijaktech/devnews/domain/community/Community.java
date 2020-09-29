@@ -1,11 +1,9 @@
 package com.stijaktech.devnews.domain.community;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.stijaktech.devnews.domain.Blamable;
+import com.stijaktech.devnews.domain.Blameable;
 import com.stijaktech.devnews.domain.Status;
-import com.stijaktech.devnews.domain.post.Post;
 import com.stijaktech.devnews.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,9 +23,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotBlank;
 import java.time.Instant;
-import java.util.List;
 
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import static com.fasterxml.jackson.annotation.JsonProperty.Access.READ_ONLY;
 import static org.hibernate.validator.constraints.SafeHtml.WhiteListType.NONE;
 
@@ -37,7 +33,7 @@ import static org.hibernate.validator.constraints.SafeHtml.WhiteListType.NONE;
 @NoArgsConstructor
 @Document("communities")
 @EqualsAndHashCode(of = "id")
-public class Community implements Blamable {
+public class Community implements Blameable {
 
     @Id
     private String id;

@@ -30,9 +30,9 @@ public class Application implements CommandLineRunner {
         SpringApplication.run(Application.class, args);
     }
 
-    private UserRepository userRepository;
-    private PasswordEncoder passwordEncoder;
-    private JwtSecretRepository jwtSecretRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtSecretRepository jwtSecretRepository;
 
     @Override
     public void run(String... args) {

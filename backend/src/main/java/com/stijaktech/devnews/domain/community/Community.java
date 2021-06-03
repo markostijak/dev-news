@@ -11,7 +11,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -25,7 +24,6 @@ import javax.validation.constraints.NotBlank;
 import java.time.Instant;
 
 import static com.fasterxml.jackson.annotation.JsonProperty.Access.READ_ONLY;
-import static org.hibernate.validator.constraints.SafeHtml.WhiteListType.NONE;
 
 @Data
 @Builder
@@ -41,7 +39,7 @@ public class Community implements Blameable {
     private String logo;
 
     @NotBlank
-    @SafeHtml(whitelistType = NONE)
+//    @SafeHtml(whitelistType = NONE)
     private String title;
 
     @Indexed(unique = true)
@@ -68,7 +66,7 @@ public class Community implements Blameable {
     private User updatedBy;
 
     @NotBlank
-    @SafeHtml(whitelistType = NONE)
+//    @SafeHtml(whitelistType = NONE)
     private String description;
 
     @CreatedDate

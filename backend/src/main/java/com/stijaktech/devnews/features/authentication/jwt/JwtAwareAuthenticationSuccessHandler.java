@@ -23,7 +23,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static com.stijaktech.devnews.features.authentication.jwt.JwtProvider.DEVICE;
-import static org.checkerframework.checker.nullness.Opt.orElseGet;
+import static java.util.Objects.requireNonNullElseGet;
 import static org.springframework.http.HttpHeaders.USER_AGENT;
 
 @Component
@@ -46,8 +46,7 @@ public class JwtAwareAuthenticationSuccessHandler implements AuthenticationSucce
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         Instant now = Instant.now();
         User user = (User) authentication.getPrincipal();
-
-        Set<Device> devices = orElseGet(user.getDevices(), HashSet::new);
+        Set<Device> devices = requireNonNullElseGet(user.getDevices(), HashSet::new);
         Device device = findDevice(authentication, devices).orElseGet(() -> createDevice(now, request));
 
         device.setUsedOn(now);

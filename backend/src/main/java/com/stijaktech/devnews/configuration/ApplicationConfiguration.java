@@ -39,6 +39,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
 import javax.servlet.MultipartConfigElement;
 import java.time.Duration;
@@ -64,7 +65,7 @@ public class ApplicationConfiguration {
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
+        config.setAllowCredentials(false);
         config.addAllowedOrigin("*");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
@@ -94,7 +95,7 @@ public class ApplicationConfiguration {
     public RepositoryRestConfigurer repositoryRestConfigurer(LocalValidatorFactoryBean validator) {
         return new RepositoryRestConfigurer() {
             @Override
-            public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config) {
+            public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config, CorsRegistry cors) {
                 config.getExposureConfiguration()
                         .forDomainType(User.class)
                         .withItemExposure((metadata, httpMethods) -> httpMethods.disable(HttpMethod.POST))

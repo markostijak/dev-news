@@ -26,7 +26,6 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.time.Instant;
 import java.util.Collection;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -127,3 +126,4 @@ public class User implements UserDetails {
     }
 
 }
+

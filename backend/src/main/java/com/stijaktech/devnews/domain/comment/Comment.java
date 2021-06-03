@@ -8,7 +8,6 @@ import com.stijaktech.devnews.domain.user.User;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -22,7 +21,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
 
-import static com.fasterxml.jackson.annotation.JsonProperty.Access.*;
+import static com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY;
 
 @Data
 @NoArgsConstructor
@@ -53,7 +52,7 @@ public class Comment implements Blameable {
     private Post post;
 
     @NotBlank
-    @SafeHtml
+//    @SafeHtml
     private String content;
 
     @DBRef

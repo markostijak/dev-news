@@ -11,9 +11,8 @@ public class JwtRefreshAuthenticationToken extends UsernamePasswordAuthenticatio
         super(principal, credentials);
     }
 
-    public JwtRefreshAuthenticationToken(Object principal, Object credentials, Object details, Collection<? extends GrantedAuthority> authorities) {
+    public JwtRefreshAuthenticationToken(Object principal, Object credentials, Collection<? extends GrantedAuthority> authorities) {
         super(principal, credentials, authorities);
-        this.setDetails(details);
     }
 
 }

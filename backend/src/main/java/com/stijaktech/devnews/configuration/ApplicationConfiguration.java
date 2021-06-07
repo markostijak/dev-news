@@ -1,18 +1,19 @@
 package com.stijaktech.devnews.configuration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.stijaktech.devnews.domain.user.User;
+import com.stijaktech.devnews.features.authentication.AuthenticatedUser;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.data.domain.AuditorAware;
@@ -23,9 +24,12 @@ import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.data.rest.core.event.ValidatingRepositoryEventListener;
 import org.springframework.data.rest.core.projection.ProjectionDefinitions;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.hateoas.mediatype.MessageResolver;
+import org.springframework.hateoas.mediatype.hal.CurieProvider;
+import org.springframework.hateoas.mediatype.hal.Jackson2HalModule;
+import org.springframework.hateoas.mediatype.hal.Jackson2HalModule.HalHandlerInstantiator;
+import org.springframework.hateoas.server.LinkRelationProvider;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,34 +39,23 @@ import org.springframework.security.oauth2.client.filter.state.DefaultStateKeyGe
 import org.springframework.security.oauth2.client.token.grant.code.AuthorizationCodeAccessTokenProvider;
 import org.springframework.util.unit.DataSize;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import ua_parser.Parser;
 
 import javax.servlet.MultipartConfigElement;
+import java.time.Clock;
 import java.time.Duration;
 import java.util.Optional;
 
 @Configuration
-@EnableCaching
-@EnableWebSecurity
 @EnableMongoAuditing
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class ApplicationConfiguration {
 
     @Bean
-    public MultipartConfigElement multipartConfigElement() {
-        MultipartConfigFactory factory = new MultipartConfigFactory();
-        factory.setMaxFileSize(DataSize.ofMegabytes(10));
-        factory.setMaxRequestSize(DataSize.ofMegabytes(10));
-        return factory.createMultipartConfig();
-    }
-
-    @Bean
     @Profile("dev")
-    public CorsFilter corsFilter() {
+    public CorsConfigurationSource corsConfigurationSource() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(false);
@@ -70,7 +63,15 @@ public class ApplicationConfiguration {
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
-        return new CorsFilter(source);
+        return source;
+    }
+
+    @Bean
+    public MultipartConfigElement multipartConfigElement() {
+        MultipartConfigFactory factory = new MultipartConfigFactory();
+        factory.setMaxFileSize(DataSize.ofMegabytes(10));
+        factory.setMaxRequestSize(DataSize.ofMegabytes(10));
+        return factory.createMultipartConfig();
     }
 
     @Bean
@@ -87,21 +88,8 @@ public class ApplicationConfiguration {
     }
 
     @Bean
-    public RestTemplate restTemplate(RestTemplateBuilder builder) {
-        return builder.build();
-    }
-
-    @Bean
     public RepositoryRestConfigurer repositoryRestConfigurer(LocalValidatorFactoryBean validator) {
         return new RepositoryRestConfigurer() {
-            @Override
-            public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config, CorsRegistry cors) {
-                config.getExposureConfiguration()
-                        .forDomainType(User.class)
-                        .withItemExposure((metadata, httpMethods) -> httpMethods.disable(HttpMethod.POST))
-                        .withCollectionExposure((metadata, httpMethods) -> httpMethods.disable(HttpMethod.POST));
-            }
-
             @Override
             public void configureValidatingRepositoryEventListener(ValidatingRepositoryEventListener validatingListener) {
                 validatingListener.addValidator("beforeCreate", validator);
@@ -116,8 +104,9 @@ public class ApplicationConfiguration {
                 .map(SecurityContext::getAuthentication)
                 .filter(Authentication::isAuthenticated)
                 .map(Authentication::getPrincipal)
-                .filter(p -> p instanceof User)
-                .map(User.class::cast);
+                .filter(p -> p instanceof AuthenticatedUser)
+                .map(AuthenticatedUser.class::cast)
+                .map(AuthenticatedUser::toUser);
     }
 
     @Bean
@@ -130,6 +119,32 @@ public class ApplicationConfiguration {
     @Bean
     public ProjectionDefinitions projectionDefinitions(RepositoryRestConfiguration configuration) {
         return configuration.getProjectionConfiguration();
+    }
+
+    @Bean
+    @Primary
+    public ObjectMapper objectMapper(Jackson2ObjectMapperBuilder builder) {
+        return builder.createXmlMapper(false).build();
+    }
+
+    @Autowired
+    @Bean("halMapper")
+    public ObjectMapper halObjectMapper(Jackson2ObjectMapperBuilder builder,
+                                        LinkRelationProvider provider, MessageResolver resolver) {
+        return builder.modulesToInstall(new Jackson2HalModule())
+                .handlerInstantiator(new HalHandlerInstantiator(provider, CurieProvider.NONE, resolver))
+                .createXmlMapper(false)
+                .build();
+    }
+
+    @Bean
+    public Parser userAgentParser() {
+        return new Parser();
+    }
+
+    @Bean
+    public Clock clock() {
+        return Clock.systemDefaultZone();
     }
 
     @Configuration

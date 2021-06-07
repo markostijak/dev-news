@@ -1,50 +1,52 @@
 package com.stijaktech.devnews.features.authentication.jwt;
 
-import com.stijaktech.devnews.domain.user.Device;
 import com.stijaktech.devnews.domain.user.User;
 import com.stijaktech.devnews.domain.user.UserRepository;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
+import com.stijaktech.devnews.domain.user.device.Device;
+import com.stijaktech.devnews.domain.user.device.DeviceService;
+import com.stijaktech.devnews.features.authentication.AuthenticatedUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
-
-import java.util.Set;
-
-import static com.stijaktech.devnews.features.authentication.jwt.JwtProvider.DEVICE;
 
 @Component
 public class JwtRefreshAuthenticationProvider implements AuthenticationProvider {
 
     private final JwtProvider jwtProvider;
+    private final DeviceService deviceService;
     private final UserRepository userRepository;
 
     @Autowired
-    public JwtRefreshAuthenticationProvider(JwtProvider jwtProvider, UserRepository userRepository) {
+    public JwtRefreshAuthenticationProvider(
+            JwtProvider jwtProvider,
+            DeviceService deviceService,
+            UserRepository userRepository) {
+
         this.jwtProvider = jwtProvider;
+        this.deviceService = deviceService;
         this.userRepository = userRepository;
     }
 
     @Override
-    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+    public Authentication authenticate(Authentication authentication) {
         String jwt = (String) authentication.getCredentials();
 
-        return jwtProvider.parse(jwt)
-                .flatMap(jws -> userRepository.findById(jws.getBody().getSubject())
-                        .filter(user -> validate(jws, user))
-                        .map(user -> new JwtRefreshAuthenticationToken(user, jwt, jws.getBody(), user.getAuthorities())))
-                .orElseThrow(() -> new JwtAuthenticationException("Invalid refresh token", jwt));
-    }
+        AuthenticatedUser user = jwtProvider.parse(jwt)
+                .filter(jwtProvider::isRefreshToken).map(jwtProvider::parseUserDetails)
+                .orElseThrow(() -> new BadCredentialsException("Invalid refresh token"));
 
-    private boolean validate(Jws<Claims> jws, User user) {
-        Claims claims = jws.getBody();
-        Set<Device> devices = user.getDevices();
+        User model = userRepository.findById(user.getId())
+                .orElseThrow(() -> new BadCredentialsException("User not found"));
 
-        String key = claims.get(DEVICE, String.class);
+        Device device = model.getDevices().stream()
+                .filter(d -> d.getToken().equals(user.getDevice())).findFirst()
+                .orElseThrow(() -> new BadCredentialsException("Refresh token has been revoked"));
 
-        return devices.stream().anyMatch(device -> key.equals(device.getToken()));
+        deviceService.updateLastUsedTime(model, device);
+
+        return new JwtRefreshAuthenticationToken(user, jwt, user.getAuthorities());
     }
 
     @Override

@@ -17,7 +17,7 @@ import {NotFoundViewComponent} from './views/not-found/not-found-view.component'
 const routes: Routes = [
   {
     path: '',
-    component: IndexViewComponent
+    component: IndexViewComponent,
   },
   {
     path: 'search',

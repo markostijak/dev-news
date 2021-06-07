@@ -85,6 +85,7 @@ import {InfiniteScrollerComponent} from './components/infinite-scroller/infinite
 import {BaseUrlAwareInterceptorService} from './services/navigation/base-url-aware-interceptor.service';
 import {NoCommentsComponent} from './components/comment/no-comments/no-comments.component';
 import {NoPostsComponent} from './components/post/no-posts/no-posts.component';
+import {ToolbarComponent} from './components/toolbar/toolbar.component';
 
 @NgModule({
   declarations: [
@@ -138,7 +139,8 @@ import {NoPostsComponent} from './components/post/no-posts/no-posts.component';
     ShortTimePipe,
     InfiniteScrollerComponent,
     NoCommentsComponent,
-    NoPostsComponent
+    NoPostsComponent,
+    ToolbarComponent
   ],
   imports: [
     BrowserModule,

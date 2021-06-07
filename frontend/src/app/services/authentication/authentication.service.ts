@@ -102,29 +102,29 @@ export class AuthenticationService {
 
   public facebook(): Observable<Authentication> {
     return fromPromise(this._oauthService.signIn(FacebookLoginProvider.PROVIDER_ID))
-      .pipe(switchMap(facebook => this.socialLogin(facebook)));
+      .pipe(switchMap(facebook => this.oauthLogin(facebook)));
   }
 
   public google(): Observable<Authentication> {
     return fromPromise(this._oauthService.signIn(GoogleLoginProvider.PROVIDER_ID))
-      .pipe(switchMap(google => this.socialLogin(google)));
+      .pipe(switchMap(google => this.oauthLogin(google)));
   }
 
   public github(): Observable<Authentication> {
     return fromPromise(this._oauthService.signIn(GitHubLoginProvider.PROVIDER_ID))
-      .pipe(switchMap(github => this.socialLogin(github)));
+      .pipe(switchMap(github => this.oauthLogin(github)));
   }
 
   public login(email: string, password: string): Observable<Authentication> {
-    return this.authenticate('api/auth/login', email, password);
+    return this.authenticate('login', email, password);
   }
 
-  private socialLogin(socialUser: SocialUser): Observable<Authentication> {
-    return this.authenticate('api/auth/social-login', socialUser.provider, socialUser.authorizationCode);
+  private oauthLogin(socialUser: SocialUser): Observable<Authentication> {
+    return this.authenticate('login/oauth', socialUser.provider, socialUser.authorizationCode);
   }
 
   public jwtRefresh(credentials: Credentials): Observable<Authentication> {
-    return this.authenticate('api/auth/refresh', credentials.accessToken, credentials.refreshToken);
+    return this.authenticate('refresh', credentials.accessToken, credentials.refreshToken);
   }
 
   public authenticate(url: string, principal: string, credentials: string): Observable<Authentication> {

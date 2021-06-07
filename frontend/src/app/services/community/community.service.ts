@@ -5,8 +5,7 @@ import {AuthenticationService} from '../authentication/authentication.service';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {Community} from '../../models/community';
 import {map, switchMap} from 'rxjs/operators';
-import {Hal, Page} from '../../models/hal';
-import {Post} from '../../models/post';
+import {Hal} from '../../models/hal';
 
 @Injectable({
   providedIn: 'root'

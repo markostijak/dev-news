@@ -1,23 +1,5 @@
-<!--<app-preloader [timeout]="5000"></app-preloader>-->
-<header class="header">
-  <mat-toolbar color="dark" class="toolbar">
-    <mat-toolbar-row class="toolbar-row">
-      <a class="branding-wrapper" routerLink="">
-        <img class="logo" src="assets/icons/logo.svg" alt="Logo">
-      </a>
-      <app-navigation class="ml-30"></app-navigation>
-      <app-search class="search-container ml-30 mr-30" (search)="onSearch($event)"></app-search>
-      <ng-container *ngIf="authentication | async as authentication">
-        <ng-container *ngIf="authentication.authenticated; then user else login"></ng-container>
-        <ng-template #user>
-          <app-user-menu-item class="ml-auto" [user]="authentication.principal"></app-user-menu-item>
-        </ng-template>
-        <ng-template #login>
-          <app-login-sign-up-menu-item class="ml-auto"></app-login-sign-up-menu-item>
-        </ng-template>
-      </ng-container>
-    </mat-toolbar-row>
-  </mat-toolbar>
+<header>
+  <app-toolbar></app-toolbar>
 </header>
 
 <main>

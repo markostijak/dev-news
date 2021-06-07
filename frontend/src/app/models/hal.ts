@@ -10,6 +10,11 @@ export interface Links {
     href: string;
     templated?: boolean;
   };
+
+  [key: string]: {
+    href: string;
+    templated?: boolean;
+  };
 }
 
 export interface Hal<T> {

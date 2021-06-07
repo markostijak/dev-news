@@ -1,0 +1,22 @@
+<mat-toolbar color="dark" class="toolbar">
+  <mat-toolbar-row class="toolbar-row">
+    <a class="branding-wrapper" routerLink=""><img class="logo" src="assets/icons/logo.svg" alt="Logo"></a>
+
+    <app-navigation class="ml-30"></app-navigation>
+
+    <app-search class="search-container ml-30 mr-30" (search)="onSearch($event)"></app-search>
+
+    <ng-container *ngIf="userService.authenticated$ | async else login">
+      <ng-container *ngIf="userService.user$ | async as user else loading">
+        <app-user-menu-item class="ml-auto" [user]="user"></app-user-menu-item>
+      </ng-container>
+      <ng-template #loading>
+        <p>Loading...</p>
+      </ng-template>
+    </ng-container>
+    <ng-template #login>
+      <app-login-sign-up-menu-item class="ml-auto"></app-login-sign-up-menu-item>
+    </ng-template>
+
+  </mat-toolbar-row>
+</mat-toolbar>

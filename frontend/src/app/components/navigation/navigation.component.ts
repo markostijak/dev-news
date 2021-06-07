@@ -11,10 +11,8 @@ import {
   TOP_COMMUNITIES
 } from '../../services/navigation/navigation.service';
 import {AuthenticationService} from '../../services/authentication/authentication.service';
-import {HttpClient} from '@angular/common/http';
-import {Observable} from 'rxjs';
-import {Community} from '../../models/community';
 import {CommunityService} from '../../services/community/community.service';
+import {UserService} from '../../services/user/user.service';
 
 @Component({
   selector: 'app-navigation',
@@ -23,34 +21,30 @@ import {CommunityService} from '../../services/community/community.service';
 })
 export class NavigationComponent implements OnInit {
 
-  private _items: NavigationGroup[] = [];
-  private _original: NavigationGroup[] = [];
+  items: NavigationGroup[] = [];
+  original: NavigationGroup[] = [];
 
-  private _httpClient: HttpClient;
-  private _communityService: CommunityService;
-  private _authenticationService: AuthenticationService;
+  userService: UserService;
+  communityService: CommunityService;
+  navigationService: NavigationService;
+  authenticationService: AuthenticationService;
 
-  private readonly _navigation: Observable<NavigationItem | Community>;
-
-  constructor(httpClient: HttpClient,
-              communityService: CommunityService,
+  constructor(communityService: CommunityService,
               navigationService: NavigationService,
               authenticationService: AuthenticationService) {
-
-    this._httpClient = httpClient;
-    this._communityService = communityService;
-    this._navigation = navigationService.navigation;
-    this._authenticationService = authenticationService;
+    this.communityService = communityService;
+    this.navigationService = navigationService;
+    this.authenticationService = authenticationService;
   }
 
   public ngOnInit(): void {
-    this._authenticationService.authentication.subscribe(authentication => {
+    this.authenticationService.authentication.subscribe(authentication => {
       if (authentication.authenticated) {
         const home: NavigationItem = HOME;
         const popular: NavigationItem = POPULAR;
         home.route = '';
         popular.route = 'c/popular';
-        this._original = [
+        this.original = [
           {
             title: 'Feeds',
             items: [
@@ -65,15 +59,15 @@ export class NavigationComponent implements OnInit {
             items: []
           }
         ];
-        this._communityService.myCommunities().subscribe((communities: any) => {
-          this._original[1].items = communities;
+        this.communityService.myCommunities().subscribe((communities: any) => {
+          this.original[1].items = communities;
         });
       } else {
         const home: NavigationItem = HOME;
         const popular: NavigationItem = POPULAR;
         home.route = 'c/home';
         popular.route = '';
-        this._original = [
+        this.original = [
           {
             title: 'Feeds',
             items: [
@@ -92,7 +86,7 @@ export class NavigationComponent implements OnInit {
         ];
       }
 
-      this.items = this._original;
+      this.items = this.original;
     });
   }
 
@@ -100,7 +94,7 @@ export class NavigationComponent implements OnInit {
     const input = $event.target.value;
     if (input) {
       const items: NavigationItem[] = [];
-      for (const navigationGroup of this._original) {
+      for (const navigationGroup of this.original) {
         for (const navigationItem of navigationGroup.items) {
           if (navigationItem.title.toLowerCase().startsWith(input)) {
             items.push(navigationItem);
@@ -110,19 +104,8 @@ export class NavigationComponent implements OnInit {
 
       this.items = [{items: items}];
     } else {
-      this.items = this._original;
+      this.items = this.original;
     }
   }
 
-  get items(): NavigationGroup[] {
-    return this._items;
-  }
-
-  set items(value: NavigationGroup[]) {
-    this._items = value;
-  }
-
-  get navigation(): Observable<NavigationItem> {
-    return this._navigation;
-  }
 }

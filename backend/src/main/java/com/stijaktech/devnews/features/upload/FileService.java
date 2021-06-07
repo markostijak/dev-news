@@ -1,7 +1,7 @@
 package com.stijaktech.devnews.features.upload;
 
-import lombok.SneakyThrows;
 import net.coobird.thumbnailator.Thumbnails;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.security.crypto.codec.Hex;
@@ -20,24 +20,26 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.util.Set;
 
 @Service
-public class FileService {
+public class FileService implements InitializingBean {
 
-    private String host;
-    private Path storeLocation;
-    private BytesKeyGenerator keyGenerator;
+    private final String host;
+    private final Path storeLocation;
+    private final BytesKeyGenerator keyGenerator;
 
-    public FileService(
-            @Value("${file-upload.host}") String host,
-            @Value("${file-upload.store-location}") Path storeLocation) throws IOException {
+    public FileService(@Value("${file-upload.host}") String host,
+                       @Value("${file-upload.store-location}") Path storeLocation) {
 
         this.host = host;
         this.storeLocation = storeLocation;
         this.keyGenerator = KeyGenerators.secureRandom(16);
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
         createIfNotExists(storeLocation);
     }
 
-    @SneakyThrows
-    public String storeImage(@NonNull MultipartFile image) {
+    public String storeImage(@NonNull MultipartFile image) throws IOException {
         assertThatFileIsPresent(image);
 
         String filename = generateFileName("image_", extractExtension(image));
@@ -51,18 +53,16 @@ public class FileService {
             Thumbnails.of(bufferedImage).size(1280, 720).keepAspectRatio(true).toFile(destination);
         }
 
-        destination.setReadable(true, false);
+        Files.setPosixFilePermissions(destination.toPath(), Set.of(PosixFilePermission.OTHERS_READ));
 
         return host + filename;
     }
 
-    @SneakyThrows
-    public String storeVideo(@NonNull MultipartFile video) {
+    public String storeVideo(@NonNull MultipartFile video) throws IOException {
         return store("video_", video);
     }
 
-    @SneakyThrows
-    public String storeDocument(@NonNull MultipartFile document) {
+    public String storeDocument(@NonNull MultipartFile document) throws IOException {
         return store("doc_", document);
     }
 
@@ -108,5 +108,4 @@ public class FileService {
             }
         }
     }
-
 }

@@ -1,12 +1,13 @@
 package com.stijaktech.devnews.features.authentication.login;
 
+import com.stijaktech.devnews.features.authentication.WebDetails;
 import com.stijaktech.devnews.features.authentication.jwt.JwtRefreshAuthenticationToken;
 import com.stijaktech.devnews.features.authentication.oauth2.AuthorizationCodeAuthenticationToken;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -19,22 +20,20 @@ import java.util.Base64;
 
 public class LoginAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
-    private static final String AUTH_LOGIN = "/api/auth/login";
-    private static final String AUTH_SOCIAL_LOGIN = "/api/auth/social-login";
-    private static final String AUTH_REFRESH = "/api/auth/refresh";
+    private static final String LOGIN = "/login";
+    private static final String OAUTH_LOGIN = "/login/oauth";
+    private static final String REFRESH = "/refresh";
 
-    public LoginAuthenticationFilter(AuthenticationManager authenticationManager, AuthenticationSuccessHandler successHandler) {
-        super(new OrRequestMatcher(
-                new AntPathRequestMatcher(AUTH_LOGIN),
-                new AntPathRequestMatcher(AUTH_SOCIAL_LOGIN),
-                new AntPathRequestMatcher(AUTH_REFRESH)
-        ));
+    public LoginAuthenticationFilter(
+            AuthenticationManager authenticationManager, AuthenticationSuccessHandler successHandler) {
+        super(new OrRequestMatcher(new AntPathRequestMatcher(LOGIN),
+                new AntPathRequestMatcher(OAUTH_LOGIN), new AntPathRequestMatcher(REFRESH)));
         setAuthenticationManager(authenticationManager);
         setAuthenticationSuccessHandler(successHandler);
     }
 
     @Override
-    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
         String header = request.getHeader(HttpHeaders.AUTHORIZATION);
 
         if (header == null || !header.toLowerCase().startsWith("basic ")) {
@@ -44,12 +43,14 @@ public class LoginAuthenticationFilter extends AbstractAuthenticationProcessingF
         String[] tokens = extractAndDecodeHeader(header);
         assert tokens.length == 2;
 
-        Authentication authentication = switch (request.getServletPath()) {
-            case AUTH_LOGIN -> new EmailPasswordAuthenticationToken(tokens[0], tokens[1]);
-            case AUTH_SOCIAL_LOGIN -> new AuthorizationCodeAuthenticationToken(tokens[0], tokens[1]);
-            case AUTH_REFRESH -> new JwtRefreshAuthenticationToken(tokens[0], tokens[1]);
+        AbstractAuthenticationToken authentication = switch (request.getServletPath()) {
+            case LOGIN -> new EmailPasswordAuthenticationToken(tokens[0], tokens[1]);
+            case OAUTH_LOGIN -> new AuthorizationCodeAuthenticationToken(tokens[0], tokens[1]);
+            case REFRESH -> new JwtRefreshAuthenticationToken(tokens[0], tokens[1]);
             default -> throw new IllegalStateException("Unsupported path");
         };
+
+        authentication.setDetails(new WebDetails(request));
 
         return getAuthenticationManager().authenticate(authentication);
     }

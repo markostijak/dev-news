@@ -1,8 +1,19 @@
 package com.stijaktech.devnews.domain.user;
 
-public interface Role {
-    String USER = "ROLE_USER";
-    String ADMIN = "ROLE_ADMIN";
-    String WEBMASTER = "ROLE_WEBMASTER";
-    String MODERATOR = "ROLE_MODERATOR";
+public enum Role {
+    USER("ROLE_USER"),
+    ADMIN("ROLE_ADMIN"),
+    WEBMASTER("ROLE_WEBMASTER"),
+    MODERATOR("ROLE_MODERATOR");
+
+    private final String role;
+
+    Role(String role) {
+        this.role = role;
+    }
+
+    public String asString() {
+        return role;
+    }
+
 }

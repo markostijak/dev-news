@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
-import {Authentication, AuthenticationService} from '../authentication/authentication.service';
 import {Community} from '../../models/community';
 
 export interface NavigationItem {
@@ -62,23 +61,18 @@ export const PAGE_NOT_FOUND: NavigationItem = {
 })
 export class NavigationService {
 
-  private _authentication: Authentication;
-  private readonly _behaviourSubject: BehaviorSubject<NavigationItem>;
+  navigation$: BehaviorSubject<NavigationItem>;
 
-  constructor(authenticationService: AuthenticationService) {
-    authenticationService.authentication.subscribe(authentication => {
-      this._authentication = authentication;
-    });
-
-    this._behaviourSubject = new BehaviorSubject<NavigationItem>(this._authentication.authenticated ? HOME : POPULAR);
+  constructor() {
+    this.navigation$ = new BehaviorSubject<NavigationItem>(null);
   }
 
   public get navigation(): Observable<NavigationItem> {
-    return this._behaviourSubject;
+    return this.navigation$;
   }
 
   public navigate(navigationItem: NavigationItem | Community): void {
-    this._behaviourSubject.next(navigationItem);
+    this.navigation$.next(navigationItem);
   }
 
 }

@@ -1,7 +1,18 @@
 package com.stijaktech.devnews.domain.user;
 
-public interface Privilege {
-    String READ = "READ_PRIVILEGE";
-    String WRITE = "WRITE_PRIVILEGE";
-    String DELETE = "DELETE_PRIVILEGE";
+public enum Privilege {
+    READ("READ_PRIVILEGE"),
+    WRITE("WRITE_PRIVILEGE"),
+    DELETE("DELETE_PRIVILEGE");
+
+    private final String privilege;
+
+    Privilege(String privilege) {
+        this.privilege = privilege;
+    }
+
+    public String asString() {
+        return privilege;
+    }
+
 }

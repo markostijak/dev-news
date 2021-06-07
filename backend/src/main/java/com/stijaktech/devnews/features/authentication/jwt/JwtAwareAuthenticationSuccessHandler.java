@@ -1,88 +1,54 @@
 package com.stijaktech.devnews.features.authentication.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.stijaktech.devnews.domain.user.Device;
 import com.stijaktech.devnews.domain.user.User;
-import com.stijaktech.devnews.domain.user.UserRepository;
-import io.jsonwebtoken.Claims;
+import com.stijaktech.devnews.features.authentication.AuthenticatedUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpStatus;
-import org.springframework.lang.NonNull;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.keygen.KeyGenerators;
-import org.springframework.security.crypto.keygen.StringKeyGenerator;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.Instant;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-
-import static com.stijaktech.devnews.features.authentication.jwt.JwtProvider.DEVICE;
-import static java.util.Objects.requireNonNullElseGet;
-import static org.springframework.http.HttpHeaders.USER_AGENT;
 
 @Component
 public class JwtAwareAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
-    private final ObjectMapper jackson;
     private final JwtProvider jwtProvider;
-    private final UserRepository userRepository;
-    private final StringKeyGenerator keyGenerator;
+    private final ObjectMapper objectMapper;
+    private final RepositoryEntityLinks links;
 
     @Autowired
-    public JwtAwareAuthenticationSuccessHandler(ObjectMapper jackson, JwtProvider jwtProvider, UserRepository userRepository) {
-        this.jackson = jackson;
+    public JwtAwareAuthenticationSuccessHandler(@Qualifier("halMapper") ObjectMapper objectMapper,
+                                                JwtProvider jwtProvider, RepositoryEntityLinks links) {
+        this.objectMapper = objectMapper;
         this.jwtProvider = jwtProvider;
-        this.userRepository = userRepository;
-        this.keyGenerator = KeyGenerators.string();
+        this.links = links;
     }
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-        Instant now = Instant.now();
-        User user = (User) authentication.getPrincipal();
-        Set<Device> devices = requireNonNullElseGet(user.getDevices(), HashSet::new);
-        Device device = findDevice(authentication, devices).orElseGet(() -> createDevice(now, request));
+        AuthenticatedUser user = (AuthenticatedUser) authentication.getPrincipal();
 
-        device.setUsedOn(now);
-        devices.add(device);
-
-        String accessToken = jwtProvider.generateAccessToken(user, now);
-        String refreshToken = jwtProvider.generateRefreshToken(user, device, now);
-
-        user.setDevices(devices);
-        userRepository.save(user);
+        String accessToken = jwtProvider.generateAccessToken(user);
+        String refreshToken = jwtProvider.generateRefreshToken(user);
 
         response.setStatus(HttpStatus.OK.value());
+        response.setContentType(MediaTypes.HAL_JSON_VALUE);
         response.setHeader("X-Auth-Token", accessToken);
         response.setHeader("X-Refresh-Token", refreshToken);
         response.setHeader("Access-Control-Expose-Headers", "X-Auth-Token, X-Refresh-Token");
-        jackson.writeValue(response.getWriter(), user);
+        objectMapper.writeValue(response.getWriter(), createRepresentationModel(user));
     }
 
-    private Optional<Device> findDevice(Authentication authentication, @NonNull Set<Device> devices) {
-        if (authentication instanceof JwtRefreshAuthenticationToken) {
-            Claims claims = (Claims) authentication.getDetails();
-            String key = claims.get(DEVICE, String.class);
-
-            return devices.stream().filter(device -> key.equals(device.getToken())).findFirst();
-        }
-
-        return Optional.empty();
-    }
-
-    private Device createDevice(Instant time, HttpServletRequest request) {
-        return Device.builder()
-                .createdAt(time)
-                .ip(request.getRemoteAddr())
-                .token(keyGenerator.generateKey())
-                .name(request.getHeader(USER_AGENT))
-                .build();
+    private EntityModel<AuthenticatedUser> createRepresentationModel(AuthenticatedUser user) {
+        return EntityModel.of(user, links.linkForItemResource(User.class, user.getId()).withSelfRel());
     }
 
 }

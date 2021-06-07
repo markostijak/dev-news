@@ -1,8 +1,9 @@
 package com.stijaktech.devnews.features.authentication.jwt;
 
-import com.stijaktech.devnews.domain.user.Device;
-import com.stijaktech.devnews.domain.user.User;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.stijaktech.devnews.features.authentication.AuthenticatedUser;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Clock;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwsHeader;
 import io.jsonwebtoken.JwtBuilder;
@@ -10,59 +11,94 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SigningKeyResolver;
+import io.jsonwebtoken.impl.DefaultClock;
+import io.jsonwebtoken.jackson.io.JacksonDeserializer;
+import io.jsonwebtoken.jackson.io.JacksonSerializer;
+import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
-import java.sql.Date;
 import java.time.Duration;
-import java.time.Instant;
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
 @Component
 public class JwtProvider {
 
-    public static final String DEVICE = "device";
+    enum Type {
+        ACCESS,
+        REFRESH
+    }
+
+    public static String TYPE = "type";
+    public static String PRINCIPAL = "principal";
+
     private static final Duration ONE_MONTH = Duration.ofDays(30);
     private static final Duration TEN_MINUTES = Duration.ofMinutes(10);
 
+
     private final Random random;
     private final JwtSecretRepository jwtSecretRepository;
+    private final JacksonSerializer<Map<String, ?>> jacksonSerializer;
+    private final JacksonDeserializer<Map<String, ?>> jacksonDeserializer;
 
-    public JwtProvider(JwtSecretRepository jwtSecretRepository) {
+    @Setter(onMethod_ = @Autowired(required = false))
+    private Clock clock = new DefaultClock();
+
+    @Autowired
+    public JwtProvider(ObjectMapper objectMapper, JwtSecretRepository jwtSecretRepository) {
         this.random = new Random();
         this.jwtSecretRepository = jwtSecretRepository;
+        this.jacksonSerializer = new JacksonSerializer<>(objectMapper);
+        this.jacksonDeserializer = new JacksonDeserializer<>(Map.of(PRINCIPAL, AuthenticatedUser.class));
     }
 
-    public String generateAccessToken(User user, Instant issuedAt) {
-        return generateToken(user, issuedAt, issuedAt.plus(TEN_MINUTES))
+    public String generateAccessToken(AuthenticatedUser user) {
+        return generateToken(user, TEN_MINUTES)
+                .claim(TYPE, Type.ACCESS.ordinal())
                 .compact();
     }
 
-    public String generateRefreshToken(User user, Device device, Instant issuedAt) {
-        return generateToken(user, issuedAt, issuedAt.plus(ONE_MONTH))
-                .claim(DEVICE, device.getToken())
+    public String generateRefreshToken(AuthenticatedUser user) {
+        return generateToken(user, ONE_MONTH)
+                .claim(TYPE, Type.REFRESH.ordinal())
                 .compact();
     }
 
-    private JwtBuilder generateToken(User user, Instant issuedAt, Instant expiration) {
+    private JwtBuilder generateToken(AuthenticatedUser user, Duration validity) {
         JwtSecret secret = random(jwtSecretRepository.findAll());
         return Jwts.builder()
-                .signWith(SignatureAlgorithm.HS256, secret.getValue())
-                .setSubject(user.getId())
-                .setIssuedAt(Date.from(issuedAt))
-                .setExpiration(Date.from(expiration))
-                .setIssuer("stijaktech")
-                .setHeaderParam(JwsHeader.KEY_ID, secret.getId());
+                .signWith(parseKey(secret))
+                .setSubject(user.getUsername())
+                .setIssuedAt(clock.now())
+                .setExpiration(new java.util.Date(clock.now().getTime() + validity.toMillis()))
+                .setIssuer("dev-news")
+                .setHeaderParam(JwsHeader.KEY_ID, secret.getId())
+                .claim(PRINCIPAL, user)
+                .serializeToJsonWith(jacksonSerializer);
+    }
+
+    public boolean isAccessToken(Jws<Claims> jws) {
+        return jws.getBody().get(TYPE, Integer.class) == Type.ACCESS.ordinal();
+    }
+
+    public boolean isRefreshToken(Jws<Claims> jws) {
+        return jws.getBody().get(TYPE, Integer.class) == Type.REFRESH.ordinal();
+    }
+
+    public AuthenticatedUser parseUserDetails(Jws<Claims> jws) {
+        return jws.getBody().get(PRINCIPAL, AuthenticatedUser.class);
     }
 
     public Optional<Jws<Claims>> parse(@NonNull String jwsString) {
         try {
-            Jws<Claims> jws = Jwts.parser().setSigningKeyResolver(new SigningKeyResolver() {
+            Jws<Claims> jws = Jwts.parserBuilder().setSigningKeyResolver(new SigningKeyResolver() {
                 @Override
                 public Key resolveSigningKey(JwsHeader header, Claims claims) {
                     return resolveSigningKey(header, "");
@@ -71,10 +107,10 @@ public class JwtProvider {
                 @Override
                 public Key resolveSigningKey(JwsHeader header, String plaintext) {
                     return jwtSecretRepository.findById(header.getKeyId())
-                            .map(jwtSecret -> new SecretKeySpec(Base64.getDecoder().decode(jwtSecret.getValue()), "AES"))
+                            .map(jwtSecret -> parseKey(jwtSecret))
                             .orElseThrow(() -> new JwtException("Invalid jwt secret id"));
                 }
-            }).parseClaimsJws(jwsString);
+            }).setClock(clock).deserializeJsonWith(jacksonDeserializer).build().parseClaimsJws(jwsString);
 
             return Optional.of(jws);
         } catch (JwtException e) {
@@ -84,6 +120,10 @@ public class JwtProvider {
 
     private JwtSecret random(List<JwtSecret> jwtSecrets) {
         return jwtSecrets.get(random.nextInt(jwtSecrets.size()));
+    }
+
+    private Key parseKey(JwtSecret jwtSecret) {
+        return new SecretKeySpec(Base64.getDecoder().decode(jwtSecret.getValue()), SignatureAlgorithm.HS512.getJcaName());
     }
 
 }

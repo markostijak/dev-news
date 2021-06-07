@@ -1,47 +1,46 @@
 import {Injectable} from '@angular/core';
 import {Authentication, AuthenticationService} from '../authentication/authentication.service';
-import {HttpClient, HttpParams, HttpResponse} from '@angular/common/http';
-import {Observable, of} from 'rxjs';
+import {HttpClient, HttpHandler, HttpHeaders, HttpParams} from '@angular/common/http';
+import {Observable} from 'rxjs';
 import {User} from '../../models/user';
-import {catchError, delay, map} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SignUpService {
 
-  private _httpClient: HttpClient;
-  private _authenticationService: AuthenticationService;
+  private httpClient: HttpClient;
+  private authenticationService: AuthenticationService;
 
   constructor(httpClient: HttpClient, authenticationService: AuthenticationService) {
-    this._httpClient = httpClient;
-    this._authenticationService = authenticationService;
+    this.httpClient = httpClient;
+    this.authenticationService = authenticationService;
   }
 
   public checkEmailAvailability(email: string): Observable<boolean> {
-    return this._httpClient.get('api/v1/users/search/existsByEmail', {
+    return this.httpClient.get('api/v1/users/search/existsByEmail', {
       params: new HttpParams().set('email', email)
     }) as Observable<boolean>;
   }
 
   public checkUsernameAvailability(username: string): Observable<boolean> {
-    return this._httpClient.get('api/v1/users/search/existsByUsername', {
+    return this.httpClient.get('api/v1/users/search/existsByUsername', {
       params: new HttpParams().set('username', username)
     }) as Observable<boolean>;
   }
 
   public signUp(user: object): Observable<User> {
-    return this._httpClient.post('api/sign-up/create', user) as Observable<User>;
+    return this.httpClient.post('api/v1/users', user) as Observable<User>;
   }
 
   public activate(user: User, activationCode: string): Observable<User> {
-    return this._httpClient.post('api/sign-up/activation/activate', activationCode, {
-      params: new HttpParams().set('user', user.id)
+    return this.httpClient.post(user._links.activate.href, JSON.stringify(activationCode), {
+      headers: new HttpHeaders().set('Content-Type', 'application/json')
     }) as Observable<User>;
   }
 
   public login(email: string, password: string): Observable<Authentication> {
-    return this._authenticationService.login(email, password);
+    return this.authenticationService.login(email, password);
   }
 
 }

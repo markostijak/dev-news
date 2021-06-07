@@ -1,6 +1,7 @@
 package com.stijaktech.devnews.domain.comment;
 
 import com.stijaktech.devnews.domain.post.Post;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.repository.query.Param;
@@ -14,13 +15,12 @@ import java.util.List;
 @RepositoryRestResource
 public interface CommentRepository extends MongoRepository<Comment, String> {
 
-    @Override
-    @PreAuthorize("hasPermission(#entity, 'WRITE')")
-    <S extends Comment> S save(S entity);
+    @NotNull
+    @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR') or @am.isAuthor(#entity)")
+    <S extends Comment> S save(@NotNull S entity);
 
-    @Override
-    @PreAuthorize("hasPermission(#entity, 'DELETE')")
-    void delete(Comment entity);
+    @PreAuthorize("hasRole('ADMIN') or @am.isAuthor(#entity)")
+    void delete(@NotNull Comment entity);
 
     List<Comment> findAllByPost(@Param("post") Post post, Sort sort);
 

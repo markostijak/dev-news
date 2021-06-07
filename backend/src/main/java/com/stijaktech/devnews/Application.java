@@ -5,7 +5,7 @@ import com.stijaktech.devnews.domain.user.Privilege;
 import com.stijaktech.devnews.domain.user.Role;
 import com.stijaktech.devnews.domain.user.User;
 import com.stijaktech.devnews.domain.user.UserRepository;
-import com.stijaktech.devnews.features.authentication.Provider;
+import com.stijaktech.devnews.domain.user.Provider;
 import com.stijaktech.devnews.features.authentication.jwt.JwtSecret;
 import com.stijaktech.devnews.features.authentication.jwt.JwtSecretRepository;
 import lombok.AllArgsConstructor;
@@ -17,6 +17,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -40,7 +41,7 @@ public class Application implements CommandLineRunner {
         if (jwtSecrets.isEmpty()) {
             for (int i = 0; i < 10; i++) {
                 JwtSecret jwtSecret = new JwtSecret();
-                jwtSecret.setValue(KeyGenerators.string().generateKey());
+                jwtSecret.setValue(Base64.getEncoder().encodeToString(KeyGenerators.secureRandom(256).generateKey()));
                 jwtSecrets.add(jwtSecret);
             }
             jwtSecretRepository.saveAll(jwtSecrets);

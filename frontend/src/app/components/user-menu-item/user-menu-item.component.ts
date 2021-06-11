@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {User} from '../../models/user';
-import {AuthenticationService} from '../../services/authentication/authentication.service';
-import {DialogService} from '../../services/dialog/dialog.service';
+import {DialogService} from '../../domain/utils/dialog.service';
+import {AuthenticationProcessor} from '../../domain/authentication/authentication-porcessor';
+import {User} from '../../domain/user/user';
 
 @Component({
   selector: 'app-user-menu-item',
@@ -13,25 +13,25 @@ export class UserMenuItemComponent implements OnInit {
   @Input()
   public user: User;
 
-  private _dialogService: DialogService;
-  private _authenticationService: AuthenticationService;
+  private dialogService: DialogService;
+  private authenticationProcessor: AuthenticationProcessor;
 
-  constructor(dialogService: DialogService, authenticationService: AuthenticationService) {
-    this._dialogService = dialogService;
-    this._authenticationService = authenticationService;
+  constructor(dialogService: DialogService, authenticationProcessor: AuthenticationProcessor) {
+    this.dialogService = dialogService;
+    this.authenticationProcessor = authenticationProcessor;
   }
 
   public ngOnInit(): void {
   }
 
   public logout(): void {
-    this._authenticationService.logout().subscribe(() => {
+    this.authenticationProcessor.onLogout().subscribe(() => {
       window.location.reload();
     });
   }
 
   public showDialog(which: string): void {
-    this._dialogService.show(which);
+    this.dialogService.show(which);
   }
 
 }

@@ -1,12 +1,10 @@
 import {Component, OnInit} from '@angular/core';
-import {HOME, NavigationService} from '../../services/navigation/navigation.service';
-import {CommunityService} from '../../services/community/community.service';
-import {Post} from '../../models/post';
-import {Page} from '../../models/hal';
-import {AuthenticationService} from '../../services/authentication/authentication.service';
-import {User} from '../../models/user';
-import {Community} from '../../models/community';
-import {PostService} from '../../services/post/post.service';
+import {State} from '../../domain/state';
+import {Page} from '../../domain/utils/hal';
+import {Post} from '../../domain/post/post';
+import {PostService} from '../../domain/post/post.service';
+import {CommunityService} from '../../domain/community/community.service';
+import {HOME} from '../../domain/utils/navigation';
 
 @Component({
   selector: 'app-home-view',
@@ -15,87 +13,63 @@ import {PostService} from '../../services/post/post.service';
 })
 export class HomeViewComponent implements OnInit {
 
-  private _user: User;
-  private _page: Page;
-  private _posts: Post[];
-  private _trendingPosts: Post[] = [];
-  private _trendingCommunities: Community[] = [];
-  private _upAndComingCommunities: Community[] = [];
+  page: Page;
+  posts: Post[] = [];
+  loading: boolean = false;
 
-  private _postService: PostService;
-  private _communityService: CommunityService;
-  private _navigationService: NavigationService;
-  private _authenticationService: AuthenticationService;
+  private state: State;
+  private postService: PostService;
+  private communityService: CommunityService;
 
-  constructor(postService: PostService,
-              communityService: CommunityService,
-              navigationService: NavigationService,
-              authenticationService: AuthenticationService) {
-
-    this._postService = postService;
-    this._communityService = communityService;
-    this._navigationService = navigationService;
-    this._authenticationService = authenticationService;
+  constructor(state: State, communityService: CommunityService, postService: PostService) {
+    this.state = state;
+    this.postService = postService;
+    this.communityService = communityService;
   }
 
   ngOnInit(): void {
-    this._navigationService.navigate(HOME);
-
-    this._authenticationService.authentication.subscribe(authentication => {
-      this._user = authentication.principal;
-    });
-
-    this._communityService.fetchTrending().subscribe(communities => {
-      this._trendingCommunities = communities;
-    });
-
-    this._postService.fetchTrending().subscribe(posts => {
-      this._trendingPosts = posts;
-    });
-
-    this._communityService.fetchUpAndComing().subscribe(communities => {
-      this._upAndComingCommunities = communities;
-    });
+    this.state.navigation$.next(HOME);
 
     this.fetchPosts(0);
   }
 
-  private fetchPosts(page: number): void {
-    this._postService.fetchPage('api/v1/posts/search/findForUser', page, 'include-stats', {
-      user: this._user.id
-    }).subscribe(response => {
-      if (response._embedded) {
-        if (this._posts) {
-          this._posts.push(...response._embedded.posts);
-        } else {
-          this._posts = response._embedded.posts;
-        }
-      } else {
-        this._posts = [];
-      }
-      this._page = response.page;
-    });
-  }
+  // private fetchPosts(page: number): void {
+  //   this.postService.fetchPage('api/v1/posts/search/findForUser', page, 'include-stats', {
+  //     user: this._user.id
+  //   }).subscribe(response => {
+  //     if (response._embedded) {
+  //       if (this.posts) {
+  //         this.posts.push(...response._embedded.posts);
+  //       } else {
+  //         this.posts = response._embedded.posts;
+  //       }
+  //     } else {
+  //       this.posts = [];
+  //     }
+  //     this.page = response.page;
+  //   });
+  // }
 
-  public onScrollEnd($event: UIEvent): void {
-    if (this._page && (this._page.number + 1 < this._page.totalPages)) {
-      this.fetchPosts(this._page.number + 1);
+  public fetchPosts(pageNumber: number): void {
+    if (!this.loading) {
+      this.loading = true;
+      this.postService.fetchPage({
+        page: pageNumber,
+        sort: 'createdAt,desc',
+        projection: 'view'
+      }).subscribe(([posts, page]) => {
+        this.posts = this.posts || [];
+        this.posts.push(...posts);
+        this.page = page;
+        this.loading = false;
+      }, () => this.loading = false);
     }
   }
 
-  get posts(): Post[] {
-    return this._posts;
+  public onScrollEnd($event: UIEvent): void {
+    if (this.page && (this.page.number + 1 < this.page.totalPages)) {
+      this.fetchPosts(this.page.number + 1);
+    }
   }
 
-  get trendingCommunities(): Community[] {
-    return this._trendingCommunities;
-  }
-
-  get trendingPosts(): Post[] {
-    return this._trendingPosts;
-  }
-
-  get upAndComingCommunities(): Community[] {
-    return this._upAndComingCommunities;
-  }
 }

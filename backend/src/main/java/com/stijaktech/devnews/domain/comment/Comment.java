@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -13,7 +14,9 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.lang.NonNull;
 
+import javax.validation.constraints.NotBlank;
 import java.time.Instant;
 import java.util.List;
 
@@ -34,6 +37,9 @@ public class Comment {
     @DBRef(lazy = true)
     private Post post;
 
+    @NonNull
+    @NotBlank
+    @SafeHtml
     private String content;
 
     @CreatedBy
@@ -54,6 +60,6 @@ public class Comment {
     private Comment parent;
 
     @DBRef(lazy = true)
-    private List<Comment> replies;
+    private List<Comment> replies = List.of();
 
 }

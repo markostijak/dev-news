@@ -1,4 +1,4 @@
-<mat-card>
+<mat-card *ngIf="communities.length" class="mb-10">
   <mat-card-content>
     Trending communities
   </mat-card-content>
@@ -15,8 +15,8 @@
           <a [routerLink]="['/c', community.alias]" class="community-title">{{community.title}}</a>
           <div class="community-members">{{community.membersCount | shortNumber}} members</div>
         </div>
-        <div fxFlex="0 0 80px" *ngIf="authorizationService.canView(community)">
-          <ng-container *ngIf="communityService.memberOf(community); then leaveButton else joinButton"></ng-container>
+        <div fxFlex="0 0 80px" *ngIf="state.user$ | async">
+          <ng-container *ngIf="memberOf(community) | async; then leaveButton else joinButton"></ng-container>
           <ng-template #joinButton>
             <button class="w-100" mat-raised-button color="primary" (click)="join(community)">Join</button>
           </ng-template>

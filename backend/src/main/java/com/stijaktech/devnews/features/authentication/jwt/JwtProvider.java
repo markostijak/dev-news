@@ -39,11 +39,8 @@ public class JwtProvider {
     public static String TYPE = "type";
     public static String PRINCIPAL = "principal";
 
-    private static final Duration ONE_MONTH = Duration.ofDays(30);
-    private static final Duration TEN_MINUTES = Duration.ofMinutes(10);
-
-
     private final Random random;
+    private final JwtProperties properties;
     private final JwtSecretRepository jwtSecretRepository;
     private final JacksonSerializer<Map<String, ?>> jacksonSerializer;
     private final JacksonDeserializer<Map<String, ?>> jacksonDeserializer;
@@ -52,21 +49,22 @@ public class JwtProvider {
     private Clock clock = new DefaultClock();
 
     @Autowired
-    public JwtProvider(ObjectMapper objectMapper, JwtSecretRepository jwtSecretRepository) {
+    public JwtProvider(JwtProperties properties, JwtSecretRepository jwtSecretRepository, ObjectMapper objectMapper) {
         this.random = new Random();
+        this.properties = properties;
         this.jwtSecretRepository = jwtSecretRepository;
         this.jacksonSerializer = new JacksonSerializer<>(objectMapper);
         this.jacksonDeserializer = new JacksonDeserializer<>(Map.of(PRINCIPAL, AuthenticatedUser.class));
     }
 
     public String generateAccessToken(AuthenticatedUser user) {
-        return generateToken(user, TEN_MINUTES)
+        return generateToken(user, properties.getAccessTokenValidity())
                 .claim(TYPE, Type.ACCESS.ordinal())
                 .compact();
     }
 
     public String generateRefreshToken(AuthenticatedUser user) {
-        return generateToken(user, ONE_MONTH)
+        return generateToken(user, properties.getRefreshTokenValidity())
                 .claim(TYPE, Type.REFRESH.ordinal())
                 .compact();
     }
@@ -78,7 +76,7 @@ public class JwtProvider {
                 .setSubject(user.getUsername())
                 .setIssuedAt(clock.now())
                 .setExpiration(new java.util.Date(clock.now().getTime() + validity.toMillis()))
-                .setIssuer("dev-news")
+                .setIssuer(properties.getIssuer())
                 .setHeaderParam(JwsHeader.KEY_ID, secret.getId())
                 .claim(PRINCIPAL, user)
                 .serializeToJsonWith(jacksonSerializer);

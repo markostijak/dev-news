@@ -1,7 +1,7 @@
 import {Component} from '@angular/core';
 import {MatDialogRef} from '@angular/material';
 import {Router} from '@angular/router';
-import {Post} from '../../../models/post';
+import {Post} from '../../../domain/post/post';
 
 @Component({
   templateUrl: './create-post-dialog.component.html',

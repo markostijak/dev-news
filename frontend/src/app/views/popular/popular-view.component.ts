@@ -1,10 +1,10 @@
 import {Component, OnInit} from '@angular/core';
-import {NavigationService, POPULAR} from '../../services/navigation/navigation.service';
-import {Page} from '../../models/hal';
-import {Post} from '../../models/post';
-import {CommunityService} from '../../services/community/community.service';
-import {Community} from '../../models/community';
-import {PostService} from '../../services/post/post.service';
+import {Post} from '../../domain/post/post';
+import {Page} from '../../domain/utils/hal';
+import {PostService} from '../../domain/post/post.service';
+import {CommunityService} from '../../domain/community/community.service';
+import {State} from '../../domain/state';
+import {POPULAR} from '../../domain/utils/navigation';
 
 @Component({
   selector: 'app-popular-view',
@@ -13,85 +13,64 @@ import {PostService} from '../../services/post/post.service';
 })
 export class PopularViewComponent implements OnInit {
 
-  private _page: Page = {
-    size: 0,
-    number: 0,
-    totalPages: 0,
-    totalElements: 0
-  };
+  page: Page;
+  posts: Post[];
+  loading: boolean = false;
 
-  private _posts: Post[];
-  private _trendingPosts: Post[] = [];
-  private _trendingCommunities: Community[] = [];
-  private _upAndComingCommunities: Community[] = [];
+  private state: State;
+  private postService: PostService;
+  private communityService: CommunityService;
 
-  private _loading: boolean = false;
-  private _postService: PostService;
-  private _communityService: CommunityService;
-  private _navigationService: NavigationService;
-
-  constructor(postService: PostService, communityService: CommunityService, navigationService: NavigationService) {
-    this._postService = postService;
-    this._communityService = communityService;
-    this._navigationService = navigationService;
+  constructor(state: State, postService: PostService, communityService: CommunityService) {
+    this.state = state;
+    this.postService = postService;
+    this.communityService = communityService;
   }
 
   ngOnInit(): void {
-    this._navigationService.navigate(POPULAR);
-
-    this._communityService.fetchTrending().subscribe(communities => {
-      this._trendingCommunities = communities;
-    });
-
-    this._postService.fetchTrending().subscribe(posts => {
-      this._trendingPosts = posts;
-    });
-
-    this._communityService.fetchUpAndComing().subscribe(communities => {
-      this._upAndComingCommunities = communities;
-    });
+    this.state.navigation$.next(POPULAR);
 
     this.fetchPosts(0);
   }
 
-  private fetchPosts(page: number): void {
-    if (!this._loading) {
-      this._postService.fetchPage('api/v1/posts/search/findPopular', page, 'include-stats').subscribe(response => {
-        const posts = response._embedded.posts;
-        if (this._posts) {
-          this._posts.push(...posts);
-        } else {
-          this._posts = posts;
-        }
+  // private fetchPosts(page: number): void {
+  //   if (!this.loading) {
+  //     this.postService.fetchPage('api/v1/posts/search/findPopular', page, 'include-stats').subscribe(response => {
+  //       const posts = response._embedded.posts;
+  //       if (this.posts) {
+  //         this.posts.push(...posts);
+  //       } else {
+  //         this.posts = posts;
+  //       }
+  //
+  //       this._page.number = this._page.totalPages;
+  //       this._page.totalPages += Math.min(posts.length, 1);
+  //
+  //       this.loading = false;
+  //     }, () => this.loading = false);
+  //   }
+  // }
 
-        this._page.number = this._page.totalPages;
-        this._page.totalPages += Math.min(posts.length, 1);
-
-        this._loading = false;
-      }, () => this._loading = false);
+  public fetchPosts(pageNumber: number): void {
+    if (!this.loading) {
+      this.loading = true;
+      this.postService.fetchPage({
+        page: pageNumber,
+        sort: 'createdAt,desc',
+        projection: 'view'
+      }).subscribe(([posts, page]) => {
+        this.posts = this.posts || [];
+        this.posts.push(...posts);
+        this.page = page;
+        this.loading = false;
+      }, () => this.loading = false);
     }
   }
 
   public onScrollEnd($event: UIEvent): void {
-    if (this._page.number + 1 <= this._page.totalPages) {
-      this.fetchPosts(this._page.number + 1);
+    if (this.page.number + 1 <= this.page.totalPages) {
+      this.fetchPosts(this.page.number + 1);
     }
-  }
-
-  get posts(): Post[] {
-    return this._posts;
-  }
-
-  get trendingCommunities(): Community[] {
-    return this._trendingCommunities;
-  }
-
-  get trendingPosts(): Post[] {
-    return this._trendingPosts;
-  }
-
-  get upAndComingCommunities(): Community[] {
-    return this._upAndComingCommunities;
   }
 
 }

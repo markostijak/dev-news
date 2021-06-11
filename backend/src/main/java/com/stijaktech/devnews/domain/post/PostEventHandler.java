@@ -1,6 +1,7 @@
 package com.stijaktech.devnews.domain.post;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.core.annotation.HandleBeforeCreate;
 import org.springframework.data.rest.core.annotation.HandleBeforeSave;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.stereotype.Component;
@@ -16,7 +17,7 @@ public class PostEventHandler {
         this.postRepository = postRepository;
     }
 
-    @HandleBeforeSave
+    @HandleBeforeCreate
     public void beforeSave(Post post) {
         String alias = post.getAlias();
 

@@ -10,9 +10,9 @@ import {HomeViewComponent} from './views/home/home-view.component';
 import {IndexViewComponent} from './views/index/index-view.component';
 import {TopCommunitiesViewComponent} from './views/top-communities/top-communities-view.component';
 import {SearchViewComponent} from './views/search/search-view.component';
-import {NonAuthenticatedOnlyGuard} from './services/authorization/non-authenticated-only.guard';
-import {AuthenticatedOnlyGuard} from './services/authorization/authenticated-only.guard';
 import {NotFoundViewComponent} from './views/not-found/not-found-view.component';
+import {NonAuthenticatedOnlyGuard} from './domain/authorization/non-authenticated-only.guard';
+import {AuthenticatedOnlyGuard} from './domain/authorization/authenticated-only.guard';
 
 const routes: Routes = [
   {

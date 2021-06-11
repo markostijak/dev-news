@@ -6,6 +6,7 @@ import com.stijaktech.devnews.domain.user.User;
 import com.stijaktech.devnews.features.authentication.AuthenticatedUser;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
@@ -14,7 +15,6 @@ import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.Profile;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
@@ -42,6 +42,7 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import ua_parser.Parser;
 
 import javax.servlet.MultipartConfigElement;
@@ -54,24 +55,15 @@ import java.util.Optional;
 public class ApplicationConfiguration {
 
     @Bean
-    @Profile("dev")
-    public CorsConfigurationSource corsConfigurationSource() {
+    public CorsConfigurationSource corsConfigurationSource(@Value("${dev-news.cors.origin}") String origin) {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(false);
-        config.addAllowedOrigin("*");
+        config.addAllowedOrigin(origin);
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
         return source;
-    }
-
-    @Bean
-    public MultipartConfigElement multipartConfigElement() {
-        MultipartConfigFactory factory = new MultipartConfigFactory();
-        factory.setMaxFileSize(DataSize.ofMegabytes(10));
-        factory.setMaxRequestSize(DataSize.ofMegabytes(10));
-        return factory.createMultipartConfig();
     }
 
     @Bean
@@ -94,6 +86,12 @@ public class ApplicationConfiguration {
             public void configureValidatingRepositoryEventListener(ValidatingRepositoryEventListener validatingListener) {
                 validatingListener.addValidator("beforeCreate", validator);
                 validatingListener.addValidator("beforeSave", validator);
+            }
+
+            @Override
+            public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config, CorsRegistry cors) {
+                config.setReturnBodyOnUpdate(true);
+                config.setReturnBodyForPutAndPost(true);
             }
         };
     }

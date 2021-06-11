@@ -1,12 +1,13 @@
 import {Component, EventEmitter, OnInit, Output, ViewChild} from '@angular/core';
 import {AbstractControl, AsyncValidatorFn, FormBuilder, FormGroup, ValidationErrors, Validators} from '@angular/forms';
 import {STEPPER_GLOBAL_OPTIONS} from '@angular/cdk/stepper';
-import {SignUpService} from '../../../services/sign-up/sign-up.service';
 import {MatStepper} from '@angular/material';
-import {Authentication} from '../../../services/authentication/authentication.service';
 import {catchError, map} from 'rxjs/operators';
 import {Observable, of} from 'rxjs';
-import {User} from '../../../models/user';
+import {Authentication} from '../../../domain/authentication/authentication';
+import {User} from '../../../domain/user/user';
+import {UserService} from '../../../domain/user/user.service';
+import {AuthenticationService} from '../../../domain/authentication/authentication.service';
 
 @Component({
   selector: 'app-sign-up-stepper',
@@ -18,37 +19,39 @@ import {User} from '../../../models/user';
 })
 export class SignUpStepperComponent implements OnInit {
 
-  @Output()
-  public success: EventEmitter<Authentication>;
-
-  private _signUpForm: FormGroup;
-
-  private _user: User;
-  private _formBuilder: FormBuilder;
-  private _signUpService: SignUpService;
-
   @ViewChild('stepper', {static: false})
   private _stepper: MatStepper;
 
-  constructor(signUpService: SignUpService, formBuilder: FormBuilder) {
-    this._formBuilder = formBuilder;
-    this._signUpService = signUpService;
-    this.success = new EventEmitter<Authentication>();
+  @Output()
+  public success: EventEmitter<Authentication> = new EventEmitter<Authentication>();
+
+  user: User;
+  signUpForm: FormGroup;
+
+  formBuilder: FormBuilder;
+
+  private userService: UserService;
+  private authenticationService: AuthenticationService;
+
+  constructor(formBuilder: FormBuilder, userService: UserService, authenticationService: AuthenticationService) {
+    this.formBuilder = formBuilder;
+    this.userService = userService;
+    this.authenticationService = authenticationService;
   }
 
   ngOnInit(): void {
-    this._signUpForm = this._formBuilder.group({
+    this.signUpForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email], this.emailValidator()],
-      usernameAndPassword: this._formBuilder.group({
+      usernameAndPassword: this.formBuilder.group({
         username: ['', [Validators.required, Validators.minLength(5)], this.usernameValidator()],
         password: ['', [Validators.required, Validators.minLength(8)]],
       }),
-      userInfo: this._formBuilder.group({
+      userInfo: this.formBuilder.group({
         firstName: ['', Validators.required],
         lastName: ['', Validators.required],
       }),
       activation: ['', Validators.required],
-      login: this._formBuilder.group({
+      login: this.formBuilder.group({
         email: ['', [Validators.required, Validators.email]],
         password: ['', Validators.required],
       }),
@@ -57,7 +60,7 @@ export class SignUpStepperComponent implements OnInit {
 
   private emailValidator(): AsyncValidatorFn {
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
-      return this._signUpService.checkEmailAvailability(control.value)
+      return this.userService.existsByEmail(control.value)
         .pipe(map(exists => {
           return exists ? {alreadyTaken: true} : null;
         }));
@@ -66,7 +69,7 @@ export class SignUpStepperComponent implements OnInit {
 
   private usernameValidator(): AsyncValidatorFn {
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
-      return this._signUpService.checkUsernameAvailability(control.value)
+      return this.userService.existsByUsername(control.value)
         .pipe(map(exists => {
           return exists ? {alreadyTaken: true} : null;
         }));
@@ -74,7 +77,7 @@ export class SignUpStepperComponent implements OnInit {
   }
 
   public signUp(): void {
-    const userInfo = this._signUpForm.get('userInfo') as FormGroup;
+    const userInfo = this.signUpForm.get('userInfo') as FormGroup;
     for (const control in userInfo.controls) {
       if (userInfo.controls.hasOwnProperty(control)) {
         userInfo.get(control).markAsTouched();
@@ -86,36 +89,36 @@ export class SignUpStepperComponent implements OnInit {
     userInfo.updateValueAndValidity();
 
     if (userInfo.valid) {
-      const form = {
-        email: this._signUpForm.get('email').value,
-        username: this._signUpForm.get('usernameAndPassword').get('username').value,
-        password: this._signUpForm.get('usernameAndPassword').get('password').value,
-        firstName: this._signUpForm.get('userInfo').get('firstName').value,
-        lastName: this._signUpForm.get('userInfo').get('lastName').value
-      };
+      const userCreate = {
+        email: this.signUpForm.get('email').value,
+        username: this.signUpForm.get('usernameAndPassword').get('username').value,
+        password: this.signUpForm.get('usernameAndPassword').get('password').value,
+        firstName: this.signUpForm.get('userInfo').get('firstName').value,
+        lastName: this.signUpForm.get('userInfo').get('lastName').value
+      } as unknown as User;
 
-      this._signUpService.signUp(form).subscribe(user => {
-        this._user = user;
+      this.userService.create(userCreate).subscribe(user => {
+        this.user = user;
         this._stepper.next();
       });
     }
   }
 
   public activate(): void {
-    const activation = this._signUpForm.get('activation');
+    const activation = this.signUpForm.get('activation');
     activation.markAsTouched();
     activation.updateValueAndValidity();
 
-    if (this._user && activation.valid) {
-      this._signUpService.activate(this._user, activation.value)
+    if (this.user && activation.valid) {
+      this.userService.activate(this.user, activation.value)
         .pipe(catchError(error => of(null)))
         .subscribe(user => {
           if (user) {
-            this._user = user;
+            this.user = user;
             this.tryFinish(
-              this._signUpForm.get('login'),
-              this._signUpForm.get('email').value,
-              this._signUpForm.get('usernameAndPassword').get('password').value
+              this.signUpForm.get('login'),
+              this.signUpForm.get('email').value,
+              this.signUpForm.get('usernameAndPassword').get('password').value
             );
           } else {
             activation.setErrors({
@@ -127,7 +130,7 @@ export class SignUpStepperComponent implements OnInit {
   }
 
   public login(): void {
-    const login = this._signUpForm.get('login') as FormGroup;
+    const login = this.signUpForm.get('login') as FormGroup;
     for (const control in login.controls) {
       if (login.controls.hasOwnProperty(control)) {
         login.get(control).markAsTouched();
@@ -146,8 +149,8 @@ export class SignUpStepperComponent implements OnInit {
   }
 
   public tryFinish(login: AbstractControl, email: string, password: string): void {
-    this._signUpService.login(email, password).pipe(catchError(error => {
-      return of({authenticated: false});
+    this.authenticationService.login(email, password).pipe(catchError(error => {
+      return of(new Authentication({}));
     })).subscribe(authentication => {
       if (authentication.authenticated) {
         this.success.emit(authentication);
@@ -159,7 +162,4 @@ export class SignUpStepperComponent implements OnInit {
     });
   }
 
-  get signUpForm(): FormGroup {
-    return this._signUpForm;
-  }
 }

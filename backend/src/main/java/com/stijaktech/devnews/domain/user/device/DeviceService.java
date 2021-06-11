@@ -14,6 +14,7 @@ import ua_parser.Parser;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import static java.util.Collections.emptySet;
@@ -76,19 +77,19 @@ public class DeviceService {
         Set<Device> devices = requireNonNullElse(user.getDevices(), emptySet());
 
         for (Device device : devices) {
-            if (!device.getIp().equals(webDetails.getIpAddress())) {
+            if (!Objects.equals(device.getIp(), webDetails.getIpAddress())) {
                 continue;
             }
 
-            if (!device.getOs().equals(clientDetails.os.family)) {
+            if (!Objects.equals(device.getOs(), clientDetails.os.family)) {
                 continue;
             }
 
-            if (!device.getOsVersion().equals(clientDetails.os.major)) {
+            if (!Objects.equals(device.getOsVersion(), clientDetails.os.major)) {
                 continue;
             }
 
-            if (device.getAgent().equals(clientDetails.userAgent.family)) {
+            if (!Objects.equals(device.getAgent(), clientDetails.userAgent.family)) {
                 continue;
             }
 

@@ -2,12 +2,16 @@ import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {MatIconRegistry} from '@angular/material';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {DomSanitizer} from '@angular/platform-browser';
-import {Authentication, AuthenticationService} from '../../services/authentication/authentication.service';
-import {catchError} from 'rxjs/operators';
+import {catchError, switchMap} from 'rxjs/operators';
 import {of} from 'rxjs';
+import {Authentication} from '../../domain/authentication/authentication';
+import {AuthenticationService} from '../../domain/authentication/authentication.service';
+import {fromPromise} from 'rxjs/internal-compatibility';
+import {GitHubLoginProvider, Oauth2Provider} from '../../domain/authentication/oauth2-provider';
+import {FacebookLoginProvider, GoogleLoginProvider} from 'angularx-social-login';
 
 interface Login {
-  email: string;
+  principal: string;
   password: string;
 }
 
@@ -19,53 +23,27 @@ interface Login {
 export class LoginFormComponent implements OnInit {
 
   @Output()
-  success: EventEmitter<Authentication>;
+  success = new EventEmitter<Authentication>();
+
+  loginForm: FormGroup;
 
   private _sanitizer: DomSanitizer;
   private _formBuilder: FormBuilder;
   private _iconRegistry: MatIconRegistry;
+  private _oAuth2Provider: Oauth2Provider;
   private _authenticationService: AuthenticationService;
-
-  private _loginForm: FormGroup;
 
   constructor(sanitizer: DomSanitizer,
               formBuilder: FormBuilder,
               iconRegistry: MatIconRegistry,
+              oauth2Provider: Oauth2Provider,
               authenticationService: AuthenticationService) {
 
     this._sanitizer = sanitizer;
     this._formBuilder = formBuilder;
     this._iconRegistry = iconRegistry;
+    this._oAuth2Provider = oauth2Provider;
     this._authenticationService = authenticationService;
-    this.success = new EventEmitter<Authentication>();
-  }
-
-  public login(): void {
-    if (this._loginForm.valid) {
-      const login = this._loginForm.value as Login;
-      this._authenticationService.login(login.email, login.password).pipe(catchError(error => {
-        return of({authenticated: false});
-      })).subscribe(authentication => {
-        if (authentication.authenticated) {
-          this.success.emit(authentication);
-        } else {
-          this._loginForm.get('email').setErrors({invalidCredentials: true});
-          this._loginForm.get('password').setErrors({invalidCredentials: true});
-        }
-      });
-    }
-  }
-
-  public facebook(): void {
-    this._authenticationService.facebook().subscribe(this.postLogin.bind(this));
-  }
-
-  public google(): void {
-    this._authenticationService.google().subscribe(this.postLogin.bind(this));
-  }
-
-  public github(): void {
-    this._authenticationService.github().subscribe(this.postLogin.bind(this));
   }
 
   ngOnInit(): void {
@@ -76,10 +54,44 @@ export class LoginFormComponent implements OnInit {
       );
     });
 
-    this._loginForm = this._formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
+    this.loginForm = this._formBuilder.group({
+      principal: ['', [Validators.required, Validators.minLength(2)]],
       password: ['', [Validators.required, Validators.minLength(8)]],
     });
+  }
+
+  public login(): void {
+    if (this.loginForm.valid) {
+      const login = this.loginForm.value as Login;
+      this._authenticationService.login(login.principal, login.password)
+        .pipe(catchError(() => of(new Authentication({}))))
+        .subscribe(authentication => {
+          if (authentication.authenticated) {
+            this.success.emit(authentication);
+          } else {
+            this.loginForm.get('principal').setErrors({invalidCredentials: true});
+            this.loginForm.get('password').setErrors({invalidCredentials: true});
+          }
+        });
+    }
+  }
+
+  public facebook(): void {
+    fromPromise(this._oAuth2Provider.signIn(FacebookLoginProvider.PROVIDER_ID))
+      .pipe(switchMap(facebook => this._authenticationService.oauthLogin(facebook)))
+      .subscribe(this.postLogin.bind(this));
+  }
+
+  public google(): void {
+    fromPromise(this._oAuth2Provider.signIn(GoogleLoginProvider.PROVIDER_ID))
+      .pipe(switchMap(google => this._authenticationService.oauthLogin(google)))
+      .subscribe(this.postLogin.bind(this));
+  }
+
+  public github(): void {
+    fromPromise(this._oAuth2Provider.signIn(GitHubLoginProvider.PROVIDER_ID))
+      .pipe(switchMap(github => this._authenticationService.oauthLogin(github)))
+      .subscribe(this.postLogin.bind(this));
   }
 
   private postLogin(authentication: Authentication): void {
@@ -88,7 +100,4 @@ export class LoginFormComponent implements OnInit {
     }
   }
 
-  get loginForm(): FormGroup {
-    return this._loginForm;
-  }
 }

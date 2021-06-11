@@ -13,9 +13,9 @@
     </ng-template>
   </div>
   <div class="main-right" fxFlex fxHide.lt-md>
-    <app-community [community]="community" class="mb-10"></app-community>
-    <app-trending-posts *ngIf="trending.length" class="mb-10" [posts]="trending"></app-trending-posts>
-    <app-dev-news class="mb-10"></app-dev-news>
+    <app-community [community]="community"></app-community>
+    <app-trending-posts></app-trending-posts>
+    <app-dev-news></app-dev-news>
     <app-back-to-top></app-back-to-top>
   </div>
 </div>

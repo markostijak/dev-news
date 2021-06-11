@@ -1,6 +1,5 @@
 package com.stijaktech.devnews.domain.community;
 
-import com.stijaktech.devnews.domain.Status;
 import com.stijaktech.devnews.domain.post.Post;
 import com.stijaktech.devnews.domain.user.User;
 import lombok.Data;
@@ -14,9 +13,13 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.lang.NonNull;
 
+import javax.validation.constraints.NotBlank;
 import java.time.Instant;
 import java.util.List;
+
+import static java.util.Collections.emptyList;
 
 @Data
 @Document("communities")
@@ -27,17 +30,16 @@ public class Community {
     @Id
     private String id;
 
+    @NonNull
+    @NotBlank
     private String logo;
 
+    @NonNull
+    @NotBlank
     private String title;
 
     @Indexed(unique = true)
     private String alias;
-
-    private Status status;
-
-    @DBRef(lazy = true)
-    private List<Post> posts;
 
     @CreatedBy
     @DBRef(lazy = true)
@@ -47,6 +49,8 @@ public class Community {
     @DBRef(lazy = true)
     private User updatedBy;
 
+    @NonNull
+    @NotBlank
     private String description;
 
     @CreatedDate
@@ -54,5 +58,8 @@ public class Community {
 
     @LastModifiedDate
     private Instant updatedAt;
+
+    @DBRef(lazy = true)
+    private List<Post> posts = emptyList();
 
 }

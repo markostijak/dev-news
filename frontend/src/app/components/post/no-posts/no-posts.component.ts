@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {DialogService} from '../../../services/dialog/dialog.service';
+import {DialogService} from '../../../domain/utils/dialog.service';
 
 @Component({
   selector: 'app-no-posts',
@@ -11,14 +11,14 @@ export class NoPostsComponent {
   @Input()
   public showCreateCommunity: boolean = true;
 
-  private _dialogService: DialogService;
+  private dialogService: DialogService;
 
   constructor(dialogService: DialogService) {
-    this._dialogService = dialogService;
+    this.dialogService = dialogService;
   }
 
   public showDialog(which: string): void {
-    this._dialogService.show(which);
+    this.dialogService.show(which);
   }
 
 }

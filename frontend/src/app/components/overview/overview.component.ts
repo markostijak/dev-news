@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {DialogService} from '../../services/dialog/dialog.service';
+import {DialogService} from '../../domain/utils/dialog.service';
 
 @Component({
   selector: 'app-overview',

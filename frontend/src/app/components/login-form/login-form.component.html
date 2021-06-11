@@ -8,17 +8,17 @@
 
   <form [formGroup]="loginForm" (ngSubmit)="login()">
     <mat-form-field appearance="fill" color="accent" class="w-100 email-field">
-      <mat-label>Email</mat-label>
-      <input matInput type="email" formControlName="email">
+      <mat-label>Email or username</mat-label>
+      <input matInput type="text" formControlName="principal">
       <mat-icon matSuffix>person</mat-icon>
-      <mat-error *ngIf="loginForm.get('email').hasError('required')">
-        Email is required
+      <mat-error *ngIf="loginForm.get('principal').hasError('required')">
+        Email or username is required
       </mat-error>
-      <mat-error *ngIf="loginForm.get('email').hasError('email')">
-        Email is invalid
+      <mat-error *ngIf="loginForm.get('principal').hasError('minlength')">
+        Email or username is invalid
       </mat-error>
-      <mat-error *ngIf="loginForm.get('email').hasError('invalidCredentials')">
-        Email may be invalid
+      <mat-error *ngIf="loginForm.get('principal').hasError('invalidCredentials')">
+        Email or username may be invalid
       </mat-error>
     </mat-form-field>
 

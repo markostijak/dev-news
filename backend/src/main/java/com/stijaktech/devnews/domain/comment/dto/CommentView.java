@@ -1,7 +1,7 @@
 package com.stijaktech.devnews.domain.comment.dto;
 
 import com.stijaktech.devnews.domain.comment.Comment;
-import com.stijaktech.devnews.domain.user.User;
+import com.stijaktech.devnews.domain.user.dto.UserView;
 import org.springframework.data.rest.core.config.Projection;
 
 import java.time.Instant;
@@ -19,8 +19,8 @@ public interface CommentView {
 
     Instant getUpdatedAt();
 
-    User getCreatedBy();
+    UserView getCreatedBy();
 
-    User getUpdatedBy();
+    UserView getUpdatedBy();
 
 }

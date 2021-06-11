@@ -1,5 +1,6 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {Post} from '../../../models/post';
+import {Component, OnInit} from '@angular/core';
+import {Post} from '../../../domain/post/post';
+import {PostService} from '../../../domain/post/post.service';
 
 @Component({
   selector: 'app-trending-posts',
@@ -8,10 +9,19 @@ import {Post} from '../../../models/post';
 })
 export class TrendingPostsComponent implements OnInit {
 
-  @Input()
   posts: Post[] = [];
 
+  private postService: PostService;
+
+  constructor(postService: PostService) {
+    this.postService = postService;
+  }
+
   ngOnInit(): void {
+    this.postService.fetchTrending()
+      .subscribe(([posts, page]) => {
+        this.posts = posts;
+      });
   }
 
 }

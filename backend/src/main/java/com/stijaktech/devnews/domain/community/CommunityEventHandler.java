@@ -1,6 +1,6 @@
 package com.stijaktech.devnews.domain.community;
 
-import org.springframework.data.rest.core.annotation.HandleBeforeSave;
+import org.springframework.data.rest.core.annotation.HandleBeforeCreate;
 import org.springframework.data.rest.core.annotation.RepositoryEventHandler;
 import org.springframework.stereotype.Component;
 
@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 @RepositoryEventHandler
 public class CommunityEventHandler {
 
-    @HandleBeforeSave
-    public void beforeSave(Community community) {
+    @HandleBeforeCreate
+    public void beforeCrete(Community community) {
         String alias = community.getAlias();
 
         if (alias == null) {

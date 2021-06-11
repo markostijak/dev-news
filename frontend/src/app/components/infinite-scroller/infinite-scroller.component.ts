@@ -16,27 +16,27 @@ export class InfiniteScrollerComponent {
   @Input()
   public throttle: number = 1000;
 
-  private _timer: number;
-  private _document: Document;
+  private timer: number;
+  private document: Document;
 
-  constructor(@Inject(DOCUMENT) private document: Document) {
-    this._document = document;
+  constructor(@Inject(DOCUMENT) document: Document) {
+    this.document = document;
   }
 
   @HostListener('window:scroll', ['$event'])
   onScroll($event: UIEvent): void {
-    if (this._timer) {
+    if (this.timer) {
       return;
     }
 
     // @ts-ignore
     const window = $event.target.defaultView;
-    const scrollHeight = this._document.documentElement.scrollHeight;
+    const scrollHeight = this.document.documentElement.scrollHeight;
 
     if ((window.innerHeight + window.scrollY) > (scrollHeight - this.offset)) {
       this.end.emit($event);
-      this._timer = setTimeout(() => {
-        this._timer = null;
+      this.timer = setTimeout(() => {
+        this.timer = null;
       }, this.throttle);
     }
   }

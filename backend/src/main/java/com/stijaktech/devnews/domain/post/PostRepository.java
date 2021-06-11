@@ -2,7 +2,6 @@ package com.stijaktech.devnews.domain.post;
 
 import com.stijaktech.devnews.domain.community.Community;
 import com.stijaktech.devnews.domain.post.dto.PostPreview;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,6 +10,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
+import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Repository;
 
@@ -21,12 +21,12 @@ import java.util.Set;
 @RepositoryRestResource(excerptProjection = PostPreview.class)
 public interface PostRepository extends MongoRepository<Post, String> {
 
-    @NotNull
+    @NonNull
     @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR') or @am.isAuthor(#entity)")
-    <S extends Post> S save(@NotNull S entity);
+    <S extends Post> S save(@NonNull S entity);
 
     @PreAuthorize("hasRole('ADMIN') or @am.isAuthor(#entity)")
-    void delete(@NotNull Post entity);
+    void delete(@NonNull Post entity);
 
     boolean existsByAlias(String alias);
 
@@ -37,7 +37,7 @@ public interface PostRepository extends MongoRepository<Post, String> {
 
     Page<Post> findAllByCommunity(@Param("community") Community community, Pageable pageable);
 
-    int countByCommunity(@Param("community") Community community);
+    long countByCommunity(@Param("community") Community community);
 
     @Aggregation(pipeline = {
             "{ $match: { communityId: { $eq: ?0 }}}",

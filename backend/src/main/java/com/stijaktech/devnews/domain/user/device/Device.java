@@ -21,12 +21,4 @@ public class Device {
 
     private Instant lastUsedOn;
 
-    public boolean isNew() {
-        return createdAt.equals(lastUsedOn);
-    }
-
-    public String getName() {
-        return agent + " on " + os;
-    }
-
 }

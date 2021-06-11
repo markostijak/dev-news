@@ -1,9 +1,8 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Observable, of} from 'rxjs';
-import {FileService} from '../../../services/file/file.service';
-import {CommunityService} from '../../../services/community/community.service';
-import {Community} from '../../../models/community';
+import {FileService} from '../../../domain/utils/file.service';
+import {CommunityService} from '../../../domain/community/community.service';
+import {Community} from '../../../domain/community/community';
 
 @Component({
   selector: 'app-community-editor',
@@ -12,35 +11,33 @@ import {Community} from '../../../models/community';
 })
 export class CommunityEditorComponent implements OnInit {
 
-  private _logo: File;
-  private _title: string;
-  private _logoPreview: string;
-  private _description: string;
+  @Output()
+  private save: EventEmitter<any> = new EventEmitter();
 
   @Output()
-  private save: EventEmitter<any>;
+  private discard: EventEmitter<any> = new EventEmitter();
 
-  @Output()
-  private discard: EventEmitter<any>;
+  logo: File;
+  title: string;
+  logoPreview: string;
+  description: string;
 
-  private _httpClient: HttpClient;
-  private _fileService: FileService;
-  private _communityService: CommunityService;
+  private httpClient: HttpClient;
+  private fileService: FileService;
+  private communityService: CommunityService;
 
   constructor(httpClient: HttpClient, fileService: FileService, communityService: CommunityService) {
-    this._httpClient = httpClient;
-    this._fileService = fileService;
-    this._communityService = communityService;
-    this.save = new EventEmitter<any>();
-    this.discard = new EventEmitter<any>();
+    this.httpClient = httpClient;
+    this.fileService = fileService;
+    this.communityService = communityService;
   }
 
   public ngOnInit(): void {
   }
 
   onSave(): any {
-    this._fileService.uploadImage(this.logo).subscribe(uri => {
-      this._communityService.create({
+    this.fileService.uploadImage(this.logo).subscribe(uri => {
+      this.communityService.create({
         logo: uri,
         title: this.title,
         description: this.description
@@ -60,40 +57,12 @@ export class CommunityEditorComponent implements OnInit {
       const reader = new FileReader();
 
       reader.onload = (event: any) => {
-        this._logoPreview = event.target.result;
-        this._logo = logo;
+        this.logoPreview = event.target.result;
+        this.logo = logo;
       };
 
       reader.readAsDataURL(logo);
     }
-  }
-
-  get logo(): File {
-    return this._logo;
-  }
-
-  set logo(value: File) {
-    this._logo = value;
-  }
-
-  get title(): string {
-    return this._title;
-  }
-
-  set title(value: string) {
-    this._title = value;
-  }
-
-  get description(): string {
-    return this._description;
-  }
-
-  set description(value: string) {
-    this._description = value;
-  }
-
-  get logoPreview(): string {
-    return this._logoPreview;
   }
 
 }

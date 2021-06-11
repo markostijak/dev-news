@@ -1,60 +1,69 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {CommunityService} from '../../../services/community/community.service';
-import {Community} from '../../../models/community';
-import {DialogService} from '../../../services/dialog/dialog.service';
+import {DialogService} from '../../../domain/utils/dialog.service';
 import {CreatePostDialogComponent} from '../../post/create-post-dialog/create-post-dialog.component';
-import {AuthorizationService} from '../../../services/authorization/authorization.service';
+import {UserService} from '../../../domain/user/user.service';
+import {takeUntil} from 'rxjs/operators';
+import {SubscriptionSupport} from '../../../domain/utils/subscription-support';
+import {Community} from '../../../domain/community/community';
+import {State} from '../../../domain/state';
 
 @Component({
   selector: 'app-community',
   templateUrl: './community.component.html',
   styleUrls: ['./community.component.scss']
 })
-export class CommunityComponent implements OnInit {
+export class CommunityComponent extends SubscriptionSupport implements OnInit {
 
   @Input()
   public community: Community;
   @Input()
   public showCreatePostButton: boolean = true;
 
-  private _member: boolean;
-  private _dialogService: DialogService;
-  private _communityService: CommunityService;
-  private _authorizationService: AuthorizationService;
+  member = false;
 
-  constructor(dialogService: DialogService, communityService: CommunityService, authorizationService: AuthorizationService) {
-    this._dialogService = dialogService;
-    this._communityService = communityService;
-    this._authorizationService = authorizationService;
+  postsCount = 0;
+  membersCount = 0;
+  state: State;
+
+  private userService: UserService;
+  private dialogService: DialogService;
+
+  constructor(dialogService: DialogService, state: State, userService: UserService) {
+    super();
+    this.state = state;
+    this.userService = userService;
+    this.dialogService = dialogService;
+  }
+
+  public ngOnInit(): void {
+    this.state.communities$.pipe(takeUntil(this.destroyed$))
+      .subscribe(c => this.member = c && c.some(e => e._links.self.href === this.community._links.self.href));
+    // this.communityService.getMembersCount(this.community).subscribe(value => this.membersCount = value);
+    // this.communityService.getPostsCount(this.community).subscribe(value => this.postsCount = value);
   }
 
   public showPostDialog(): void {
-    this._dialogService.showDialog(CreatePostDialogComponent);
+    this.dialogService.showDialog(CreatePostDialogComponent);
   }
 
   public join(): void {
-    this._communityService.join(this.community).subscribe(() => {
-      this._member = true;
-      this.community.membersCount++;
-    });
+    const communities = this.state.communities || [];
+    this.userService.joinCommunity(this.state.user, this.community)
+      .subscribe(() => {
+        this.membersCount++;
+        communities.push(this.community);
+        this.state.communities$.next(communities);
+      });
   }
 
   public leave(): void {
-    this._communityService.leave(this.community).subscribe(() => {
-      this._member = false;
-      this.community.membersCount--;
-    });
+    const communities = (this.state.communities || [])
+      .filter(c => c._links.self.href !== this.community._links.self.href) as Community[];
+    this.userService.updateCommunities(this.state.user, communities)
+      .subscribe(() => {
+        this.membersCount--;
+        this.state.communities$.next(communities);
+      });
   }
 
-  ngOnInit(): void {
-    this._member = this._communityService.memberOf(this.community);
-  }
-
-  get member(): boolean {
-    return this._member;
-  }
-
-  get authorizationService(): AuthorizationService {
-    return this._authorizationService;
-  }
 }

@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
-import {UserService} from '../../services/user/user.service';
+import {State} from '../../domain/state';
 
 @Component({
   selector: 'app-toolbar',
@@ -9,12 +9,13 @@ import {UserService} from '../../services/user/user.service';
 })
 export class ToolbarComponent implements OnInit {
 
-  router: Router;
-  userService: UserService;
+  state: State;
 
-  constructor(router: Router, userService: UserService) {
+  private router: Router;
+
+  constructor(state: State, router: Router) {
+    this.state = state;
     this.router = router;
-    this.userService = userService;
   }
 
   ngOnInit(): void {

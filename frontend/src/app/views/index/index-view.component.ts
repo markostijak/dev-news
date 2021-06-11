@@ -1,6 +1,5 @@
 import {Component} from '@angular/core';
-import {Authentication, AuthenticationService} from '../../services/authentication/authentication.service';
-import {Observable} from 'rxjs';
+import {State} from '../../domain/state';
 
 @Component({
   selector: 'app-index-view',
@@ -9,14 +8,10 @@ import {Observable} from 'rxjs';
 })
 export class IndexViewComponent {
 
-  private readonly _authentication: Observable<Authentication>;
+  state: State;
 
-  constructor(authenticationService: AuthenticationService) {
-    this._authentication = authenticationService.authentication;
-  }
-
-  public get authentication(): Observable<Authentication> {
-    return this._authentication;
+  constructor(state: State) {
+    this.state = state;
   }
 
 }

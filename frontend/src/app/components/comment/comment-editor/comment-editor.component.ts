@@ -1,6 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {QuillEditorComponent, QuillModule} from 'ngx-quill';
-import {Comment} from '../../../models/comment';
 
 export interface Data {
   editor: CommentEditorComponent;

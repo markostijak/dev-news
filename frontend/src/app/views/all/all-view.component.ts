@@ -1,10 +1,10 @@
 import {Component, OnInit} from '@angular/core';
-import {ALL, NavigationService} from '../../services/navigation/navigation.service';
-import {Post} from '../../models/post';
-import {Page} from '../../models/hal';
-import {PostService} from '../../services/post/post.service';
-import {CommunityService} from '../../services/community/community.service';
-import {Community} from '../../models/community';
+import {Page} from '../../domain/utils/hal';
+import {Post} from '../../domain/post/post';
+import {PostService} from '../../domain/post/post.service';
+import {CommunityService} from '../../domain/community/community.service';
+import {State} from '../../domain/state';
+import {ALL} from '../../domain/utils/navigation';
 
 @Component({
   selector: 'app-all-view',
@@ -13,75 +13,46 @@ import {Community} from '../../models/community';
 })
 export class AllViewComponent implements OnInit {
 
-  private _page: Page;
-  private _posts: Post[];
-  private _loading: boolean = false;
-  private _trendingPosts: Post[] = [];
-  private _trendingCommunities: Community[] = [];
-  private _upAndComingCommunities: Community[] = [];
+  page: Page;
+  posts: Post[];
+  loading: boolean = false;
 
-  private _postService: PostService;
-  private _communityService: CommunityService;
-  private _navigationService: NavigationService;
+  private state: State;
+  private postService: PostService;
+  private communityService: CommunityService;
 
-  constructor(postService: PostService, communityService: CommunityService, navigationService: NavigationService) {
-    this._postService = postService;
-    this._communityService = communityService;
-    this._navigationService = navigationService;
+  constructor(state: State, communityService: CommunityService, postService: PostService) {
+    this.state = state;
+    this.postService = postService;
+    this.communityService = communityService;
   }
 
   ngOnInit(): void {
-    this._navigationService.navigate(ALL);
-
-    this._communityService.fetchTrending().subscribe(communities => {
-      this._trendingCommunities = communities;
-    });
-
-    this._communityService.fetchUpAndComing().subscribe(communities => {
-      this._upAndComingCommunities = communities;
-    });
-
-    this._postService.fetchTrending().subscribe(posts => {
-      this._trendingPosts = posts;
-    });
+    this.state.navigation$.next(ALL);
 
     this.fetchPosts(0);
   }
 
-  public fetchPosts(page: number): void {
-    if (!this._loading) {
-      this._loading = true;
-      this._postService.fetchPage('api/v1/posts', page, 'include-stats').subscribe(response => {
-        if (this._posts) {
-          this._posts.push(...response._embedded.posts);
-        } else {
-          this._posts = response._embedded.posts;
-        }
-        this._page = response.page;
-        this._loading = false;
-      }, () => this._loading = false);
+  public fetchPosts(pageNumber: number): void {
+    if (!this.loading) {
+      this.loading = true;
+      this.postService.fetchPage({
+        page: pageNumber,
+        sort: 'createdAt,desc',
+        projection: 'view'
+      }).subscribe(([posts, page]) => {
+        this.posts = this.posts || [];
+        this.posts.push(...posts);
+        this.page = page;
+        this.loading = false;
+      }, () => this.loading = false);
     }
   }
 
   public onScrollEnd($event: UIEvent): void {
-    if (this._page.number + 1 < this._page.totalPages) {
-      this.fetchPosts(this._page.number + 1);
+    if (this.page.number + 1 < this.page.totalPages) {
+      this.fetchPosts(this.page.number + 1);
     }
   }
 
-  get posts(): Post[] {
-    return this._posts;
-  }
-
-  get trendingCommunities(): Community[] {
-    return this._trendingCommunities;
-  }
-
-  get trendingPosts(): Post[] {
-    return this._trendingPosts;
-  }
-
-  get upAndComingCommunities(): Community[] {
-    return this._upAndComingCommunities;
-  }
 }

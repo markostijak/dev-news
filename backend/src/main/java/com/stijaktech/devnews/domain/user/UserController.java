@@ -5,6 +5,8 @@ import com.stijaktech.devnews.domain.user.dto.UserAccount;
 import com.stijaktech.devnews.domain.user.dto.UserCreate;
 import com.stijaktech.devnews.domain.user.dto.UserProfile;
 import com.stijaktech.devnews.domain.user.dto.UserView;
+import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks;
 import org.springframework.hateoas.EntityModel;
@@ -24,28 +26,12 @@ import javax.validation.Valid;
 @Validated
 @RepositoryRestController
 @RequestMapping("/users")
+@AllArgsConstructor(onConstructor_ = @Autowired)
 public class UserController {
 
     private final UserService userService;
-    private final ModelAssembler modelAssembler;
     private final RepositoryEntityLinks links;
-
-    public UserController(UserService userService, ModelAssembler modelAssembler, RepositoryEntityLinks links) {
-        this.userService = userService;
-        this.modelAssembler = modelAssembler;
-        this.links = links;
-    }
-
-    @PostMapping("")
-    public ResponseEntity<EntityModel<UserAccount>> create(@Valid @RequestBody UserCreate model) {
-        User user = userService.create(model);
-
-        EntityModel<UserAccount> entityModel = modelAssembler.toModel(user, UserAccount.class);
-        entityModel.add(links.linkForItemResource(user, User::getId).slash("/activate").withRel("activate"));
-        entityModel.add(links.linkForItemResource(user, User::getId).slash("/activate/resend").withRel("resendActivationCode"));
-
-        return ResponseEntity.ok(entityModel);
-    }
+    private final ModelAssembler modelAssembler;
 
     @GetMapping("/{id}")
     public ResponseEntity<EntityModel<UserView>> view(@PathVariable("id") User user) {
@@ -62,6 +48,17 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN') or @am.isAuthor(#user)")
     public ResponseEntity<EntityModel<UserProfile>> viewProfile(@PathVariable("id") User user) {
         return ResponseEntity.ok(modelAssembler.toModel(user, UserProfile.class));
+    }
+
+    @PostMapping("")
+    public ResponseEntity<EntityModel<UserAccount>> create(@Valid @RequestBody UserCreate model) {
+        User user = userService.create(model);
+
+        EntityModel<UserAccount> entityModel = modelAssembler.toModel(user, UserAccount.class);
+        entityModel.add(links.linkForItemResource(user, User::getId).slash("/activate").withRel("activate"));
+        entityModel.add(links.linkForItemResource(user, User::getId).slash("/activate/resend").withRel("resendActivationCode"));
+
+        return ResponseEntity.ok(entityModel);
     }
 
     @PostMapping(path = "/{id}/activate")

@@ -46,7 +46,12 @@ public class AuthorAwareAuthorizationManager {
             return isSameUser(principal, user);
         }
 
-        return isSameUser(principal, extractCreatedBy(model));
+        User createdBy = extractCreatedBy(model);
+        if (createdBy == null) {
+            return true;
+        }
+
+        return isSameUser(principal, createdBy);
     }
 
     protected boolean hasPermission(AuthenticatedUser principal, Object model, String permission) {

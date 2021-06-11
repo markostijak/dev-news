@@ -1,5 +1,5 @@
 import {BrowserModule} from '@angular/platform-browser';
-import {NgModule} from '@angular/core';
+import {APP_INITIALIZER, NgModule} from '@angular/core';
 
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
@@ -35,7 +35,6 @@ import {LoginFormComponent} from './components/login-form/login-form.component';
 import {SignUpFormComponent} from './components/sign-up/sign-up-form/sign-up-form.component';
 import {AccountMenuComponent} from './components/account-menu/account-menu.component';
 import {SocialLoginModule} from 'angularx-social-login';
-import {JwtInterceptorService} from './services/authentication/jwt-interceptor.service';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {ActivationFormComponent} from './components/sign-up/activation-form/activation-form.component';
 import {HomeViewComponent} from './views/home/home-view.component';
@@ -58,7 +57,6 @@ import {CreatePostDialogComponent} from './components/post/create-post-dialog/cr
 import {OverviewComponent} from './components/overview/overview.component';
 import {CommunityComponent} from './components/community/community/community.component';
 import {CommunityEditorComponent} from './components/community/community-editor/community-editor.component';
-import {AuthenticationGuardService} from './services/authentication/authentication-guard.service';
 import {IndexViewComponent} from './views/index/index-view.component';
 import {NotFoundViewComponent} from './views/not-found/not-found-view.component';
 import {TopCommunitiesViewComponent} from './views/top-communities/top-communities-view.component';
@@ -70,22 +68,26 @@ import {ReplyEditorComponent} from './components/comment/reply-editor/reply-edit
 import {PostEditEditorComponent} from './components/post/post-edit-editor/post-edit-editor.component';
 import {AppEditorModule} from './modules/editor/app-editor.module';
 import {SignUpStepperComponent} from './components/sign-up/sign-up-stepper/sign-up-stepper.component';
-import {ShowProgressDirective} from './directives/show-progress/show-progress.directive';
+import {ShowProgressDirective} from './features/directives/show-progress.directive';
 import {SearchViewComponent} from './views/search/search-view.component';
 import {TrendingCommunitiesComponent} from './components/community/trending-communities/trending-communities.component';
 import {TrendingPostsComponent} from './components/post/trending-posts/trending-posts.component';
 import {UpAndComingCommunitiesComponent} from './components/community/up-and-coming-communities/up-and-coming-communities.component';
 import {BackToTopComponent} from './components/back-to-top/back-to-top.component';
 import {DevNewsComponent} from './components/dev-news/dev-news.component';
-import {ShortNumberPipe} from './pipes/short-number.pipe';
-import {TimeAgoPipe} from './pipes/time-ago.pipe';
-import {TimePipe} from './pipes/time.pipe';
-import {ShortTimePipe} from './pipes/twitter-time.pipe';
+import {ShortNumberPipe} from './features/pipes/short-number.pipe';
+import {TimeAgoPipe} from './features/pipes/time-ago.pipe';
+import {TimePipe} from './features/pipes/time.pipe';
+import {ShortTimePipe} from './features/pipes/twitter-time.pipe';
 import {InfiniteScrollerComponent} from './components/infinite-scroller/infinite-scroller.component';
-import {BaseUrlAwareInterceptorService} from './services/navigation/base-url-aware-interceptor.service';
+import {BaseUrlAwareInterceptorService} from './domain/utils/base-url-aware-interceptor.service';
 import {NoCommentsComponent} from './components/comment/no-comments/no-comments.component';
 import {NoPostsComponent} from './components/post/no-posts/no-posts.component';
 import {ToolbarComponent} from './components/toolbar/toolbar.component';
+import {Observable} from 'rxjs';
+import {AuthenticationStore} from './domain/authentication/authentication-store';
+import {AuthenticationProcessor} from './domain/authentication/authentication-porcessor';
+import {JwtAwareHttpInterceptor} from './domain/authentication/jwt-aware-http-interceptor';
 
 @NgModule({
   declarations: [
@@ -174,10 +176,9 @@ import {ToolbarComponent} from './components/toolbar/toolbar.component';
     VirtualScrollerModule
   ],
   providers: [
-    AuthenticationGuardService,
     {
       provide: HTTP_INTERCEPTORS,
-      useClass: JwtInterceptorService,
+      useClass: JwtAwareHttpInterceptor,
       multi: true
     },
     {
@@ -192,6 +193,21 @@ import {ToolbarComponent} from './components/toolbar/toolbar.component';
     {
       provide: 'document',
       useValue: document
+    },
+    {
+      provide: 'localStorage',
+      useValue: localStorage
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (processor, store) => () => processor.onApplicationStarting(store.get()),
+      deps: [AuthenticationProcessor, AuthenticationStore],
+      multi: true
+    },
+    {
+      provide: Observable,
+      useFactory: (store: AuthenticationStore) => store,
+      deps: [AuthenticationStore]
     }
   ],
   entryComponents: [

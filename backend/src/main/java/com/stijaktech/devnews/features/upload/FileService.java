@@ -2,7 +2,6 @@ package com.stijaktech.devnews.features.upload;
 
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.security.crypto.codec.Hex;
 import org.springframework.security.crypto.keygen.BytesKeyGenerator;
@@ -20,30 +19,27 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.util.Set;
 
 @Service
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class FileService implements InitializingBean {
 
-    private final String host;
-    private final Path storeLocation;
+    private final FileProperties properties;
     private final BytesKeyGenerator keyGenerator;
 
-    public FileService(@Value("${file-upload.host}") String host,
-                       @Value("${file-upload.store-location}") Path storeLocation) {
-
-        this.host = host;
-        this.storeLocation = storeLocation;
+    public FileService(FileProperties fileProperties) {
+        this.properties = fileProperties;
         this.keyGenerator = KeyGenerators.secureRandom(16);
     }
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        createIfNotExists(storeLocation);
+        createIfNotExists(properties.getStoreLocation());
     }
 
     public String storeImage(@NonNull MultipartFile image) throws IOException {
         assertThatFileIsPresent(image);
 
         String filename = generateFileName("image_", extractExtension(image));
-        File destination = storeLocation.resolve(filename).toFile();
+        File destination = properties.getStoreLocation().resolve(filename).toFile();
 
         BufferedImage bufferedImage = ImageIO.read(image.getInputStream());
 
@@ -53,9 +49,9 @@ public class FileService implements InitializingBean {
             Thumbnails.of(bufferedImage).size(1280, 720).keepAspectRatio(true).toFile(destination);
         }
 
-        Files.setPosixFilePermissions(destination.toPath(), Set.of(PosixFilePermission.OTHERS_READ));
+        destination.setReadable(true, false);
 
-        return host + filename;
+        return properties.getHost() + filename;
     }
 
     public String storeVideo(@NonNull MultipartFile video) throws IOException {
@@ -70,11 +66,11 @@ public class FileService implements InitializingBean {
         assertThatFileIsPresent(file);
 
         String filename = generateFileName(prefix, extractExtension(file));
-        Path destination = storeLocation.resolve(filename);
+        Path destination = properties.getStoreLocation().resolve(filename);
         Files.setPosixFilePermissions(destination, Set.of(PosixFilePermission.OTHERS_READ));
         file.transferTo(destination);
 
-        return host + filename;
+        return properties.getHost() + filename;
     }
 
     private void assertThatFileIsPresent(MultipartFile file) {

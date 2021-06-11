@@ -7,27 +7,22 @@ import {FormControl, NgForm} from '@angular/forms';
   styleUrls: ['./search.component.scss']
 })
 export class SearchComponent implements OnInit {
+
   value = 'Clear me';
 
   @Output()
-  private search: EventEmitter<string> = new EventEmitter<string>();
+  search: EventEmitter<string> = new EventEmitter<string>();
 
-  private _searchInput: FormControl = new FormControl();
-
-  constructor() {
-  }
+  searchInput: FormControl = new FormControl();
 
   ngOnInit(): void {
   }
 
   onSubmit($event: NgForm): void {
-    const value = this._searchInput.value;
+    const value = this.searchInput.value;
     if (value && value.length > 2) {
       this.search.emit(value);
     }
   }
 
-  get searchInput(): FormControl {
-    return this._searchInput;
-  }
 }

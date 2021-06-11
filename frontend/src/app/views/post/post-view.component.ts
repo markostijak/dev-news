@@ -1,142 +1,114 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Community} from '../../models/community';
-import {Post} from '../../models/post';
 import {ActivatedRoute, Router} from '@angular/router';
-import {NavigationService} from '../../services/navigation/navigation.service';
-import {forkJoin, Subscription} from 'rxjs';
 import {Data} from '../../components/comment/comment-editor/comment-editor.component';
-import {Comment} from '../../models/comment';
-import {PostService} from '../../services/post/post.service';
-import {AuthorizationService} from '../../services/authorization/authorization.service';
+import {Post} from '../../domain/post/post';
+import {Community} from '../../domain/community/community';
+import {PostService} from '../../domain/post/post.service';
+import {Authorization} from '../../domain/authorization/authorization.service';
+import {SubscriptionSupport} from '../../domain/utils/subscription-support';
+import {State} from '../../domain/state';
+import {takeUntil} from 'rxjs/operators';
+import {CommunityService} from '../../domain/community/community.service';
+import {Comment} from '../../domain/comment/comment';
+import {CommentService} from '../../domain/comment/comment.service';
+
 
 @Component({
   selector: 'app-post-view',
   templateUrl: './post-view.component.html',
   styleUrls: ['./post-view.component.scss']
 })
-export class PostViewComponent implements OnInit, OnDestroy {
+export class PostViewComponent extends SubscriptionSupport implements OnInit, OnDestroy {
 
-  private _post: Post;
-  private _community: Community;
-  private _trending: Post[] = [];
-  private _comments: Comment[] = [];
+  post: Post;
+  community: Community;
+  trending: Post[] = [];
+  comments: Comment[] = [];
+  startEditing: boolean = false;
 
-  private _router: Router;
-  private _postService: PostService;
-  private _activatedRoute: ActivatedRoute;
-  private _navigationService: NavigationService;
+  state: State;
+  authorization: Authorization;
 
-  private _authorizationService: AuthorizationService;
-  private _startEditing: boolean = false;
-  private _subscription: Subscription = new Subscription();
+  private router: Router;
+  private postService: PostService;
+  private commentService: CommentService;
+  private communityService: CommunityService;
+  private activatedRoute: ActivatedRoute;
 
-  constructor(router: Router,
+  constructor(state: State,
+              router: Router,
               postService: PostService,
+              commentService: CommentService,
+              communityService: CommunityService,
               activatedRoute: ActivatedRoute,
-              navigationService: NavigationService,
-              authorizationService: AuthorizationService) {
-
-    this._router = router;
-    this._postService = postService;
-    this._activatedRoute = activatedRoute;
-    this._navigationService = navigationService;
-    this._authorizationService = authorizationService;
+              authorization: Authorization) {
+    super();
+    this.state = state;
+    this.router = router;
+    this.postService = postService;
+    this.commentService = commentService;
+    this.communityService = communityService;
+    this.activatedRoute = activatedRoute;
+    this.authorization = authorization;
   }
 
   ngOnInit(): void {
-    this._subscription.add(this._activatedRoute.params.subscribe(params => {
-      this._community = null;
+    this.activatedRoute.params.pipe(takeUntil(this.destroyed$)).subscribe(params => {
+      this.community = null;
       this.reload(params['post']);
-    }));
-  }
-
-  ngOnDestroy(): void {
-    this._subscription.unsubscribe();
+    });
   }
 
   private reload(alias: string): void {
-    this._postService.fetchByAlias(alias, 'include-stats').subscribe(post => {
-      this._navigationService.navigate(post.community);
-
-      forkJoin({
-        community: this._postService.fetchCommunity(post, 'include-stats'),
-        comments: this._postService.fetchComments(post, 'preview'),
-        trending: this._postService.fetchTrending()
-      }).subscribe(result => {
-        this._post = post;
-        this._community = result.community;
-        this._comments.push(...result.comments);
-        this._trending.push(...result.trending);
-      });
+    this.postService.fetchByAlias(alias).subscribe(post => {
+      this.state.navigation$.next(post._embedded.community);
+      this.communityService.fetch(post._links.community).subscribe(c => this.community = c);
+      this.postService.fetchComments(post).subscribe(([c, page]) => this.comments = c);
+      this.postService.fetchTrending().subscribe(([p, page]) => this.trending = p);
+      this.post = post;
     });
   }
 
   onSave($event: Data): void {
-    if (this._authorizationService.canCreate()) {
-      this._postService.addComment({
-        content: $event.content,
-        post: this._post._links.self.href
-      } as Comment).subscribe(comment => {
-        comment.createdBy = this._authorizationService.authentication.principal;
-        this._comments.push(comment);
-        this.post.commentsCount++;
-        $event.editor.reset();
-      });
+    if (this.authorization.canCreate()) {
+      const comment = {content: $event.content};
+      this.commentService.create(this.post, comment as Comment)
+        .subscribe(response => {
+          this.comments.push(response);
+          this.post.commentsCount++;
+          $event.editor.reset();
+        });
     }
   }
 
   onPostEditSave(content: string): void {
-    this._postService.update(this._post, content).subscribe(post => {
-      this._post.content = post.content;
-      this._post.updatedAt = post.updatedAt;
-      this._startEditing = false;
+    this.postService.update(this.post, content).subscribe(post => {
+      this.post.content = post.content;
+      this.post.updatedAt = post.updatedAt;
+      this.startEditing = false;
     });
   }
 
   showEditor(): void {
-    this._startEditing = true;
+    this.startEditing = true;
   }
 
   onPostEditCancel(): void {
-    this._startEditing = false;
+    this.startEditing = false;
   }
 
-  onReply($event: Comment): void {
-    this._post.commentsCount++;
+  onReply($event: any): void {
+    this.post.commentsCount++;
   }
 
-  get post(): Post {
-    return this._post;
-  }
-
-  get community(): Community {
-    return this._community;
-  }
-
-  get comments(): Comment[] {
-    return this._comments;
-  }
-
-  get startEditing(): boolean {
-    return this._startEditing;
-  }
-
-  get authorizationService(): AuthorizationService {
-    return this._authorizationService;
-  }
-
-  get trending(): Post[] {
-    return this._trending;
-  }
-
-  public delete(post: Post) {
-    this._postService.delete(post).subscribe(() => {
-      this._router.navigate(['/c', post.community.alias]);
+  public delete(post: Post): void {
+    this.postService.delete(post).subscribe(() => {
+      this.router.navigate(['/c', post.community.alias]);
     });
   }
 
-  public deleteComment(deleted: Comment) {
-    this._postService.deleteComment(deleted).subscribe(() => {
+  public deleteComment(deleted: Comment): void {
+    this.commentService.delete(deleted).subscribe(() => {
       const index = this.comments.indexOf(deleted);
       this.comments.splice(index, 1);
       this.post.commentsCount--;

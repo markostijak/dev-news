@@ -61,8 +61,6 @@ public class ApplicationSecurityConfiguration extends WebSecurityConfigurerAdapt
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/login", "/login/oauth", "/refresh")
                 .permitAll()
-                .and()
-                .authorizeRequests()
                 .anyRequest()
                 .denyAll()
                 .and()

@@ -1,8 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {NavigationService, TOP_COMMUNITIES} from '../../services/navigation/navigation.service';
-import {Community} from '../../models/community';
-import {HttpClient, HttpParams} from '@angular/common/http';
-import {Hal, Page} from '../../models/hal';
+import {State} from '../../domain/state';
+import {CommunityService} from '../../domain/community/community.service';
+import {Page} from '../../domain/utils/hal';
+import {Community} from '../../domain/community/community';
+import {TOP_COMMUNITIES} from '../../domain/utils/navigation';
 
 @Component({
   selector: 'app-top-communities-view',
@@ -11,46 +12,40 @@ import {Hal, Page} from '../../models/hal';
 })
 export class TopCommunitiesViewComponent implements OnInit {
 
-  private _page: Page;
-  private _communities: Community[] = [];
+  page: Page;
+  communities: Community[] = [];
 
-  private _httpClient: HttpClient;
-  private _navigationService: NavigationService;
+  private state: State;
+  private communityService: CommunityService;
 
-  constructor(navigationService: NavigationService, httpClient: HttpClient) {
-    this._httpClient = httpClient;
-    this._navigationService = navigationService;
+  constructor(state: State, communityService: CommunityService) {
+    this.state = state;
+    this.communityService = communityService;
   }
 
   ngOnInit(): void {
-    this._navigationService.navigate(TOP_COMMUNITIES);
+    this.state.navigation$.next(TOP_COMMUNITIES);
     this.fetchCommunities(0);
   }
 
   private fetchCommunities(start: number): void {
-    this._httpClient.get('api/v1/communities', {
-      params: new HttpParams()
-        .set('page', String(start))
-        .set('sort', 'postsCount,desc')
-        .set('projection', 'include-stats')
-    }).subscribe((hal: Hal<Community[]>) => {
-      this._communities.push(...hal._embedded.communities);
-      this._page = hal.page;
+    this.communityService.fetchPage({
+      page: start,
+      sort: 'postsCount,desc'
+    }).subscribe(([communities, page]) => {
+      this.communities.push(...communities);
+      this.page = page;
     });
   }
 
   public onScroll($event): void {
-    if (this._page && (this._page.number + 1 < this._page.totalPages)) {
-      this.fetchCommunities(this._page.number + 1);
+    if (this.page && (this.page.number + 1 < this.page.totalPages)) {
+      this.fetchCommunities(this.page.number + 1);
     }
   }
 
-  get communities(): Community[] {
-    return this._communities;
-  }
-
   navigate(community: Community): void {
-    this._navigationService.navigate(community);
+    this.state.navigation$.next(community);
   }
 
 }

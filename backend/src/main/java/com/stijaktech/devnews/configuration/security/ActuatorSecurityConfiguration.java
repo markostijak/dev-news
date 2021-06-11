@@ -30,30 +30,26 @@ public class ActuatorSecurityConfiguration extends WebSecurityConfigurerAdapter 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.antMatcher("/actuator/**")
+                .userDetailsService(new AuthenticationService(userRepository))
                 .httpBasic()
                 .and()
-                .userDetailsService(new AuthenticationService(userRepository))
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .csrf()
                 .disable()
-                .formLogin()
-                .disable()
                 .exceptionHandling()
-                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
+                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.FORBIDDEN))
                 .and()
                 .authorizeRequests()
                 .anyRequest()
-                .hasAnyAuthority(Role.ADMIN.asString(), Role.WEBMASTER.asString())
-                .and()
-                .httpBasic();
+                .hasRole(Role.WEBMASTER.name());
     }
 
     record AuthenticationService(UserRepository userRepository) implements UserDetailsService {
         @Override
         public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-            User user = userRepository.findByUsername(username)
+            User user = userRepository.findByEmailOrUsername(username, username)
                     .orElseThrow(() -> new UsernameNotFoundException(username));
 
             return new AuthenticatedUser(user, null) {

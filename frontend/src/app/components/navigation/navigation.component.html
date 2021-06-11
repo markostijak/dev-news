@@ -1,7 +1,7 @@
 <!--suppress TypeScriptUnresolvedVariable -->
-<button class="navigation-button" mat-stroked-button [matMenuTriggerFor]="menu" *ngIf="navigationService.navigation$ | async as active" [matTooltip]="active.title">
-  <mat-icon class="left-icon" *ngIf="!active.id" mat-list-icon>{{active.icon}}</mat-icon>
-  <img class="left-image" *ngIf="active.id" mat-list-icon [src]="active.logo ? active.logo : 'assets/icons/community.svg'" [alt]="active.title">
+<button class="navigation-button" mat-stroked-button [matMenuTriggerFor]="menu" *ngIf="state.navigation$ | async as active" [matTooltip]="active.title">
+  <mat-icon class="left-icon" *ngIf="active.icon" mat-list-icon>{{active.icon}}</mat-icon>
+  <img class="left-image" *ngIf="!active.icon" mat-list-icon [src]="active.logo ? active.logo : 'assets/icons/community.svg'" [alt]="active.title">
   <span class="navigation-text">{{active.title}}</span>
   <mat-icon class="right-icon">keyboard_arrow_down</mat-icon>
 </button>

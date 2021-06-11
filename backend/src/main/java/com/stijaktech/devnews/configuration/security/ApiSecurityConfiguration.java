@@ -56,8 +56,6 @@ public class ApiSecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .antMatchers(HttpMethod.POST, "/api/v1/users", "/api/v1/users/*/activate**")
                 .permitAll()
-                .and()
-                .authorizeRequests()
                 .anyRequest()
                 .authenticated()
                 .and()

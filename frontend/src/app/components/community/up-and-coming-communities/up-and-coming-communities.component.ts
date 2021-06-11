@@ -1,5 +1,6 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {Community} from '../../../models/community';
+import {Component, OnInit} from '@angular/core';
+import {Community} from '../../../domain/community/community';
+import {CommunityService} from '../../../domain/community/community.service';
 
 @Component({
   selector: 'app-up-and-coming-communities',
@@ -8,13 +9,18 @@ import {Community} from '../../../models/community';
 })
 export class UpAndComingCommunitiesComponent implements OnInit {
 
-  @Input()
   communities: Community[] = [];
 
-  constructor() {
+  private communityService: CommunityService;
+
+  constructor(communityService: CommunityService) {
+    this.communityService = communityService;
   }
 
   ngOnInit(): void {
+    this.communityService.fetchUpAndComing({size: '5'}).subscribe(communities => {
+      this.communities = communities;
+    });
   }
 
 }

@@ -1,7 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {LOGIN, NavigationService} from '../../services/navigation/navigation.service';
-import {Authentication} from '../../services/authentication/authentication.service';
 import {Router} from '@angular/router';
+import {Authentication} from '../../domain/authentication/authentication';
+import {AuthenticationProcessor} from '../../domain/authentication/authentication-porcessor';
+import {State} from '../../domain/state';
+import {LOGIN} from '../../domain/utils/navigation';
 
 @Component({
   selector: 'app-login-view',
@@ -10,20 +12,24 @@ import {Router} from '@angular/router';
 })
 export class LoginViewComponent implements OnInit {
 
-  private _router: Router;
-  private _navigationService: NavigationService;
+  private state: State;
+  private router: Router;
+  private authenticationProcessor: AuthenticationProcessor;
 
-  constructor(router: Router, navigationService: NavigationService) {
-    this._router = router;
-    this._navigationService = navigationService;
+  constructor(state: State, router: Router, authenticationProcessor: AuthenticationProcessor) {
+    this.state = state;
+    this.router = router;
+    this.authenticationProcessor = authenticationProcessor;
   }
 
   ngOnInit(): void {
-    this._navigationService.navigate(LOGIN);
+    this.state.navigation$.next(LOGIN);
   }
 
   public redirect($event: Authentication): void {
-    this._router.navigate(['']);
+    this.authenticationProcessor.onLogin($event).subscribe(() => {
+      this.router.navigate(['']);
+    });
   }
 
 }

@@ -1,9 +1,10 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Comment} from '../../../models/comment';
 import {Data, ReplyEditorComponent} from '../reply-editor/reply-editor.component';
-import {CommentService} from '../../../services/comment/comment.service';
-import {Post} from '../../../models/post';
-import {AuthorizationService} from '../../../services/authorization/authorization.service';
+import {Post} from '../../../domain/post/post';
+import {Comment} from '../../../domain/comment/comment';
+import {CommentService} from '../../../domain/comment/comment.service';
+import {Authorization} from '../../../domain/authorization/authorization.service';
+import {State} from '../../../domain/state';
 
 @Component({
   selector: 'app-comment',
@@ -13,53 +14,58 @@ import {AuthorizationService} from '../../../services/authorization/authorizatio
 export class CommentComponent implements OnInit {
 
   @Input()
-  public post: Post;
+  post: Post;
 
   @Input()
-  public comment: Comment;
+  comment: Comment;
+
+  @Input()
+  depth: number = 0;
 
   @Output()
-  public reply: EventEmitter<Comment> = new EventEmitter<Comment>();
+  reply: EventEmitter<Comment> = new EventEmitter<Comment>();
 
   @Output()
-  public delete: EventEmitter<Comment> = new EventEmitter<Comment>();
+  delete: EventEmitter<Comment> = new EventEmitter<Comment>();
 
-  private _showEditor: boolean = false;
-  private _startEditing: boolean = false;
+  showEditor: boolean = false;
+  startEditing: boolean = false;
+  loadMore: boolean = false;
 
-  private _commentService: CommentService;
-  private _authorizationService: AuthorizationService;
+  state: State;
+  authorization: Authorization;
 
-  constructor(commentService: CommentService, authorizationService: AuthorizationService) {
-    this._commentService = commentService;
-    this._authorizationService = authorizationService;
+  private commentService: CommentService;
+
+  constructor(state: State, commentService: CommentService, authorization: Authorization) {
+    this.authorization = authorization;
+    this.commentService = commentService;
   }
 
   ngOnInit(): void {
+    this.commentService.fetchPage(this.comment._links.replies)
+      .subscribe(([replies, page]) => {
+        this.comment.replies = replies;
+      });
   }
 
   public toggleReplyEditor(): void {
-    this._showEditor = !this._showEditor;
+    this.showEditor = !this.showEditor;
   }
 
   public toggleEditEditor(): void {
-    this._startEditing = !this._startEditing;
+    this.startEditing = !this.startEditing;
   }
 
   public onSave($event: Data): void {
-    this._commentService.create({
-      content: $event.content,
-      post: this.post._links.self.href,
-      parent: this.comment._links.self.href
-    } as Comment).subscribe(reply => {
-      reply.createdBy = this._authorizationService.authentication.principal;
-
+    const reply = {content: $event.content} as Comment;
+    this.commentService.addReply(this.comment, reply).subscribe(response => {
       if (!this.comment.replies) {
         this.comment.replies = [];
       }
 
-      this.comment.replies.push(reply);
-      this._showEditor = false;
+      this.comment.replies.push(response);
+      this.showEditor = false;
       $event.editor.reset();
       this.onReply(reply);
     });
@@ -67,48 +73,33 @@ export class CommentComponent implements OnInit {
 
   public onCancel($event: ReplyEditorComponent): void {
     $event.reset();
-    this._showEditor = false;
+    this.showEditor = false;
   }
 
   public onEditSave($event: Data): void {
-    this._commentService.update({
-      content: $event.content,
-      _links: this.comment._links
-    } as Comment).subscribe(comment => {
-      this.comment.content = comment.content;
-      this.comment.updatedAt = comment.updatedAt;
+    this.commentService.update(this.comment, $event.content).subscribe(response => {
+      this.comment.content = response.content;
+      this.comment.updatedAt = response.updatedAt;
+      this.startEditing = false;
       $event.editor.reset();
-      this._startEditing = false;
     });
   }
 
   public onEditCancel($event: ReplyEditorComponent): void {
     $event.reset();
-    this._startEditing = false;
+    this.startEditing = false;
   }
 
   public onReply(reply: Comment): void {
     this.reply.emit(reply);
   }
 
-  get showEditor(): boolean {
-    return this._showEditor;
-  }
-
-  get startEditing(): boolean {
-    return this._startEditing;
-  }
-
-  get authorizationService(): AuthorizationService {
-    return this._authorizationService;
-  }
-
-  public onDelete(comment: Comment) {
+  public onDelete(comment: Comment): void {
     this.delete.emit(comment);
   }
 
-  public deleteReply(deleted: Comment) {
-    this._commentService.delete(deleted).subscribe(() => {
+  public deleteReply(deleted: Comment): void {
+    this.commentService.delete(deleted).subscribe(() => {
       if (this.comment.replies) {
         const index = this.comment.replies.indexOf(deleted);
         this.comment.replies.splice(index, 1);

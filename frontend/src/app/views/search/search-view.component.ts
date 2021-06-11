@@ -1,11 +1,10 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {CommunityService} from '../../services/community/community.service';
-import {NavigationService} from '../../services/navigation/navigation.service';
 import {forkJoin, Subscription} from 'rxjs';
-import {PostService} from '../../services/post/post.service';
-import {Community} from '../../models/community';
-import {Post} from '../../models/post';
+import {PostService} from '../../domain/post/post.service';
+import {CommunityService} from '../../domain/community/community.service';
+import {Post} from '../../domain/post/post';
+import {Community} from '../../domain/community/community';
 
 @Component({
   selector: 'app-search-view',
@@ -15,7 +14,6 @@ import {Post} from '../../models/post';
 export class SearchViewComponent implements OnInit, OnDestroy {
 
   private _activatedRoute: ActivatedRoute;
-  private _navigationService: NavigationService;
 
   private _postService: PostService;
   private _communityService: CommunityService;
@@ -27,12 +25,10 @@ export class SearchViewComponent implements OnInit, OnDestroy {
 
   constructor(postService: PostService,
               activatedRoute: ActivatedRoute,
-              communityService: CommunityService,
-              navigationService: NavigationService) {
+              communityService: CommunityService) {
     this._postService = postService;
     this._activatedRoute = activatedRoute;
     this._communityService = communityService;
-    this._navigationService = navigationService;
   }
 
   ngOnInit(): void {

@@ -1,8 +1,10 @@
 import {Component, OnInit} from '@angular/core';
-import {NavigationService, SIGN_UP} from '../../services/navigation/navigation.service';
 import {STEPPER_GLOBAL_OPTIONS} from '@angular/cdk/stepper';
 import {Router} from '@angular/router';
-import {Authentication} from '../../services/authentication/authentication.service';
+import {State} from '../../domain/state';
+import {SIGN_UP} from '../../domain/utils/navigation';
+import {AuthenticationProcessor} from '../../domain/authentication/authentication-porcessor';
+import {Authentication} from '../../domain/authentication/authentication';
 
 @Component({
   selector: 'app-sign-up-view',
@@ -14,21 +16,24 @@ import {Authentication} from '../../services/authentication/authentication.servi
 })
 export class SignUpViewComponent implements OnInit {
 
+  private state: State;
+  private router: Router;
+  private authenticationProcessor: AuthenticationProcessor;
 
-  private _router: Router;
-  private _navigationService: NavigationService;
-
-  constructor(router: Router, navigationService: NavigationService) {
-    this._router = router;
-    this._navigationService = navigationService;
+  constructor(state: State, router: Router, authenticationProcessor: AuthenticationProcessor) {
+    this.state = state;
+    this.router = router;
+    this.authenticationProcessor = authenticationProcessor;
   }
 
   ngOnInit(): void {
-    this._navigationService.navigate(SIGN_UP);
+    this.state.navigation$.next(SIGN_UP);
   }
 
-  public redirect($event: Authentication): void {
-    this._router.navigate(['']);
+  public success(authentication: Authentication): void {
+    this.authenticationProcessor.onLogin(authentication).subscribe(value => {
+      this.router.navigate(['']);
+    });
   }
 
 }

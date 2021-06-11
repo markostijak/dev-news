@@ -3,8 +3,8 @@
     <div class="editor">
       <div class="mb-10" fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center center">
         <div fxFlex="0 1 auto" class="avatar-container">
-          <ng-container *ngIf="authentication | async as authentication">
-            <img class="avatar" [src]="authentication.principal.picture || 'assets/icons/user.png'" [alt]="authentication.principal.username">
+          <ng-container *ngIf="state.user as user">
+            <img class="avatar" [src]="user.picture || 'assets/icons/user.png'" [alt]="user.username">
           </ng-container>
         </div>
         <div fxFlex="1 1 100%">
@@ -21,7 +21,7 @@
         <mat-icon class="community-select-icon-2">keyboard_arrow_down</mat-icon>
       </div>
       <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onCommunitySelected($event)" [displayWith]="displayCommunity">
-            <mat-option *ngFor="let community of (communities | async)" [value]="community">
+            <mat-option *ngFor="let community of communities" [value]="community">
               <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center center">
                 <div fxFlex="0 0 30px">
                   <img class="mat-option-avatar" [src]="community.logo ? community.logo : 'assets/icons/community.svg'" [alt]="community.title">

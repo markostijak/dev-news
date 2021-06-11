@@ -1,95 +1,75 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Community} from '../../models/community';
-import {NavigationService} from '../../services/navigation/navigation.service';
+import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {Subscription} from 'rxjs';
-import {Post} from '../../models/post';
-import {Page} from '../../models/hal';
-import {CommunityService} from '../../services/community/community.service';
-import {PostService} from '../../services/post/post.service';
+import {CommunityService} from '../../domain/community/community.service';
+import {SubscriptionSupport} from '../../domain/utils/subscription-support';
+import {State} from '../../domain/state';
+import {Page} from '../../domain/utils/hal';
+import {Post} from '../../domain/post/post';
+import {Community} from '../../domain/community/community';
+import {takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-community-view',
   templateUrl: './community-view.component.html',
   styleUrls: ['./community-view.component.scss']
 })
-export class CommunityViewComponent implements OnInit, OnDestroy {
+export class CommunityViewComponent extends SubscriptionSupport implements OnInit {
 
-  private _page: Page;
-  private _posts: Post[] = [];
-  private _community: Community;
-  private _trending: Post[] = [];
+  page: Page;
+  posts: Post[] = [];
+  community: Community;
 
-  private _postService: PostService;
-  private _communityService: CommunityService;
-  private _navigationService: NavigationService;
+  private loading: boolean = false;
 
-  private _loading: boolean = false;
-  private _activatedRoute: ActivatedRoute;
-  private _subscription: Subscription = new Subscription();
+  private state: State;
+  private activatedRoute: ActivatedRoute;
+  private communityService: CommunityService;
 
-  constructor(postService: PostService,
-              activatedRoute: ActivatedRoute,
-              communityService: CommunityService,
-              navigationService: NavigationService) {
-    this._postService = postService;
-    this._activatedRoute = activatedRoute;
-    this._communityService = communityService;
-    this._navigationService = navigationService;
+  constructor(state: State, activatedRoute: ActivatedRoute, communityService: CommunityService) {
+    super();
+    this.state = state;
+    this.activatedRoute = activatedRoute;
+    this.communityService = communityService;
   }
 
   ngOnInit(): void {
-    this._subscription.add(this._activatedRoute.params.subscribe(params => {
-      this._community = null;
-      this._page = null;
-      this._posts = [];
-      this.reload(params['community']);
-    }));
-  }
-
-  ngOnDestroy(): void {
-    this._subscription.unsubscribe();
-  }
-
-  private reload(alias: string): void {
-    this._communityService.fetchByAlias(alias, 'include-stats').subscribe(community => {
-      this._navigationService.navigate(community);
-      this.fetchPosts(community, 0);
-      this._postService.fetchTrendingByCommunity(community, 5).subscribe(posts => {
-        this._trending = posts;
+    this.activatedRoute.params.pipe(takeUntil(this.destroyed$))
+      .subscribe(params => {
+        this.posts = [];
+        this.page = null;
+        this.community = null;
+        this.load(params['community']);
       });
+  }
+
+  private load(alias: string): void {
+    this.communityService.fetchByAlias(alias).subscribe(community => {
+      this.community = community;
+      this.state.navigation$.next(community);
+      this.fetchPosts(0);
+      // todo trending
     });
   }
 
-  private fetchPosts(community: Community, page: number): void {
-    if (!this._loading) {
-      this._postService.fetchPage('api/v1/posts/search/findAllByCommunity', page, 'include-stats', {
-        community: community._links.self.href
-      }).subscribe(hal => {
-        this._posts.push(...hal._embedded.posts);
-        this._community = community;
-        this._page = hal.page;
-        this._loading = false;
-      }, () => this._loading = false);
-    }
-  }
-
   public onScrollEnd($event: UIEvent): void {
-    if (this._page.number + 1 < this._page.totalPages) {
-      this.fetchPosts(this.community, this._page.number + 1);
+    if (this.page.number + 1 < this.page.totalPages) {
+      this.fetchPosts(this.page.number + 1);
     }
   }
 
-  get community(): Community {
-    return this._community;
-  }
-
-  get posts(): Post[] {
-    return this._posts;
-  }
-
-  get trending(): Post[] {
-    return this._trending;
+  private fetchPosts(pageNumber: number): void {
+    if (!this.loading) {
+      this.loading = true;
+      this.communityService.fetchPosts(this.community, {
+        page: pageNumber,
+        sort: 'createdAt,desc',
+        projection: 'view'
+      }).subscribe(([posts, page]) => {
+        this.posts.push(...posts);
+        this.page = page;
+        this.loading = false;
+      }, () => this.loading = false);
+    }
   }
 
 }

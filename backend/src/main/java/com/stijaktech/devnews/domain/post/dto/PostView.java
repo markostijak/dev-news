@@ -1,7 +1,8 @@
 package com.stijaktech.devnews.domain.post.dto;
 
+import com.stijaktech.devnews.domain.community.dto.CommunityPreview;
 import com.stijaktech.devnews.domain.post.Post;
-import com.stijaktech.devnews.domain.user.User;
+import com.stijaktech.devnews.domain.user.dto.UserView;
 import org.springframework.data.rest.core.config.Projection;
 
 import java.time.Instant;
@@ -15,12 +16,14 @@ public interface PostView {
 
     String getContent();
 
-    User getCreatedBy();
+    UserView getCreatedBy();
 
-    User getUpdatedBy();
+    UserView getUpdatedBy();
 
     Instant getCreatedAt();
 
     Instant getUpdatedAt();
+
+    CommunityPreview getCommunity();
 
 }

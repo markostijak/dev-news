@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {NavigationService, PAGE_NOT_FOUND} from '../../services/navigation/navigation.service';
+import {State} from '../../domain/state';
+import {LOGIN} from '../../domain/utils/navigation';
 
 @Component({
   selector: 'app-not-found-view',
@@ -8,14 +9,14 @@ import {NavigationService, PAGE_NOT_FOUND} from '../../services/navigation/navig
 })
 export class NotFoundViewComponent implements OnInit {
 
-  private _navigationService: NavigationService;
+  private state: State;
 
-  constructor(navigationService: NavigationService) {
-    this._navigationService = navigationService;
+  constructor(state: State) {
+    this.state = state;
   }
 
-  public ngOnInit(): void {
-    this._navigationService.navigate(PAGE_NOT_FOUND);
+  ngOnInit(): void {
+    this.state.navigation$.next(LOGIN);
   }
 
 }

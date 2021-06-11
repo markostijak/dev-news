@@ -1,6 +1,5 @@
 package com.stijaktech.devnews.domain;
 
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mapping.PersistentEntity;
 import org.springframework.data.mapping.context.PersistentEntities;
@@ -46,24 +45,29 @@ public class ModelAssembler implements RepresentationModelAssembler<Object, Enti
         this.embeddedAssembler = new EmbeddedResourcesAssembler(entities, associations, projector);
     }
 
-    @NotNull
+    @NonNull
     @Override
-    public EntityModel<Object> toModel(@NotNull Object instance) {
+    public EntityModel<Object> toModel(@NonNull Object instance) {
         return wrap(projector.projectExcerpt(instance), instance);
     }
 
-    @NotNull
-    public <T> EntityModel<T> toModel(@NotNull Object instance, @NotNull Class<T> projection) {
+    @NonNull
+    public <T> EntityModel<T> toModel(@NonNull Object instance, @NonNull Class<T> projection) {
         return wrap(projector.project(instance, projection), instance);
     }
 
-    @NotNull
-    public <T> EntityModel<T> toModel(@NotNull Object instance, String projection) {
+    @NonNull
+    public <T> EntityModel<T> toModel(@NonNull Object instance, @NonNull Object projection) {
+        return wrap(projection, instance);
+    }
+
+    @NonNull
+    public <T> EntityModel<T> toModel(@NonNull Object instance, String projection) {
         return wrap(projector.project(instance, projection), instance);
     }
 
-    @NotNull
-    public <T> CollectionModel<EntityModel<T>> toCollectionModel(@NotNull Iterable<?> entities, @NotNull Class<T> projection) {
+    @NonNull
+    public <T> CollectionModel<EntityModel<T>> toCollectionModel(@NonNull Iterable<?> entities, @NonNull Class<T> projection) {
         return StreamSupport.stream(entities.spliterator(), false)
                 .map(e -> toModel(e, projection))
                 .collect(collectingAndThen(toList(), CollectionModel::of));

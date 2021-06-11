@@ -18,7 +18,7 @@ class InMemoryProviderRepository implements ProviderRepository {
     @Autowired
     public InMemoryProviderRepository(@NonNull ProviderProperties providerProperties) {
         Assert.notNull(providerProperties, "OAuth2ProviderProperties can't be null.");
-        this.providers = providerProperties.getProviders();
+        this.providers = providerProperties.build().getProviders();
     }
 
     @Override

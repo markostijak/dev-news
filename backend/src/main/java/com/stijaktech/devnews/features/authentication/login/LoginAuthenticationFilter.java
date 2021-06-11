@@ -18,7 +18,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
+import static org.springframework.util.StringUtils.hasText;
+
 public class LoginAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
+
+    record LoginDetails(String principal, String credentials) {}
 
     private static final String LOGIN = "/login";
     private static final String OAUTH_LOGIN = "/login/oauth";
@@ -40,13 +44,13 @@ public class LoginAuthenticationFilter extends AbstractAuthenticationProcessingF
             throw new BadCredentialsException("Credentials are missing!");
         }
 
-        String[] tokens = extractAndDecodeHeader(header);
-        assert tokens.length == 2;
+        LoginDetails login = extractFromHeader(header);
+        assert hasText(login.principal) && hasText(login.credentials);
 
         AbstractAuthenticationToken authentication = switch (request.getServletPath()) {
-            case LOGIN -> new EmailPasswordAuthenticationToken(tokens[0], tokens[1]);
-            case OAUTH_LOGIN -> new AuthorizationCodeAuthenticationToken(tokens[0], tokens[1]);
-            case REFRESH -> new JwtRefreshAuthenticationToken(tokens[0], tokens[1]);
+            case LOGIN -> new EmailOrUsernamePasswordAuthenticationToken(login.principal, login.credentials);
+            case OAUTH_LOGIN -> new AuthorizationCodeAuthenticationToken(login.principal, login.credentials);
+            case REFRESH -> new JwtRefreshAuthenticationToken(login.principal, login.credentials);
             default -> throw new IllegalStateException("Unsupported path");
         };
 
@@ -55,7 +59,7 @@ public class LoginAuthenticationFilter extends AbstractAuthenticationProcessingF
         return getAuthenticationManager().authenticate(authentication);
     }
 
-    private String[] extractAndDecodeHeader(String header) {
+    private LoginDetails extractFromHeader(String header) {
         byte[] base64Token = header.substring(6).getBytes(StandardCharsets.UTF_8);
         byte[] decoded;
 
@@ -73,7 +77,7 @@ public class LoginAuthenticationFilter extends AbstractAuthenticationProcessingF
             throw new BadCredentialsException("Invalid basic authentication token");
         }
 
-        return new String[]{token.substring(0, delimiter), token.substring(delimiter + 1)};
+        return new LoginDetails(token.substring(0, delimiter), token.substring(delimiter + 1));
     }
 
 }

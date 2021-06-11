@@ -1,6 +1,5 @@
 package com.stijaktech.devnews.domain.user;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.stijaktech.devnews.domain.Status;
 import com.stijaktech.devnews.domain.community.Community;
 import com.stijaktech.devnews.domain.user.device.Device;
@@ -50,15 +49,12 @@ public class User {
     @LastModifiedDate
     private Instant updatedAt;
 
-    @JsonIgnore
     private String password;
 
-    @JsonIgnore
     private String resetToken;
 
     private Provider provider;
 
-    @JsonIgnore
     private String activationCode;
 
     private Set<Privilege> privileges;

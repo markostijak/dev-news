@@ -99,7 +99,6 @@ export class PostEditorComponent extends SubscriptionSupport implements OnInit {
         title: this.title,
         content: JSON.stringify(this.content)
       } as Post).subscribe((post: Post) => {
-        console.log(post);
         post.community = this.selected;
         this.save.emit(post);
       });

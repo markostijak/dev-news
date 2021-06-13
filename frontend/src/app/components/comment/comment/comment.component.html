@@ -16,17 +16,17 @@
 <ng-template #show>
   <quill-view *ngIf="!startEditing" class="comment-content" format="json" [content]="comment.content"></quill-view>
   <div class="actions">
-    <a *ngIf="authorization.canView(comment)" class="mr-10" (click)="toggleReplyEditor()">
+    <a *ngIf="this.state.user" class="mr-10" (click)="toggleReplyEditor()">
       <i class="icon">mode_comment</i>
       Reply
     </a>
     <a class="mr-10">
       Share
     </a>
-    <a *ngIf="authorization.canEdit(comment)" class="mr-10" (click)="toggleEditEditor()">
+    <a *ngIf="isAuthor" class="mr-10" (click)="toggleEditEditor()">
       Edit
     </a>
-    <a *ngIf="authorization.canDelete(comment) && (!comment?.replies || !comment?.replies?.length)" (click)="onDelete(comment)">
+    <a *ngIf="isAuthor && (!comment?.replies || !comment?.replies?.length)" (click)="onDelete(comment)">
       Delete
     </a>
   </div>

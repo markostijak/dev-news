@@ -33,42 +33,24 @@ export class PopularViewComponent implements OnInit {
     this.fetchPosts(0);
   }
 
-  // private fetchPosts(page: number): void {
-  //   if (!this.loading) {
-  //     this.postService.fetchPage('api/v1/posts/search/findPopular', page, 'include-stats').subscribe(response => {
-  //       const posts = response._embedded.posts;
-  //       if (this.posts) {
-  //         this.posts.push(...posts);
-  //       } else {
-  //         this.posts = posts;
-  //       }
-  //
-  //       this._page.number = this._page.totalPages;
-  //       this._page.totalPages += Math.min(posts.length, 1);
-  //
-  //       this.loading = false;
-  //     }, () => this.loading = false);
-  //   }
-  // }
-
   public fetchPosts(pageNumber: number): void {
     if (!this.loading) {
       this.loading = true;
-      this.postService.fetchPage({
+      this.postService.fetchPopular({
         page: pageNumber,
         sort: 'createdAt,desc',
-        projection: 'view'
+        projection: 'stats'
       }).subscribe(([posts, page]) => {
         this.posts = this.posts || [];
         this.posts.push(...posts);
-        this.page = page;
+        // this.page = page;
         this.loading = false;
       }, () => this.loading = false);
     }
   }
 
   public onScrollEnd($event: UIEvent): void {
-    if (this.page.number + 1 <= this.page.totalPages) {
+    if (this.page && (this.page.number + 1 <= this.page.totalPages)) {
       this.fetchPosts(this.page.number + 1);
     }
   }

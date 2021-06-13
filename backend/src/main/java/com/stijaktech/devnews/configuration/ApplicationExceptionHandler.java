@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -49,6 +50,12 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
         });
 
         return handleExceptionInternal(e, errors, HttpHeaders.EMPTY, HttpStatus.BAD_REQUEST, request);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleMissingPathVariable(MissingPathVariableException e, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        String message = e.getParameter().getParameterType().getSimpleName() + " not found";
+        return handleExceptionInternal(e, message, headers, HttpStatus.NOT_FOUND, request);
     }
 
     @Override

@@ -200,8 +200,10 @@ import {JwtAwareHttpInterceptor} from './domain/authentication/jwt-aware-http-in
     },
     {
       provide: APP_INITIALIZER,
-      useFactory: (processor, store) => () => processor.onApplicationStarting(store.get()),
-      deps: [AuthenticationProcessor, AuthenticationStore],
+      useFactory: (processor) => () => new Promise(resolve => {
+        processor.onApplicationStarting().subscribe(() => resolve(true));
+      }),
+      deps: [AuthenticationProcessor],
       multi: true
     },
     {

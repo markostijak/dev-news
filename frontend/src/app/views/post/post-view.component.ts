@@ -25,6 +25,8 @@ export class PostViewComponent extends SubscriptionSupport implements OnInit, On
   trending: Post[] = [];
   comments: Comment[] = [];
   startEditing: boolean = false;
+  isAuthor: boolean = false;
+  commentsCount: number = 0;
 
   state: State;
   authorization: Authorization;
@@ -60,12 +62,14 @@ export class PostViewComponent extends SubscriptionSupport implements OnInit, On
   }
 
   private reload(alias: string): void {
-    this.postService.fetchByAlias(alias).subscribe(post => {
-      this.state.navigation$.next(post._embedded.community);
+    this.postService.fetchByAlias(alias, 'stats').subscribe(post => {
+      this.state.navigation$.next(post.community);
       this.communityService.fetch(post._links.community).subscribe(c => this.community = c);
       this.postService.fetchComments(post).subscribe(([c, page]) => this.comments = c);
       this.postService.fetchTrending().subscribe(([p, page]) => this.trending = p);
       this.post = post;
+      this.isAuthor = this.state.user && post.createdBy.username === this.state.user.username;
+      this.commentsCount = post.commentsCount;
     });
   }
 
@@ -75,7 +79,7 @@ export class PostViewComponent extends SubscriptionSupport implements OnInit, On
       this.commentService.create(this.post, comment as Comment)
         .subscribe(response => {
           this.comments.push(response);
-          this.post.commentsCount++;
+          this.commentsCount++;
           $event.editor.reset();
         });
     }
@@ -98,7 +102,7 @@ export class PostViewComponent extends SubscriptionSupport implements OnInit, On
   }
 
   onReply($event: any): void {
-    this.post.commentsCount++;
+    this.commentsCount++;
   }
 
   public delete(post: Post): void {
@@ -111,7 +115,7 @@ export class PostViewComponent extends SubscriptionSupport implements OnInit, On
     this.commentService.delete(deleted).subscribe(() => {
       const index = this.comments.indexOf(deleted);
       this.comments.splice(index, 1);
-      this.post.commentsCount--;
+      this.commentsCount--;
     });
   }
 

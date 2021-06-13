@@ -11,8 +11,10 @@ import javax.validation.constraints.Size;
 public class UserCreate {
 
     @Email
+    @NotBlank
     private String email;
 
+    @NotBlank
     @Size(min = 8, max = 64)
     private String username;
 
@@ -24,6 +26,7 @@ public class UserCreate {
     @Size(min = 1, max = 64)
     private String lastName;
 
+    @NotBlank
     @Pattern(regexp = "^(?=.*\\d)(?=.*[A-Z]).{8,32}$")
     private String password;
 

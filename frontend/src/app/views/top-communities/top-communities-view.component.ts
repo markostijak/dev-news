@@ -31,7 +31,8 @@ export class TopCommunitiesViewComponent implements OnInit {
   private fetchCommunities(start: number): void {
     this.communityService.fetchPage({
       page: start,
-      sort: 'postsCount,desc'
+      sort: 'postsCount,desc',
+      projection: 'stats'
     }).subscribe(([communities, page]) => {
       this.communities.push(...communities);
       this.page = page;

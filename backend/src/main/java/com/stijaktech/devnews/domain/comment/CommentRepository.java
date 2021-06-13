@@ -1,15 +1,14 @@
 package com.stijaktech.devnews.domain.comment;
 
 import com.stijaktech.devnews.domain.post.Post;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.springframework.data.rest.core.annotation.RestResource;
 import org.springframework.lang.NonNull;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 @RepositoryRestResource
@@ -22,10 +21,13 @@ public interface CommentRepository extends MongoRepository<Comment, String> {
     @PreAuthorize("hasRole('ADMIN') or @am.isAuthor(#entity)")
     void delete(@NonNull Comment entity);
 
-    List<Comment> findAllByPost(@Param("post") Post post, Sort sort);
+    Page<Comment> findAllByPostAndParentNull(Post post, Pageable pageable);
 
-    List<Comment> findAllByPostId(@Param("id") String postId, Sort sort);
+    Page<Comment> findAllByPost(Post post, Pageable pageable);
 
-    int countByPost(@Param("post") Post post);
+    Page<Comment> findAllByParent(Comment comment, Pageable pageable);
+
+    @RestResource(exported = false)
+    int countByPost(Post post);
 
 }

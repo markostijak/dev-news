@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {State} from '../../domain/state';
-import {LOGIN} from '../../domain/utils/navigation';
+import {PAGE_NOT_FOUND} from '../../domain/utils/navigation';
 
 @Component({
   selector: 'app-not-found-view',
@@ -16,7 +16,7 @@ export class NotFoundViewComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.state.navigation$.next(LOGIN);
+    this.state.navigation$.next(PAGE_NOT_FOUND);
   }
 
 }

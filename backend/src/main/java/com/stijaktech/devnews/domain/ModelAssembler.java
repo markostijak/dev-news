@@ -27,7 +27,7 @@ import static java.util.stream.Collectors.toList;
 @Component
 public class ModelAssembler implements RepresentationModelAssembler<Object, EntityModel<Object>> {
 
-    private final ModelProjector projector;
+    public final ModelProjector projector;
     private final PersistentEntities entities;
     private final SelfLinkProvider linkProvider;
     private final EmbeddedResourcesAssembler embeddedAssembler;
@@ -92,7 +92,7 @@ public class ModelAssembler implements RepresentationModelAssembler<Object, Enti
         return linkProvider.createSelfLinkFor(instance).withSelfRel().expand();
     }
 
-    static class ModelProjector extends DefaultExcerptProjector {
+    public static class ModelProjector extends DefaultExcerptProjector {
 
         private final ProjectionFactory projectionFactory;
         private final ProjectionDefinitions projectionDefinitions;

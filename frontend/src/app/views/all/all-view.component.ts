@@ -39,7 +39,7 @@ export class AllViewComponent implements OnInit {
       this.postService.fetchPage({
         page: pageNumber,
         sort: 'createdAt,desc',
-        projection: 'view'
+        projection: 'stats'
       }).subscribe(([posts, page]) => {
         this.posts = this.posts || [];
         this.posts.push(...posts);

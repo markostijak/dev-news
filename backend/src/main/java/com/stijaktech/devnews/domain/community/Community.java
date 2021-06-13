@@ -1,5 +1,6 @@
 package com.stijaktech.devnews.domain.community;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.stijaktech.devnews.domain.post.Post;
 import com.stijaktech.devnews.domain.user.User;
 import lombok.Data;
@@ -18,8 +19,6 @@ import org.springframework.lang.NonNull;
 import javax.validation.constraints.NotBlank;
 import java.time.Instant;
 import java.util.List;
-
-import static java.util.Collections.emptyList;
 
 @Data
 @Document("communities")
@@ -59,7 +58,8 @@ public class Community {
     @LastModifiedDate
     private Instant updatedAt;
 
+    @JsonIgnore
     @DBRef(lazy = true)
-    private List<Post> posts = emptyList();
+    private List<Post> posts;
 
 }

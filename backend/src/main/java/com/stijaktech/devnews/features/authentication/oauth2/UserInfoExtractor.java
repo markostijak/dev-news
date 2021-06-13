@@ -10,7 +10,7 @@ public class UserInfoExtractor {
         User user = new User();
         user.setProvider(Provider.GOOGLE);
         user.setEmail(jsonNode.get("email").asText());
-        user.setPicture(jsonNode.get("picture").asText());
+        //user.setPicture(jsonNode.get("picture").asText());
         user.setFirstName(jsonNode.get("given_name").asText());
         user.setLastName(jsonNode.get("family_name").asText());
         return user;
@@ -20,7 +20,7 @@ public class UserInfoExtractor {
         User user = new User();
         user.setProvider(Provider.FACEBOOK);
         user.setEmail(jsonNode.get("email").asText());
-        user.setPicture(jsonNode.get("picture").asText());
+        //user.setPicture(jsonNode.get("picture").asText());
         user.setFirstName(jsonNode.get("given_name").asText());
         user.setLastName(jsonNode.get("family_name").asText());
         return user;
@@ -30,7 +30,7 @@ public class UserInfoExtractor {
         User user = new User();
         user.setProvider(Provider.GITHUB);
         user.setEmail(jsonNode.get("email").asText());
-        user.setPicture(jsonNode.get("picture").asText());
+        //user.setPicture(jsonNode.get("picture").asText());
         user.setFirstName(jsonNode.get("given_name").asText());
         user.setLastName(jsonNode.get("family_name").asText());
         return user;

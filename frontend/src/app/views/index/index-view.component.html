@@ -1,5 +1,4 @@
-<ng-container *ngIf="state.authenticated$ | async; then home else popular"></ng-container>
-
+<ng-container *ngIf="state.user; then home else popular"></ng-container>
 <ng-template #home>
   <app-home-view></app-home-view>
 </ng-template>

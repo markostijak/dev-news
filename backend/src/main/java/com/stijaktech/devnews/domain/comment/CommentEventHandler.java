@@ -1,5 +1,7 @@
 package com.stijaktech.devnews.domain.comment;
 
+import com.stijaktech.devnews.domain.post.Post;
+import com.stijaktech.devnews.domain.post.PostRepository;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.core.annotation.HandleBeforeCreate;
@@ -16,16 +18,21 @@ import java.time.Clock;
 public class CommentEventHandler {
 
     private final BytesKeyGenerator generator;
+    private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
 
     @Setter(onMethod_ = @Autowired(required = false))
     private Clock clock = Clock.systemDefaultZone();
 
-    public CommentEventHandler() {
+    public CommentEventHandler(PostRepository postRepository, CommentRepository commentRepository) {
+        this.postRepository = postRepository;
+        this.commentRepository = commentRepository;
         this.generator = KeyGenerators.secureRandom(3);
     }
 
     @HandleBeforeCreate
     public void beforeCreate(Comment comment) {
+        Post post = comment.getPost();
         Comment parent = comment.getParent();
 
         String slug = generateKey();

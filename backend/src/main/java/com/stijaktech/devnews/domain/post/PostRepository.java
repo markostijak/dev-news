@@ -2,6 +2,7 @@ package com.stijaktech.devnews.domain.post;
 
 import com.stijaktech.devnews.domain.community.Community;
 import com.stijaktech.devnews.domain.post.dto.PostPreview;
+import com.stijaktech.devnews.domain.user.User;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,12 +36,15 @@ public interface PostRepository extends MongoRepository<Post, String> {
     @RestResource(exported = false)
     Page<Post> findAllByCommunityIn(Set<Community> communities, Pageable pageable);
 
+    @RestResource(exported = false)
+    Page<Post> findAllByCreatedBy(User user, Pageable pageable);
+
     Page<Post> findAllByCommunity(@Param("community") Community community, Pageable pageable);
 
     long countByCommunity(@Param("community") Community community);
 
     @Aggregation(pipeline = {
-            "{ $match: { communityId: { $eq: ?0 }}}",
+            "{ $match: { community: { $eq: ?0 }}}",
             """
                      { $lookup: {
                          from: 'comments',
@@ -59,8 +63,8 @@ public interface PostRepository extends MongoRepository<Post, String> {
             "{ $sort: { 'comments.count': -1 } }",
             "{ $project: { 'comments': 0 } }",
     })
-    @Cacheable(cacheNames = "trending", cacheManager = "ttlCache", key = "#communityId")
-    List<Post> findTrendingByCommunityId(@Param("communityId") String communityId, Pageable pageable);
+    @Cacheable(cacheNames = "trending", cacheManager = "ttlCache", key = "#community.id")
+    List<Post> findTrendingByCommunity(Community community, Pageable pageable);
 
     @Aggregation(pipeline = {
             """
@@ -90,7 +94,7 @@ public interface PostRepository extends MongoRepository<Post, String> {
             "{ $addFields: { date: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } } } }",
             "{ $sort: { createdAt: -1 } }",
             "{ $group: { '_id': '$date', 'posts': { '$push': '$$ROOT' } } }",
-            "{ $project: { posts: { $slice: ['$posts', 10] } } }",
+            "{ $project: { posts: { $slice: ['$posts', 50] } } }",
             "{ $unwind: '$posts' }",
             "{ $replaceWith: '$posts' }",
             "{ $sort: { date: -1, commentsCount: -1 } }"

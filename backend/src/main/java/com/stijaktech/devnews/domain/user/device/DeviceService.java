@@ -47,7 +47,7 @@ public class DeviceService {
     }
 
     public Device findOrCreate(User user, WebDetails webDetails) {
-        String ua = webDetails.getUserAgent();
+        String ua = webDetails.userAgent();
         Client clientDetails = userAgentParser.parse(ua);
 
         Device device = findForUser(user, webDetails, clientDetails);
@@ -63,7 +63,7 @@ public class DeviceService {
         Instant now = clock.instant();
 
         Device device = new Device();
-        device.setIp(webDetails.getIpAddress());
+        device.setIp(webDetails.ipAddress());
         device.setToken(keyGenerator.generateKey());
         device.setOs(clientDetails.os.family);
         device.setOsVersion(clientDetails.os.major);
@@ -77,7 +77,7 @@ public class DeviceService {
         Set<Device> devices = requireNonNullElse(user.getDevices(), emptySet());
 
         for (Device device : devices) {
-            if (!Objects.equals(device.getIp(), webDetails.getIpAddress())) {
+            if (!Objects.equals(device.getIp(), webDetails.ipAddress())) {
                 continue;
             }
 

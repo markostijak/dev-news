@@ -33,30 +33,13 @@ export class HomeViewComponent implements OnInit {
     this.fetchPosts(0);
   }
 
-  // private fetchPosts(page: number): void {
-  //   this.postService.fetchPage('api/v1/posts/search/findForUser', page, 'include-stats', {
-  //     user: this._user.id
-  //   }).subscribe(response => {
-  //     if (response._embedded) {
-  //       if (this.posts) {
-  //         this.posts.push(...response._embedded.posts);
-  //       } else {
-  //         this.posts = response._embedded.posts;
-  //       }
-  //     } else {
-  //       this.posts = [];
-  //     }
-  //     this.page = response.page;
-  //   });
-  // }
-
   public fetchPosts(pageNumber: number): void {
     if (!this.loading) {
       this.loading = true;
-      this.postService.fetchPage({
+      this.postService.fetchPageResource(this.state.user._links.posts, {
         page: pageNumber,
         sort: 'createdAt,desc',
-        projection: 'view'
+        projection: 'stats'
       }).subscribe(([posts, page]) => {
         this.posts = this.posts || [];
         this.posts.push(...posts);

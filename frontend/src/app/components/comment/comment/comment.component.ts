@@ -31,6 +31,7 @@ export class CommentComponent implements OnInit {
   showEditor: boolean = false;
   startEditing: boolean = false;
   loadMore: boolean = false;
+  isAuthor: boolean;
 
   state: State;
   authorization: Authorization;
@@ -38,11 +39,13 @@ export class CommentComponent implements OnInit {
   private commentService: CommentService;
 
   constructor(state: State, commentService: CommentService, authorization: Authorization) {
+    this.state = state;
     this.authorization = authorization;
     this.commentService = commentService;
   }
 
   ngOnInit(): void {
+    this.isAuthor = this.state.user && this.state.user.username === this.comment._embedded.createdBy.username;
     this.commentService.fetchPage(this.comment._links.replies)
       .subscribe(([replies, page]) => {
         this.comment.replies = replies;
@@ -59,7 +62,7 @@ export class CommentComponent implements OnInit {
 
   public onSave($event: Data): void {
     const reply = {content: $event.content} as Comment;
-    this.commentService.addReply(this.comment, reply).subscribe(response => {
+    this.commentService.addReply(this.post, this.comment, reply).subscribe(response => {
       if (!this.comment.replies) {
         this.comment.replies = [];
       }

@@ -4,7 +4,6 @@ import com.stijaktech.devnews.features.authentication.WebDetails;
 import com.stijaktech.devnews.features.authentication.jwt.JwtRefreshAuthenticationToken;
 import com.stijaktech.devnews.features.authentication.oauth2.AuthorizationCodeAuthenticationToken;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
@@ -22,7 +21,8 @@ import static org.springframework.util.StringUtils.hasText;
 
 public class LoginAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
-    record LoginDetails(String principal, String credentials) {}
+    public record LoginDetails(String principal, String credentials) {
+    }
 
     private static final String LOGIN = "/login";
     private static final String OAUTH_LOGIN = "/login/oauth";
@@ -44,13 +44,13 @@ public class LoginAuthenticationFilter extends AbstractAuthenticationProcessingF
             throw new BadCredentialsException("Credentials are missing!");
         }
 
-        LoginDetails login = extractFromHeader(header);
-        assert hasText(login.principal) && hasText(login.credentials);
+        LoginDetails loginDetails = extractFromHeader(header);
+        assert hasText(loginDetails.principal) && hasText(loginDetails.credentials);
 
-        AbstractAuthenticationToken authentication = switch (request.getServletPath()) {
-            case LOGIN -> new EmailOrUsernamePasswordAuthenticationToken(login.principal, login.credentials);
-            case OAUTH_LOGIN -> new AuthorizationCodeAuthenticationToken(login.principal, login.credentials);
-            case REFRESH -> new JwtRefreshAuthenticationToken(login.principal, login.credentials);
+        var authentication = switch (request.getServletPath()) {
+            case LOGIN -> new EmailOrUsernamePasswordAuthenticationToken(loginDetails);
+            case OAUTH_LOGIN -> new AuthorizationCodeAuthenticationToken(loginDetails);
+            case REFRESH -> new JwtRefreshAuthenticationToken(loginDetails);
             default -> throw new IllegalStateException("Unsupported path");
         };
 

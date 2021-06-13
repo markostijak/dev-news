@@ -26,17 +26,24 @@
   <mat-card-content class="numbers-container">
     <div fxLayout="row" fxLayoutAlign="center center">
       <div fxFlex>
-        <div class="numbers">{{membersCount | shortNumber}}</div>
+        <div class="numbers">{{community?.membersCount || 0 | shortNumber}}</div>
         <div class="numbers-description">Members</div>
       </div>
       <div fxFlex>
-        <div class="numbers">{{postsCount | shortNumber}}</div>
+        <div class="numbers">{{community?.postsCount || 0 | shortNumber}}</div>
         <div class="numbers-description">Posts</div>
       </div>
     </div>
   </mat-card-content>
   <mat-card-content>
     {{community.description}}
+  </mat-card-content>
+  <mat-card-content>
+    <hr class="w-100 h-line mb-10">
+    <div fxLayout="row" fxLayoutAlign="center center">
+      <mat-icon fxFlex="0 0 30px">calendar_today</mat-icon>
+      <span fxFlex="1 1 100%">Created {{community.createdAt | timeAgo}}</span>
+    </div>
   </mat-card-content>
   <mat-card-content *ngIf="state.user$ | async as user">
     <button *ngIf="!member" class="w-100 mb-10" mat-raised-button color="primary" (click)="join()">Join</button>

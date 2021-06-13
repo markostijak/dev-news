@@ -1,10 +1,11 @@
 import {Injectable} from '@angular/core';
 import {AuthenticationStore} from './authentication-store';
-import {Observable, of} from 'rxjs';
+import {BehaviorSubject, Observable, of} from 'rxjs';
 import {AuthenticationService} from './authentication.service';
 import {Authentication, Credentials} from './authentication';
 import {User} from '../user/user';
 import {UserAuthenticationListener} from '../user/user-authentication-listener';
+import {skip} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -23,31 +24,34 @@ export class AuthenticationProcessor {
     this.authenticationListener = authenticationListener;
   }
 
-  public onApplicationStarting(authentication: Authentication): Observable<User> {
+  public onApplicationStarting(): Observable<any> {
+    const authentication = this.authenticationStore.get();
     const credentials: Credentials = authentication.credentials || {};
+
+    const result = new BehaviorSubject<any>(null);
+    const waitForIt = result.pipe(skip(1));
 
     if (this.authenticationService.isJwtValid(credentials.accessToken)) {
       this.authenticationStore.next(authentication);
-      this.authenticationListener.onLogin(authentication);
-      return of(authentication.principal);
+      this.authenticationListener.onLogin(authentication).subscribe(user => result.next(user));
+      return waitForIt;
     }
 
     if (this.authenticationService.isJwtValid(credentials.refreshToken)) {
       this.authenticationService.jwtRefresh(credentials).subscribe(newAuthentication => {
         this.authenticationStore.next(newAuthentication);
-        this.authenticationListener.onLogin(newAuthentication);
+        this.authenticationListener.onLogin(newAuthentication).subscribe(user => result.next(user));
       });
 
-      return of(authentication.principal);
+      return waitForIt;
     }
 
-    return of({} as User);
+    return of({});
   }
 
   public onLogin(authentication: Authentication): Observable<User> {
     this.authenticationStore.save(authentication);
-    this.authenticationListener.onLogin(authentication);
-    return of(authentication.principal);
+    return this.authenticationListener.onLogin(authentication);
   }
 
   public onJwtRefresh(authentication: Authentication): Observable<User> {

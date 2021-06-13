@@ -1,12 +1,12 @@
 package com.stijaktech.devnews.domain.comment;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.stijaktech.devnews.domain.post.Post;
 import com.stijaktech.devnews.domain.user.User;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -39,7 +39,6 @@ public class Comment {
 
     @NonNull
     @NotBlank
-    @SafeHtml
     private String content;
 
     @CreatedBy
@@ -59,7 +58,8 @@ public class Comment {
     @DBRef(lazy = true)
     private Comment parent;
 
+    @JsonIgnore
     @DBRef(lazy = true)
-    private List<Comment> replies = List.of();
+    private List<Comment> replies;
 
 }

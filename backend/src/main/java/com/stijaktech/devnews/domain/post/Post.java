@@ -1,5 +1,6 @@
 package com.stijaktech.devnews.domain.post;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.stijaktech.devnews.domain.comment.Comment;
 import com.stijaktech.devnews.domain.community.Community;
 import com.stijaktech.devnews.domain.user.User;
@@ -19,8 +20,6 @@ import org.springframework.lang.NonNull;
 import javax.validation.constraints.NotBlank;
 import java.time.Instant;
 import java.util.List;
-
-import static java.util.Collections.emptyList;
 
 @Data
 @Document("posts")
@@ -59,7 +58,8 @@ public class Post {
     @DBRef(lazy = true)
     private Community community;
 
+    @JsonIgnore
     @DBRef(lazy = true)
-    private List<Comment> comments = emptyList();
+    private List<Comment> comments;
 
 }

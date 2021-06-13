@@ -15,8 +15,7 @@
               <span class="separator">•</span>
             </div>
           </ng-container>
-          <div fxFlex="1 1 auto" class="user">Posted
-            by {{post.createdBy.username}} {{post.createdAt | timeAgo}}</div>
+          <div fxFlex="1 1 auto" class="user">Posted by {{post.createdBy.username}} {{post.createdAt | timeAgo}}</div>
         </div>
         <div class="title">{{post.title}}</div>
         <div [class]="showMask(post.content) ? 'content content-mask' : 'content'">

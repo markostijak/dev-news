@@ -63,7 +63,7 @@ export class CommunityViewComponent extends SubscriptionSupport implements OnIni
       this.communityService.fetchPosts(this.community, {
         page: pageNumber,
         sort: 'createdAt,desc',
-        projection: 'view'
+        projection: 'stats'
       }).subscribe(([posts, page]) => {
         this.posts.push(...posts);
         this.page = page;

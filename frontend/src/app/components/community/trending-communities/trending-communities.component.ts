@@ -36,7 +36,7 @@ export class TrendingCommunitiesComponent extends SubscriptionSupport implements
   // }
 
   ngOnInit(): void {
-    this.communityService.fetchUpAndComing({size: '5'}).subscribe(communities => {
+    this.communityService.fetchUpAndComing({size: '5', projection: 'stats'}).subscribe(communities => {
       this.communities = communities;
     });
   }

@@ -5,19 +5,22 @@
         <div class="post">
           <div class="info" fxLayout="row" fxLayoutGap="5px" fxLayoutAlign="center center">
             <div fxFlex="0 0 20px">
-              <a class="community-link  w-100" [routerLink]="['/c/', post._embedded.community.alias]">
-                <img class="community-logo w-100" [src]="post._embedded.community.logo ? post._embedded.community.logo : 'assets/icons/community.svg'"
-                     [alt]="post._embedded.community.alias">
+              <a class="community-link  w-100" [routerLink]="['/c/', post.community.alias]">
+                <img class="community-logo w-100" [src]="post.community.logo ? post.community.logo : 'assets/icons/community.svg'"
+                     [alt]="post.community.alias">
               </a>
             </div>
             <div fxFlex="0 0 auto" class="community">
-              <a class="community-link" [routerLink]="['/c/', post._embedded.community.alias]">{{post._embedded.community.title}}</a>
+              <a class="community-link" [routerLink]="['/c/', post.community.alias]">{{post.community.title}}</a>
             </div>
             <div fxFlex="0 0 auto">
               <span class="separator">•</span>
             </div>
             <div fxFlex="0 0 auto" class="user">Posted
-              by <span class="username-view">{{post._embedded.createdBy.username}}</span> {{post.createdAt | timeAgo}}</div>
+              by <span class="username-view">{{post.createdBy.username}}</span> {{post.createdAt | timeAgo}}</div>
+            <div *ngIf="post.updatedAt && post.createdAt != post.updatedAt" fxFlex="0 0 auto" class="user">
+              (edited {{post.updatedAt | timeAgo}})
+            </div>
             <div fxFlex="1 1 auto"></div>
           </div>
           <div class="title">{{post.title}}</div>
@@ -30,17 +33,17 @@
             <div class="actions">
               <button mat-raised-button class="mr-10">
                 <mat-icon>mode_comment</mat-icon>
-                {{post.commentsCount || 0}} Comments
+                {{commentsCount}} Comments
               </button>
               <button mat-raised-button class="mr-10">
                 <mat-icon>share</mat-icon>
                 Share
               </button>
-              <button *ngIf="authorization.canEdit(post)" mat-raised-button class="mr-10" (click)="showEditor()">
+              <button *ngIf="isAuthor" mat-raised-button class="mr-10" (click)="showEditor()">
                 <mat-icon>edit</mat-icon>
                 Edit
               </button>
-              <button *ngIf="authorization.canDelete(post)" mat-raised-button (click)="delete(post)">
+              <button *ngIf="isAuthor" mat-raised-button (click)="delete(post)">
                 <mat-icon>delete</mat-icon>
                 Delete
               </button>
@@ -54,7 +57,7 @@
               (save)="onPostEditSave($event)"
             ></app-post-edit-editor>
           </ng-template>
-          <div *ngIf="authorization.canView()" class="comment-editor-container">
+          <div *ngIf="state.user" class="comment-editor-container">
             <div class="comment-as">Comment as {{state.user?.username}}</div>
             <app-comment-editor (save)="onSave($event)"></app-comment-editor>
           </div>

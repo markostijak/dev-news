@@ -28,7 +28,6 @@
                 </div>
                 <div fxFlex="1 1 100%">
                   <div class="community-title">{{community.title}}</div>
-                  <div class="community-members">{{community.membersCount}} members</div>
                 </div>
               </div>
             </mat-option>
@@ -44,7 +43,7 @@
         <button mat-raised-button class="cancel-button" (click)="onDiscard()">
           Cancel
         </button>
-        <button mat-raised-button class="post-button" [disabled]="!title" (click)="onSave()">
+        <button mat-raised-button class="post-button" [disabled]="!title || !selected" (click)="onSave()">
           Post
         </button>
       </div>

@@ -24,17 +24,17 @@ public class PostController {
     @GetMapping("/users/{id}/posts")
     public ResponseEntity<?> userPosts(@PathVariable("id") User user, Pageable pageable,
                                        PagedResourcesAssembler pagedAssembler,
-                                       PersistentEntityResourceAssembler assembler) {
+                                       PersistentEntityResourceAssembler entityAssembler) {
         Page<Post> posts = postRepository.findAllByCommunityIn(user.getCommunities(), pageable);
-        return ResponseEntity.ok(pagedAssembler.toModel(posts, assembler));
+        return ResponseEntity.ok(pagedAssembler.toModel(posts, entityAssembler));
     }
 
     @GetMapping("/communities/{id}/posts")
     public ResponseEntity<?> communityPosts(@PathVariable("id") Community community, Pageable pageable,
                                             PagedResourcesAssembler pagedAssembler,
-                                            PersistentEntityResourceAssembler assembler) {
+                                            PersistentEntityResourceAssembler entityAssembler) {
         Page<Post> posts = postRepository.findAllByCommunity(community, pageable);
-        return ResponseEntity.ok(pagedAssembler.toModel(posts, assembler));
+        return ResponseEntity.ok(pagedAssembler.toModel(posts, entityAssembler));
     }
 
 }

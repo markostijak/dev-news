@@ -23,17 +23,17 @@ public class CommentController {
     @GetMapping("/posts/{id}/comments")
     public ResponseEntity<?> comments(@PathVariable("id") Post post, Pageable pageable,
                                       PagedResourcesAssembler pagedAssembler,
-                                      PersistentEntityResourceAssembler assembler) {
+                                      PersistentEntityResourceAssembler entityAssembler) {
         Page<Comment> comments = commentRepository.findAllByPostAndParentNull(post, pageable);
-        return ResponseEntity.ok(pagedAssembler.toModel(comments, assembler));
+        return ResponseEntity.ok(pagedAssembler.toModel(comments, entityAssembler));
     }
 
     @GetMapping("/comments/{id}/replies")
     public ResponseEntity<?> replies(@PathVariable("id") Comment comment, Pageable pageable,
                                      PagedResourcesAssembler pagedAssembler,
-                                     PersistentEntityResourceAssembler assembler) {
+                                     PersistentEntityResourceAssembler entityAssembler) {
         Page<Comment> comments = commentRepository.findAllByParent(comment, pageable);
-        return ResponseEntity.ok(pagedAssembler.toModel(comments, assembler));
+        return ResponseEntity.ok(pagedAssembler.toModel(comments, entityAssembler));
     }
 
 }

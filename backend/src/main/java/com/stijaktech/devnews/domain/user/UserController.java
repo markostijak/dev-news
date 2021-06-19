@@ -43,7 +43,7 @@ public class UserController {
         entityModel.add(links.linkForItemResource(user, User::getId).slash("activate").withRel("activate"));
         entityModel.add(links.linkForItemResource(user, User::getId).slash("activate/resend").withRel("resendActivationCode"));
 
-        return ResponseEntity.ok(entityModel);
+        return ResponseEntity.status(HttpStatus.CREATED).body(entityModel);
     }
 
     @GetMapping("/{id}")

@@ -10,6 +10,7 @@ import com.stijaktech.devnews.domain.user.dto.UserView;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.data.rest.webmvc.support.RepositoryEntityLinks;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.LinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -46,10 +47,11 @@ public class UserController {
         User user = userService.create(model);
 
         EntityModel<UserAccount> entityModel = project(user, UserAccount.class);
-        entityModel.add(links.linkForItemResource(user, User::getId).slash("activate").withRel("activate"));
-        entityModel.add(links.linkForItemResource(user, User::getId).slash("activate/resend").withRel("resendActivationCode"));
+        LinkBuilder builder = links.linkForItemResource(user, User::getId);
+        entityModel.add(builder.slash("activate").withRel("activate"));
+        entityModel.add(builder.slash("activate").slash("resend").withRel("resendActivationCode"));
 
-        return ResponseEntity.created(entityModel.getRequiredLink("self").toUri()).body(entityModel);
+        return ResponseEntity.created(builder.toUri()).body(entityModel);
     }
 
     @GetMapping("/{id}")
@@ -110,9 +112,9 @@ public class UserController {
 
     private <T> EntityModel<T> project(User user, Class<T> projection) {
         EntityModel<T> entityModel = modelAssembler.toModel(user, projection);
-        entityModel.add(links.linkForItemResource(user, User::getId).slash("posts").withRel("posts"));
-        entityModel.add(links.linkForItemResource(user, User::getId).slash("created-posts").withRel("createdPosts"));
-
+        LinkBuilder builder = links.linkForItemResource(user, User::getId);
+        entityModel.add(builder.slash("posts").withRel("posts"));
+        entityModel.add(builder.slash("created-posts").withRel("createdPosts"));
         return entityModel;
     }
 

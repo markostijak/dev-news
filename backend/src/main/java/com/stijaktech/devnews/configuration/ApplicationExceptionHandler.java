@@ -16,6 +16,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingPathVariableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -36,9 +37,15 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 @SuppressWarnings("NullableProblems")
 public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(ModelException.ModelNotFoundException.class)
-    public ResponseEntity<Object> handleModelNotFound(ModelException.ModelNotFoundException e, WebRequest request) {
-        return handleExceptionInternal(e, e.getMessage(), HttpHeaders.EMPTY, HttpStatus.NOT_FOUND, request);
+    @ExceptionHandler(ModelException.class)
+    public ResponseEntity<Object> handleModelNotFound(ModelException e, WebRequest request) {
+        ResponseStatus responseStatus = e.getClass().getAnnotation(ResponseStatus.class);
+        if (responseStatus != null) {
+            String message = e.getMessage() != null ? e.getMessage() : responseStatus.reason();
+            return handleExceptionInternal(e, message, HttpHeaders.EMPTY, responseStatus.code(), request);
+        }
+
+        return handleExceptionInternal(e, e.getMessage(), HttpHeaders.EMPTY, HttpStatus.FORBIDDEN, request);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)

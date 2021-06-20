@@ -37,18 +37,32 @@ public class DeviceService {
     }
 
     public void updateLastUsedTime(User user, Device device) {
-        if (user.getDevices() == null) {
-            user.setDevices(new HashSet<>());
+        Set<Device> devices = user.getDevices();
+        if (devices == null) {
+            devices = new HashSet<>();
         }
 
         device.setLastUsedOn(clock.instant());
-        user.getDevices().add(device);
+        devices.removeIf(d -> d.getToken().equals(device.getToken()));
+        user.setDevices(devices);
         userRepository.save(user);
     }
 
+    public void updateLastUsedTime(User user, Device device, WebDetails webDetails) {
+        String userAgent = webDetails.userAgent();
+        Client clientDetails = userAgentParser.parse(userAgent);
+
+        device.setIp(webDetails.ipAddress());
+        device.setOs(clientDetails.os.family);
+        device.setOsVersion(clientDetails.os.major);
+        device.setAgent(clientDetails.userAgent.family);
+
+        updateLastUsedTime(user, device);
+    }
+
     public Device findOrCreate(User user, WebDetails webDetails) {
-        String ua = webDetails.userAgent();
-        Client clientDetails = userAgentParser.parse(ua);
+        String userAgent = webDetails.userAgent();
+        Client clientDetails = userAgentParser.parse(userAgent);
 
         Device device = findForUser(user, webDetails, clientDetails);
 
@@ -90,6 +104,10 @@ public class DeviceService {
             }
 
             if (!Objects.equals(device.getAgent(), clientDetails.userAgent.family)) {
+                continue;
+            }
+
+            if (!Objects.equals(device.getAgent(), "Android")) {
                 continue;
             }
 

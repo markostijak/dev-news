@@ -5,6 +5,7 @@ import com.stijaktech.devnews.domain.user.UserRepository;
 import com.stijaktech.devnews.domain.user.device.Device;
 import com.stijaktech.devnews.domain.user.device.DeviceService;
 import com.stijaktech.devnews.features.authentication.AuthenticatedUser;
+import com.stijaktech.devnews.features.authentication.WebDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -32,6 +33,7 @@ public class JwtRefreshAuthenticationProvider implements AuthenticationProvider 
     @Override
     public Authentication authenticate(Authentication authentication) {
         String jwt = (String) authentication.getCredentials();
+        WebDetails webDetails = (WebDetails) authentication.getDetails();
 
         AuthenticatedUser user = jwtProvider.parse(jwt)
                 .filter(jwtProvider::isRefreshToken).map(jwtProvider::parseUserDetails)
@@ -44,7 +46,7 @@ public class JwtRefreshAuthenticationProvider implements AuthenticationProvider 
                 .filter(d -> d.getToken().equals(user.getDevice())).findFirst()
                 .orElseThrow(() -> new BadCredentialsException("Refresh token has been revoked"));
 
-        deviceService.updateLastUsedTime(model, device);
+        deviceService.updateLastUsedTime(model, device, webDetails);
 
         return new JwtRefreshAuthenticationToken(user, jwt, user.getAuthorities());
     }

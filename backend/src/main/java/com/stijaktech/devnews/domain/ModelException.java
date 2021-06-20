@@ -22,6 +22,10 @@ public abstract class ModelException extends RuntimeException {
         public ModelNotFoundException() {
         }
 
+        public ModelNotFoundException(Class<?> modelClass, String id) {
+            super(modelClass.getSimpleName() + " " + id + " not found");
+        }
+
         public ModelNotFoundException(String message) {
             super(message);
         }
@@ -34,6 +38,10 @@ public abstract class ModelException extends RuntimeException {
     @ResponseStatus(code = HttpStatus.CONFLICT, reason = "Model already present.")
     public static class ModelAlreadyPresentException extends ModelException {
         public ModelAlreadyPresentException() {
+        }
+
+        public ModelAlreadyPresentException(Class<?> modelClass) {
+            super(modelClass.getSimpleName() + " already present");
         }
 
         public ModelAlreadyPresentException(String message) {
@@ -69,6 +77,20 @@ public abstract class ModelException extends RuntimeException {
         }
 
         public ModelProjectionNotFoundException(String message, Throwable cause) {
+            super(message, cause);
+        }
+    }
+
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST, reason = "User activation failed.")
+    public static class UserActivationFailedException extends ModelException {
+        public UserActivationFailedException() {
+        }
+
+        public UserActivationFailedException(String message) {
+            super(message);
+        }
+
+        public UserActivationFailedException(String message, Throwable cause) {
             super(message, cause);
         }
     }

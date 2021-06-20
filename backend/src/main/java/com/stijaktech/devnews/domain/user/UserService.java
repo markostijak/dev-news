@@ -20,6 +20,7 @@ import javax.mail.MessagingException;
 import java.util.Objects;
 import java.util.Set;
 
+import static com.stijaktech.devnews.domain.ModelException.UserActivationFailedException;
 import static com.stijaktech.devnews.domain.ModelException.ModelNotFoundException;
 import static com.stijaktech.devnews.domain.user.Privilege.DELETE;
 import static com.stijaktech.devnews.domain.user.Privilege.READ;
@@ -43,11 +44,11 @@ public class UserService {
 
     public User create(UserCreate model) {
         if (userRepository.existsByEmail(model.getEmail())) {
-            throw new ModelAlreadyPresentException();
+            throw new ModelAlreadyPresentException(User.class);
         }
 
         if (userRepository.existsByUsername(model.getUsername())) {
-            throw new ModelAlreadyPresentException();
+            throw new ModelAlreadyPresentException(User.class);
         }
 
         String activationCode = keyGenerator.generateKey();
@@ -94,11 +95,11 @@ public class UserService {
 
     public boolean activate(User user, String activationCode) {
         if (user.getStatus() != Status.AWAITING_ACTIVATION) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+            throw new UserActivationFailedException();
         }
 
         if (!Objects.equals(user.getActivationCode(), activationCode)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+            throw new UserActivationFailedException();
         }
 
         user.setActivationCode(null);
@@ -111,7 +112,7 @@ public class UserService {
 
     public boolean resendActivationCode(User user) {
         if (user.getStatus() != Status.AWAITING_ACTIVATION) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+            throw new UserActivationFailedException();
         }
 
         String activationCode = keyGenerator.generateKey();

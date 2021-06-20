@@ -23,7 +23,7 @@
                   {{device.agent}} on {{device.os}} {{device?.osVersion}}
                 </div>
                 <div class="mb-5">
-                  {{device.ip}}
+                  {{device.geoData?.country || device.ip}}
                 </div>
                 <div *ngIf="authenticatedDevice != device.token" class="mb-5">
                   {{device.lastUsedOn | shortTime}}

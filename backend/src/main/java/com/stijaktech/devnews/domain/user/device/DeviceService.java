@@ -29,10 +29,12 @@ public class DeviceService {
     private final Parser userAgentParser;
     private final UserRepository userRepository;
     private final StringKeyGenerator keyGenerator;
+    private final GeoIpService geoIpService;
 
-    public DeviceService(Parser userAgentParser, UserRepository userRepository) {
+    public DeviceService(Parser userAgentParser, UserRepository userRepository, GeoIpService geoIpService) {
         this.userAgentParser = userAgentParser;
         this.userRepository = userRepository;
+        this.geoIpService = geoIpService;
         this.keyGenerator = KeyGenerators.string();
     }
 
@@ -44,6 +46,7 @@ public class DeviceService {
 
         device.setLastUsedOn(clock.instant());
         devices.removeIf(d -> d.getToken().equals(device.getToken()));
+        devices.add(device);
         user.setDevices(devices);
         userRepository.save(user);
     }
@@ -51,11 +54,14 @@ public class DeviceService {
     public void updateLastUsedTime(User user, Device device, WebDetails webDetails) {
         String userAgent = webDetails.userAgent();
         Client clientDetails = userAgentParser.parse(userAgent);
+        GeoData geoData = geoIpService.findByIp(webDetails.ipAddress())
+                .orElseGet(device::getGeoData);
 
         device.setIp(webDetails.ipAddress());
         device.setOs(clientDetails.os.family);
         device.setOsVersion(clientDetails.os.major);
         device.setAgent(clientDetails.userAgent.family);
+        device.setGeoData(geoData);
 
         updateLastUsedTime(user, device);
     }
@@ -63,17 +69,19 @@ public class DeviceService {
     public Device findOrCreate(User user, WebDetails webDetails) {
         String userAgent = webDetails.userAgent();
         Client clientDetails = userAgentParser.parse(userAgent);
+        GeoData geoData = geoIpService.findByIp(webDetails.ipAddress())
+                .orElse(null);
 
         Device device = findForUser(user, webDetails, clientDetails);
 
         if (device == null) {
-            return createNew(webDetails, clientDetails);
+            return createNew(webDetails, clientDetails, geoData);
         }
 
         return device;
     }
 
-    public Device createNew(WebDetails webDetails, Client clientDetails) {
+    public Device createNew(WebDetails webDetails, Client clientDetails, GeoData geoData) {
         Instant now = clock.instant();
 
         Device device = new Device();
@@ -82,6 +90,7 @@ public class DeviceService {
         device.setOs(clientDetails.os.family);
         device.setOsVersion(clientDetails.os.major);
         device.setAgent(clientDetails.userAgent.family);
+        device.setGeoData(geoData);
         device.setCreatedAt(now);
         device.setLastUsedOn(now);
         return device;

@@ -46,5 +46,4 @@ public class CommentController {
         return pagedAssembler.toModel(comments, entityAssembler);
     }
 
-
 }

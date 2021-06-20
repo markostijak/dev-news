@@ -21,4 +21,6 @@ public class Device {
 
     private Instant lastUsedOn;
 
+    private GeoData geoData;
+
 }

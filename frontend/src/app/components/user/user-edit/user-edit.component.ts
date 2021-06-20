@@ -1,9 +1,10 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {User} from '../../../domain/user/user';
 import {AbstractControl, AsyncValidatorFn, FormBuilder, FormGroup, ValidationErrors, Validators} from '@angular/forms';
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {UserService} from '../../../domain/user/user.service';
+import {validate} from 'codelyzer/walkerFactory/walkerFn';
 
 @Component({
   selector: 'app-user-edit',
@@ -46,10 +47,15 @@ export class UserEditComponent implements OnInit {
 
   private usernameValidator(): AsyncValidatorFn {
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
-      return this.userService.existsByUsername(control.value)
-        .pipe(map(exists => {
-          return control.value !== this.user.username && exists ? {alreadyTaken: true} : null;
-        }));
+      const username = control.value;
+      if (username !== this.user.username) {
+        return this.userService.existsByUsername(control.value)
+          .pipe(map(exists => {
+            return control.value !== this.user.username && exists ? {alreadyTaken: true} : null;
+          }));
+      }
+
+      return of(null);
     };
   }
 

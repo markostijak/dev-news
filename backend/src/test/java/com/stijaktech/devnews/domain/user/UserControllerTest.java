@@ -85,7 +85,7 @@ class UserControllerTest {
         mvc.perform(post("/api/v1/users")
                 .content(json)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.password").doesNotExist())
                 .andExpect(jsonPath("$.firstName", is("John")))
                 .andExpect(jsonPath("$.lastName", is("Murphy")))

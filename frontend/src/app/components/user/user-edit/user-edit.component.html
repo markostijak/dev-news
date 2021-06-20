@@ -1,0 +1,51 @@
+<mat-card class="user-info mb-10">
+  <div class="mb-10">Edit you details</div>
+  <form [formGroup]="form" (submit)="submit($event)">
+    <mat-card-content class="t-center">
+      <div class="image-container">
+        <label class="pointer" mat-ripple matTooltip="Click here to choose your image">
+          <img *ngIf="!imagePreview" class="user-image w-100" [src]="user.picture || 'assets/icons/user.png'"
+               [alt]="user.username"/>
+          <img *ngIf="imagePreview" class="w-100 preview" [src]="imagePreview" alt="Image">
+          <span *ngIf="!imagePreview" class="image-overlay">
+            <mat-icon class="logo-upload-icon">add_photo_alternate</mat-icon>
+          </span>
+          <input type="file" accept=".png, .jpg, .svg" class="image-upload" (change)="onImageSelect($event)">
+        </label>
+      </div>
+    </mat-card-content>
+    <mat-card-content class="t-center">
+      <div class="mt-10">
+        <mat-form-field appearance="fill" color="accent" class="ml-5 mr-5">
+          <mat-label>First name</mat-label>
+          <input matInput type="text" formControlName="firstName">
+          <mat-error *ngIf="form.get('firstName').hasError('required')">
+            First name is required
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" color="accent" class="ml-5 mr-5">
+          <mat-label>Last name</mat-label>
+          <input matInput type="text" formControlName="lastName">
+          <mat-error *ngIf="form.get('lastName').hasError('required')">
+            Last name is required
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" color="accent" class="ml-5 mr-5">
+          <mat-label>Username</mat-label>
+          <input matInput type="text" formControlName="username">
+          <mat-error *ngIf="form.get('username').hasError('required')">
+            Username is required
+          </mat-error>
+          <mat-error *ngIf="form.get('username').hasError('alreadyTaken')">
+            Username is already taken
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <button class="save-button" mat-button mat-raised-button color="primary">
+        Save
+      </button>
+    </mat-card-content>
+  </form>
+</mat-card>

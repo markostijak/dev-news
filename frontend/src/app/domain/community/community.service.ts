@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {RestTemplate} from '../utils/rest-template.service';
-import {Observable, of} from 'rxjs';
-import {map, tap} from 'rxjs/operators';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {Hal, Link, Page} from '../utils/hal';
 import {Community} from './community';
 import {Post} from '../post/post';
@@ -26,6 +26,7 @@ export class CommunityService {
 
   public search(search: string): Observable<Community[]> {
     return this.restTemplate.get(this.BASE_PATH + '/search/findByTitleStartsWithIgnoreCase', {
+      size: 10,
       term: search,
       projection: 'preview'
     }).pipe(map(CommunityService.mapToArray));
@@ -35,6 +36,12 @@ export class CommunityService {
     return this.restTemplate.get(communityResource, {
       projection: projection
     }) as Observable<Community>;
+  }
+
+  public fetchAll(communityResource: string | Link, projection?: string): Observable<Community[]> {
+    return this.restTemplate.get(communityResource, {
+      projection: projection
+    }).pipe(map(CommunityService.mapToArray));
   }
 
   public fetchPage(params?: object): Observable<[Community[], Page]> {

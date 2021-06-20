@@ -26,18 +26,24 @@
   font-weight: 500;
 }
 
-.community-link {
+.community-link, .user-link {
   color: white;
   text-decoration: none;
 }
 
-.community-link:hover {
+.community-link:hover, .user-link:hover {
   text-decoration: underline;
 }
 
 .user {
   opacity: 0.6;
   font-weight: 200;
+}
+
+.user-link {
+  color: white;
+  opacity: 1;
+  font-weight: 500;
 }
 
 .info {

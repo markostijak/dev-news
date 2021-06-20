@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import {forkJoin, Observable, of} from 'rxjs';
-import {flatMap, map} from 'rxjs/operators';
+import {Observable} from 'rxjs';
+import {map} from 'rxjs/operators';
 import {RestTemplate} from '../utils/rest-template.service';
 import {environment} from '../../../environments/environment';
 import {Hal, Link, Page} from '../utils/hal';
@@ -19,6 +19,10 @@ export class PostService {
 
   constructor(restTemplate: RestTemplate) {
     this.restTemplate = restTemplate;
+  }
+
+  public static mapToArray(hal: Hal<Post[]>): Post[] {
+    return hal._embedded.posts;
   }
 
   public create(community: Community, post: Post): Observable<Post> {
@@ -72,12 +76,16 @@ export class PostService {
 
   public fetchComments(post: Post, params?: object): Observable<[Comment[], Page]> {
     return this.restTemplate.get(post._links.comments, params).pipe(
-      map((hal: Hal<Comment[]>) => [hal._embedded ? hal._embedded.comments : [], hal.page])
+      map((hal: Hal<Comment[]>) => [hal._embedded.comments, hal.page])
     ) as Observable<[Comment[], Page]>;
   }
 
-  public search(term: string): Observable<Post[]> {
-    return of([]);
+  public search(search: string): Observable<Post[]> {
+    return this.restTemplate.get(this.BASE_PATH + '/search/findByTitleStartsWithIgnoreCase', {
+      size: 10,
+      term: search,
+      projection: 'view'
+    }).pipe(map(PostService.mapToArray));
   }
 
 }

@@ -17,7 +17,6 @@ public interface UserRepository extends MongoRepository<User, String> {
     @RestResource(exported = false)
     void delete(User user);
 
-    // todo move to controller
     <S extends User> S save(S user);
 
     @RestResource(exported = false)
@@ -26,6 +25,7 @@ public interface UserRepository extends MongoRepository<User, String> {
     @RestResource(exported = false)
     Optional<User> findByEmailOrUsername(String email, String username);
 
+    @RestResource(exported = false)
     Optional<User> findByUsername(@Param("username") String username);
 
     boolean existsByEmail(@Param("email") String email);

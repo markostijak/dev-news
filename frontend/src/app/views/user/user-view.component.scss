@@ -1,0 +1,61 @@
+main {
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.user-info {
+  text-align: center;
+}
+
+.user-image {
+  width: 200px;
+  height: auto;
+  border-radius: 100%;
+}
+
+.horizontal-item {
+  display: inline-block;
+  height: auto;
+  width: auto;
+}
+
+.mat-nav-list {
+  padding: 0;
+}
+
+.community-logo {
+  border-radius: 50px;
+}
+
+.community {
+  font-weight: 500;
+}
+
+.user {
+  opacity: 0.6;
+  font-weight: 200;
+}
+
+.info {
+  font-size: 12px;
+}
+
+.username {
+  margin-top: -18px;
+}
+
+.post-title {
+  font-size: 16px !important;
+  font-weight: 500 !important;
+}
+
+.more-button-container {
+  position: relative;
+}
+
+.more-button {
+  position: absolute;
+  top: -13px;
+  right: -13px;
+}

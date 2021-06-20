@@ -26,7 +26,8 @@ import {
   MatStepperModule,
   MatTabsModule,
   MatToolbarModule,
-  MatTooltipModule
+  MatTooltipModule,
+  MatSnackBarModule
 } from '@angular/material';
 import {PreloaderComponent} from './components/preloader/preloader.component';
 import {SearchComponent} from './components/search/search.component';
@@ -60,7 +61,7 @@ import {CommunityEditorComponent} from './components/community/community-editor/
 import {IndexViewComponent} from './views/index/index-view.component';
 import {NotFoundViewComponent} from './views/not-found/not-found-view.component';
 import {TopCommunitiesViewComponent} from './views/top-communities/top-communities-view.component';
-import {UserMenuItemComponent} from './components/user-menu-item/user-menu-item.component';
+import {UserMenuItemComponent} from './components/user/user-menu-item/user-menu-item.component';
 import {LoginSignUpMenuItemComponent} from './components/login-sign-up-menu-item/login-sign-up-menu-item.component';
 import {CommentEditorComponent} from './components/comment/comment-editor/comment-editor.component';
 import {CommentComponent} from './components/comment/comment/comment.component';
@@ -88,6 +89,8 @@ import {Observable} from 'rxjs';
 import {AuthenticationStore} from './domain/authentication/authentication-store';
 import {AuthenticationProcessor} from './domain/authentication/authentication-porcessor';
 import {JwtAwareHttpInterceptor} from './domain/authentication/jwt-aware-http-interceptor';
+import {UserSettingsViewComponent} from './views/user-settings/user-settings-view.component';
+import { UserEditComponent } from './components/user/user-edit/user-edit.component';
 
 @NgModule({
   declarations: [
@@ -142,7 +145,9 @@ import {JwtAwareHttpInterceptor} from './domain/authentication/jwt-aware-http-in
     InfiniteScrollerComponent,
     NoCommentsComponent,
     NoPostsComponent,
-    ToolbarComponent
+    ToolbarComponent,
+    UserSettingsViewComponent,
+    UserEditComponent
   ],
   imports: [
     BrowserModule,
@@ -173,7 +178,8 @@ import {JwtAwareHttpInterceptor} from './domain/authentication/jwt-aware-http-in
     MatSelectModule,
     MatStepperModule,
     MatAutocompleteModule,
-    VirtualScrollerModule
+    VirtualScrollerModule,
+    MatSnackBarModule
   ],
   providers: [
     {

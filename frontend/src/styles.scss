@@ -11,6 +11,7 @@ html {
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
+  overflow-y: scroll;
 }
 
 .spacer {
@@ -51,6 +52,10 @@ body {
 
 .mr-30 {
   margin-right: 30px !important;
+}
+
+.ml-5 {
+  margin-left: 5px !important;
 }
 
 .ml-10 {
@@ -149,4 +154,21 @@ body {
 
 .mat-horizontal-content-container {
   padding: 0 !important;
+}
+
+.search-autocomplete {
+  max-height: 550px !important;
+}
+
+.t-center {
+  text-align: center;
+}
+
+.d-flex {
+  display: flex;
+}
+
+snack-bar-container.mat-snack-bar-container {
+  color: #ffffff !important;
+  background-color: #424242 !important;
 }

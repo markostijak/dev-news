@@ -1,4 +1,4 @@
-<div *ngIf="community" class="main" fxLayout="row" fxLayoutGap="24px">
+<div *ngIf="community && posts" class="main" fxLayout="row" fxLayoutGap="24px">
   <div class="main-left" fxFlex>
     <ng-container *ngIf="posts.length then showPosts else showNoPosts"></ng-container>
     <ng-template #showPosts>

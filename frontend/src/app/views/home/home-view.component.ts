@@ -14,7 +14,7 @@ import {HOME} from '../../domain/utils/navigation';
 export class HomeViewComponent implements OnInit {
 
   page: Page;
-  posts: Post[] = [];
+  posts: Post[];
   loading: boolean = false;
 
   private state: State;

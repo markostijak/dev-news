@@ -1,0 +1,47 @@
+<main *ngIf="user">
+ <app-user-edit [user]="user" (save)="save($event)"></app-user-edit>
+
+  <mat-card class="mb-10">
+    <div class="mb-10">Where you’re signed in</div>
+    <mat-card-content class="devices" fxLayout="row wrap" fxLayoutGap="10px" fxLayoutAlign="start start">
+      <ng-container *ngFor="let device of user.devices">
+        <div fxFlex.gt-sm="32%" fxFlex.sm="47%" fxFlex.xs="99%" class="device-container w-100 mt-10">
+          <div class="device">
+            <div class="device-image-container">
+              <ng-container [ngSwitch]="device.os">
+                <mat-icon *ngSwitchCase="'Windows'">desktop_windows</mat-icon>
+                <mat-icon *ngSwitchCase="'Linux'">laptop</mat-icon>
+                <mat-icon *ngSwitchCase="'Mac'">laptop_mac</mat-icon>
+                <mat-icon *ngSwitchCase="'Android'">phone_android</mat-icon>
+                <mat-icon *ngSwitchCase="'iOS'">phone_iphone</mat-icon>
+                <mat-icon *ngSwitchDefault>devices</mat-icon>
+              </ng-container>
+            </div>
+            <div class="device-description-container">
+              <div class="device-details">
+                <div class="device-name mb-16">
+                  {{device.agent}} on {{device.os}} {{device?.osVersion}}
+                </div>
+                <div class="mb-5">
+                  {{device.ip}}
+                </div>
+                <div *ngIf="authenticatedDevice != device.token" class="mb-5">
+                  {{device.lastUsedOn | shortTime}}
+                </div>
+                <div *ngIf="authenticatedDevice == device.token" class="d-flex mb-5">
+                  <mat-icon class="this-device-icon">check_circle</mat-icon>
+                  This device
+                </div>
+              </div>
+              <div class="logout-button-container">
+                <button [disabled]="authenticatedDevice == device.token" class="logout-button" mat-raised-button
+                        (click)="logout(device)">Log out
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </mat-card-content>
+  </mat-card>
+</main>

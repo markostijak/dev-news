@@ -22,7 +22,7 @@ export class CommentService {
 
   public fetchPage(resource: string | Link, params?: any): Observable<[Comment[], Page]> {
     return this.restTemplate.get(resource, params).pipe(
-      map((hal: Hal<Comment[]>) => [hal._embedded ? hal._embedded.comments : [], hal.page])
+      map((hal: Hal<Comment[]>) => [hal._embedded.comments, hal.page])
     ) as Observable<[Comment[], Page]>;
   }
 

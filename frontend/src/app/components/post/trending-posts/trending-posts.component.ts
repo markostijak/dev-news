@@ -18,7 +18,7 @@ export class TrendingPostsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.postService.fetchTrending()
+    this.postService.fetchTrending({projection: 'stats'})
       .subscribe(([posts, page]) => {
         this.posts = posts;
       });

@@ -101,4 +101,6 @@ public interface PostRepository extends MongoRepository<Post, String> {
     })
     List<Post> findPopular(Pageable pageable);
 
+    List<Post> findByTitleStartsWithIgnoreCase(@Param("term") String term, Pageable pageable);
+
 }

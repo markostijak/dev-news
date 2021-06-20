@@ -21,12 +21,4 @@ export class ToolbarComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  public onSearch($event): void {
-    this.router.navigate(['/search'], {
-      queryParams: {
-        term: $event
-      }
-    });
-  }
-
 }

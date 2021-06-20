@@ -4,10 +4,10 @@ import {RestTemplate} from '../utils/rest-template.service';
 import {User} from './user';
 import {map} from 'rxjs/operators';
 import {CommunityService} from '../community/community.service';
-import {Link} from '../utils/hal';
+import {Hal, Link, Page} from '../utils/hal';
 import {Community} from '../community/community';
-import {HttpHeaders} from '@angular/common/http';
 import {environment} from '../../../environments/environment';
+import {Post} from '../post/post';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +21,13 @@ export class UserService {
 
   constructor(restTemplate: RestTemplate) {
     this.restTemplate = restTemplate;
+  }
+
+  public fetchByUsername(username: string, projection?: string): Observable<User> {
+    return this.restTemplate.get(this.BASE_PATH + '/search/findByUsername', {
+      username: username,
+      projection: projection
+    }) as Observable<User>;
   }
 
   public fetch(resource: string | Link, projection?: string): Observable<User> {
@@ -65,6 +72,25 @@ export class UserService {
     return this.restTemplate.post(user._links.activate.href, JSON.stringify(activationCode), {
       headers: {'Content-Type': 'application/json'}
     }) as Observable<User>;
+  }
+
+  public fetchPosts(user: User, params?: object): Observable<[Post[], Page]> {
+    return this.restTemplate.get(user._links.posts, params).pipe(
+      map((hal: Hal<Post[]>) => [hal._embedded.posts, hal.page])
+    ) as Observable<[Post[], Page]>;
+  }
+
+  public update(user: User): Observable<User> {
+    return this.restTemplate.patch(user._links.self, {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      username: user.username,
+      picture: user.picture,
+    }) as Observable<User>;
+  }
+
+  public revokeDevice(user: User, device: string): Observable<any> {
+    return this.restTemplate.delete(user._links.self.href + '/devices/' + device);
   }
 
 }

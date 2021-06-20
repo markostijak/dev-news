@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {CommunityService} from '../../domain/community/community.service';
 import {SubscriptionSupport} from '../../domain/utils/subscription-support';
 import {State} from '../../domain/state';
@@ -16,18 +16,20 @@ import {takeUntil} from 'rxjs/operators';
 export class CommunityViewComponent extends SubscriptionSupport implements OnInit {
 
   page: Page;
-  posts: Post[] = [];
+  posts: Post[];
   community: Community;
 
   private loading: boolean = false;
 
   private state: State;
+  private router: Router;
   private activatedRoute: ActivatedRoute;
   private communityService: CommunityService;
 
-  constructor(state: State, activatedRoute: ActivatedRoute, communityService: CommunityService) {
+  constructor(state: State, router: Router, activatedRoute: ActivatedRoute, communityService: CommunityService) {
     super();
     this.state = state;
+    this.router = router;
     this.activatedRoute = activatedRoute;
     this.communityService = communityService;
   }
@@ -47,8 +49,7 @@ export class CommunityViewComponent extends SubscriptionSupport implements OnIni
       this.community = community;
       this.state.navigation$.next(community);
       this.fetchPosts(0);
-      // todo trending
-    });
+    }, () => this.router.navigate(['page-not-found']));
   }
 
   public onScrollEnd($event: UIEvent): void {
@@ -65,6 +66,7 @@ export class CommunityViewComponent extends SubscriptionSupport implements OnIni
         sort: 'createdAt,desc',
         projection: 'stats'
       }).subscribe(([posts, page]) => {
+        this.posts = this.posts || [];
         this.posts.push(...posts);
         this.page = page;
         this.loading = false;

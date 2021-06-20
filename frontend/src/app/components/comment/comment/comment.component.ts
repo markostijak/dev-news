@@ -67,6 +67,7 @@ export class CommentComponent implements OnInit {
         this.comment.replies = [];
       }
 
+      response._embedded.createdBy = this.state.user;
       this.comment.replies.push(response);
       this.showEditor = false;
       $event.editor.reset();

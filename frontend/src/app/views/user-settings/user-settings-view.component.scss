@@ -1,0 +1,61 @@
+main {
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.device {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 5px;
+}
+
+.device-image-container {
+  height: 100px;
+  background-color: #4D4D4D;
+}
+
+.device-description-container {
+  padding: 15px;
+}
+
+.device-name {
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.logout-button {
+  background-color: #a23737;
+  width: 100%;
+  line-height: 30px;
+}
+
+.logout-button-container {
+  padding-top: 15px;
+}
+
+.this-device-icon {
+  color: #3092ea;
+  height: auto;
+  width: auto;
+  font-size: 16px;
+  margin-right: 5px;
+}
+
+.devices {
+  margin-right: -10px;
+}
+
+.device-image-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.device-image-container > mat-icon {
+  height: auto;
+  width: auto;
+  padding: 0;
+  margin: 0;
+  font-size: 3.5rem;
+}
+

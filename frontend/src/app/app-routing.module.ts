@@ -13,6 +13,8 @@ import {SearchViewComponent} from './views/search/search-view.component';
 import {NotFoundViewComponent} from './views/not-found/not-found-view.component';
 import {NonAuthenticatedOnlyGuard} from './domain/authorization/non-authenticated-only.guard';
 import {AuthenticatedOnlyGuard} from './domain/authorization/authenticated-only.guard';
+import {UserViewComponent} from './views/user/user-view.component';
+import {UserSettingsViewComponent} from './views/user-settings/user-settings-view.component';
 
 const routes: Routes = [
   {
@@ -57,6 +59,15 @@ const routes: Routes = [
   {
     path: 'c/:community/p/:post',
     component: PostViewComponent
+  },
+  {
+    path: 'u/:user',
+    component: UserViewComponent
+  },
+  {
+    path: 'u/:user/settings',
+    component: UserSettingsViewComponent,
+    canActivate: [AuthenticatedOnlyGuard]
   },
   {
     path: 'page-not-found',

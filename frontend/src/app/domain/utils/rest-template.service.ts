@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {Link, LinkAware} from './hal';
+import {tap} from 'rxjs/operators';
 
 export interface Options {
   params?: {

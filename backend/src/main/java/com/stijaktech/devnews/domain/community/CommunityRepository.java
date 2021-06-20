@@ -3,7 +3,7 @@ package com.stijaktech.devnews.domain.community;
 import com.stijaktech.devnews.domain.comment.Comment;
 import com.stijaktech.devnews.domain.community.dto.CommunityView;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.repository.query.Param;
@@ -30,6 +30,8 @@ public interface CommunityRepository extends MongoRepository<Community, String> 
 
     Optional<Community> findByAlias(@Param("alias") String alias);
 
+    boolean existsByAlias(String alias);
+
     @Aggregation(pipeline = {
             """
                      { $lookup: {
@@ -54,7 +56,7 @@ public interface CommunityRepository extends MongoRepository<Community, String> 
     @Cacheable(cacheNames = "trending", cacheManager = "ttlCache", key = "'communities'")
     List<Community> findTrending();
 
-    List<Community> findByTitleStartsWithIgnoreCase(@Param("term") String term, Sort sort);
+    List<Community> findByTitleStartsWithIgnoreCase(@Param("term") String term, Pageable pageable);
 
     @Aggregation("{ $sample: { size: ?0 } }")
     List<Community> findUpAndComing(@Size(min = 5, max = 100) @Param("size") int size);

@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {DialogService} from '../../domain/utils/dialog.service';
-import {AuthenticationProcessor} from '../../domain/authentication/authentication-porcessor';
-import {User} from '../../domain/user/user';
+import {DialogService} from '../../../domain/utils/dialog.service';
+import {AuthenticationProcessor} from '../../../domain/authentication/authentication-porcessor';
+import {User} from '../../../domain/user/user';
 
 @Component({
   selector: 'app-user-menu-item',

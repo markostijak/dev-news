@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.rest.webmvc.PersistentEntityResourceAssembler;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +27,15 @@ public class PostController {
                                        PagedResourcesAssembler pagedAssembler,
                                        PersistentEntityResourceAssembler entityAssembler) {
         Page<Post> posts = postRepository.findAllByCommunityIn(user.getCommunities(), pageable);
-        return ResponseEntity.ok(pagedAssembler.toModel(posts, entityAssembler));
+        return ResponseEntity.ok(toPagedModel(posts, pagedAssembler, entityAssembler));
+    }
+
+    @GetMapping("/users/{id}/created-posts")
+    public ResponseEntity<?> userCreatedPosts(@PathVariable("id") User user, Pageable pageable,
+                                              PagedResourcesAssembler pagedAssembler,
+                                              PersistentEntityResourceAssembler entityAssembler) {
+        Page<Post> posts = postRepository.findAllByCreatedBy(user, pageable);
+        return ResponseEntity.ok(toPagedModel(posts, pagedAssembler, entityAssembler));
     }
 
     @GetMapping("/communities/{id}/posts")
@@ -34,7 +43,16 @@ public class PostController {
                                             PagedResourcesAssembler pagedAssembler,
                                             PersistentEntityResourceAssembler entityAssembler) {
         Page<Post> posts = postRepository.findAllByCommunity(community, pageable);
-        return ResponseEntity.ok(pagedAssembler.toModel(posts, entityAssembler));
+        return ResponseEntity.ok(toPagedModel(posts, pagedAssembler, entityAssembler));
+    }
+
+    private PagedModel<?> toPagedModel(Page<Post> posts, PagedResourcesAssembler pagedAssembler,
+                                       PersistentEntityResourceAssembler entityAssembler) {
+        if (posts.isEmpty()) {
+            return pagedAssembler.toEmptyModel(posts, Post.class);
+        }
+
+        return pagedAssembler.toModel(posts, entityAssembler);
     }
 
 }

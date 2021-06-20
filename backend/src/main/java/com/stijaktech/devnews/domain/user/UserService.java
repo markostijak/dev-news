@@ -2,7 +2,10 @@ package com.stijaktech.devnews.domain.user;
 
 import com.stijaktech.devnews.domain.ModelException.ModelAlreadyPresentException;
 import com.stijaktech.devnews.domain.Status;
+import com.stijaktech.devnews.domain.user.device.Device;
 import com.stijaktech.devnews.domain.user.dto.UserCreate;
+import com.stijaktech.devnews.domain.user.dto.UserPatch;
+import com.stijaktech.devnews.domain.user.dto.UserUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -17,6 +20,7 @@ import javax.mail.MessagingException;
 import java.util.Objects;
 import java.util.Set;
 
+import static com.stijaktech.devnews.domain.ModelException.ModelNotFoundException;
 import static com.stijaktech.devnews.domain.user.Privilege.DELETE;
 import static com.stijaktech.devnews.domain.user.Privilege.READ;
 import static com.stijaktech.devnews.domain.user.Privilege.WRITE;
@@ -71,7 +75,7 @@ public class UserService {
         User user = userRepository.findByEmail(model.getEmail()).orElse(null);
 
         if (user != null) {
-            user.setPicture(model.getPicture());
+            //user.setPicture(model.getPicture());
             user.setLastName(model.getLastName());
             user.setProvider(model.getProvider());
             user.setFirstName(model.getFirstName());
@@ -117,9 +121,44 @@ public class UserService {
         return sendMail(user.getEmail(), activationCode);
     }
 
-    public boolean deleteDevice(User user, String deviceToken) {
-        boolean result = user.getDevices()
-                .removeIf(d -> d.getToken().equals(deviceToken));
+    public User update(User user, UserUpdate model) {
+        user.setFirstName(model.getFirstName());
+        user.setLastName(model.getLastName());
+        user.setUsername(model.getUsername());
+        user.setPicture(model.getPicture());
+
+        return userRepository.save(user);
+    }
+
+    public User patch(User user, UserPatch model) {
+        if (model.getFirstName() != null) {
+            user.setFirstName(model.getFirstName());
+        }
+
+        if (model.getLastName() != null) {
+            user.setLastName(model.getLastName());
+        }
+
+        if (model.getUsername() != null) {
+            user.setUsername(model.getUsername());
+        }
+
+        if (model.getPicture() != null) {
+            user.setPicture(model.getPicture());
+        }
+
+        return userRepository.save(user);
+    }
+
+    public User getByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new ModelNotFoundException("User" + username + " not found"));
+    }
+
+    public boolean revokeDevice(User user, String token) {
+        Set<Device> devices = user.getDevices();
+
+        boolean result = devices.removeIf(d -> d.getToken().equals(token));
 
         userRepository.save(user);
 
@@ -148,10 +187,6 @@ public class UserService {
         } catch (MessagingException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
-
-    public User update(User user, UserCreate model) {
-        return null;
     }
 
 }

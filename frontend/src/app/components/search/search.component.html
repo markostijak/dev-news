@@ -1,6 +1,42 @@
 <div class="search-container">
-  <form (ngSubmit)="onSubmit($event)">
-    <input [formControl]="searchInput" class="search" label="Search box" placeholder="Search">
-    <div class="search-result-container"></div>
-  </form>
+  <input [formControl]="searchInput" [matAutocomplete]="auto" class="search" label="Search box" placeholder="Search">
+
+  <mat-autocomplete #auto="matAutocomplete" class="search-autocomplete">
+    <div *ngIf="communities.length" mat-subheader class="sub-header">Communities</div>
+    <mat-option *ngFor="let community of communities" [routerLink]="['c', community.alias]">
+      <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="center center">
+        <div fxFlex="0 0 30px">
+          <img class="mat-option-avatar" [src]="community.logo ? community.logo : 'assets/icons/community.svg'"
+               [alt]="community.title">
+        </div>
+        <div fxFlex="1 1 100%">
+          <div class="community-title">{{community.title}}</div>
+        </div>
+      </div>
+    </mat-option>
+
+    <mat-divider class="mt-10" *ngIf="communities.length && posts.length"></mat-divider>
+    <div *ngIf="posts.length" mat-subheader class="sub-header">Posts</div>
+    <mat-option class="post-option" *ngFor="let post of posts"
+                [routerLink]="['c', post.community.alias, 'p', post.alias]">
+      <div class="mb-5">{{post.title}}</div>
+      <div class="info" fxLayout="row" fxLayoutGap="5px" fxLayoutAlign="center center">
+        <ng-container *ngIf="post.community as community">
+          <div fxFlex="0 0 16px">
+            <img class="community-logo w-100" [src]="community.logo ? community.logo : 'assets/icons/community.svg'"
+                 [alt]="community.alias">
+          </div>
+          <div fxFlex="0 0 auto" class="community">
+            <span class="community-link" [routerLink]="['/c/', community.alias]">{{community.title}}</span>
+          </div>
+          <div fxFlex="0 0 auto">
+            <span class="separator">•</span>
+          </div>
+        </ng-container>
+        <div fxFlex="1 1 auto" class="user">Posted by {{post.createdBy.username}} {{post.createdAt | timeAgo}}</div>
+      </div>
+    </mat-option>
+
+    <div class="mb-10"></div>
+  </mat-autocomplete>
 </div>

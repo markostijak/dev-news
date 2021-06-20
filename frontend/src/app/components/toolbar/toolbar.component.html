@@ -4,7 +4,7 @@
 
     <app-navigation class="ml-30"></app-navigation>
 
-    <app-search class="search-container ml-30 mr-30" (search)="onSearch($event)"></app-search>
+    <app-search class="search-container ml-30 mr-30"></app-search>
 
     <ng-container *ngIf="state.user$ | async else login">
       <ng-container *ngIf="state.user else loading">

@@ -70,7 +70,7 @@ export class PostViewComponent extends SubscriptionSupport implements OnInit, On
       this.post = post;
       this.isAuthor = this.state.user && post.createdBy.username === this.state.user.username;
       this.commentsCount = post.commentsCount;
-    });
+    }, () => this.router.navigate(['page-not-found']));
   }
 
   onSave($event: Data): void {
@@ -78,6 +78,7 @@ export class PostViewComponent extends SubscriptionSupport implements OnInit, On
       const comment = {content: $event.content};
       this.commentService.create(this.post, comment as Comment)
         .subscribe(response => {
+          response._embedded.createdBy = this.state.user;
           this.comments.push(response);
           this.commentsCount++;
           $event.editor.reset();

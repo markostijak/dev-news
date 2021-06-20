@@ -20,11 +20,10 @@ public class PostEventHandler {
     public void beforeSave(Post post) {
         String alias = post.getAlias();
 
-        if (alias != null) {
-            return;
+        if (alias == null) {
+            alias = post.getTitle().toLowerCase();
         }
 
-        alias = post.getTitle().toLowerCase();
         alias = alias.replaceAll("[^\\p{IsAlphabetic}\\p{IsDigit}\\- ]", "");
         alias = alias.replace(" ", "-");
 

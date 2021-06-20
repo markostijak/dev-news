@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.validator.internal.engine.path.PathImpl;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +51,11 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
         });
 
         return handleExceptionInternal(e, errors, HttpHeaders.EMPTY, HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<Object> handleConstraintViolation(ResourceNotFoundException e, WebRequest request) {
+        return handleExceptionInternal(e, "Resource not found", HttpHeaders.EMPTY, HttpStatus.NOT_FOUND, request);
     }
 
     @Override

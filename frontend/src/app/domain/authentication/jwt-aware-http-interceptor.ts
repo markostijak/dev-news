@@ -85,7 +85,7 @@ export class JwtAwareHttpInterceptor extends AuthenticationAware implements Http
           this.refreshTokenSubject.next(authentication);
           this.authenticationProcessor.onJwtRefresh(authentication);
           return next.handle(JwtAwareHttpInterceptor.addToken(request, authentication.credentials.accessToken));
-        }));
+        }), catchError(() => this.logout()));
 
     } else {
       return this.refreshTokenSubject.pipe(

@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.util.matcher.IpAddressMatcher;
 
 @Order(2)
 @Configuration
@@ -42,6 +43,8 @@ public class ActuatorSecurityConfiguration extends WebSecurityConfigurerAdapter 
                 .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.FORBIDDEN))
                 .and()
                 .authorizeRequests()
+                .requestMatchers(new IpAddressMatcher("127.0.0.1"))
+                .permitAll()
                 .anyRequest()
                 .hasRole(Role.WEBMASTER.name());
     }

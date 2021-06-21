@@ -16,7 +16,7 @@ export class InfiniteScrollerComponent {
   @Input()
   public throttle: number = 1000;
 
-  private timer: number;
+  private timer: object;
   private document: Document;
 
   constructor(@Inject(DOCUMENT) document: Document) {

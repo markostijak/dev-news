@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: eu.gcr.io/nifty-analyst-317516/stijaktech/backend:latest
+          image: eu.gcr.io/nifty-analyst-317516/mscode/backend:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080

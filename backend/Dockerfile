@@ -1,4 +1,4 @@
-FROM openjdk:14.0.1
+FROM openjdk:16.0.1-slim
 
 ARG JAR
 

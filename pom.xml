@@ -32,7 +32,7 @@
                         </execution>
                     </executions>
                     <configuration>
-                        <repository>stijaktech/${project.artifactId}</repository>
+                        <repository>mscode/${project.artifactId}</repository>
                         <tag>${project.version}</tag>
                         <tag>latest</tag>
                     </configuration>

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: eu.gcr.io/stijaktech-260513/stijaktech/frontend:latest
+          image: eu.gcr.io/nifty-analyst-317516/stijaktech/frontend:latest
           imagePullPolicy: Always
           ports:
             - name: frontend

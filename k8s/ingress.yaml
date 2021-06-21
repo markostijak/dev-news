@@ -31,7 +31,6 @@ spec:
               service:
                 name: frontend
                 port:
-                  name: http
                   number: 8080
             path: '/'
             pathType: Prefix
@@ -42,7 +41,6 @@ spec:
               service:
                 name: frontend
                 port:
-                  name: http
                   number: 8080
             path: '/'
             pathType: Prefix
@@ -53,7 +51,6 @@ spec:
               service:
                 name: backend
                 port:
-                  name: http
                   number: 8080
             path: '/'
             pathType: Prefix
@@ -64,7 +61,6 @@ spec:
               service:
                 name: cdn
                 port:
-                  name: http
                   number: 8080
             path: '/'
             pathType: Prefix
@@ -75,7 +71,6 @@ spec:
               service:
                 name: elk
                 port:
-                  name: http
                   number: 8080
             path: '/'
             pathType: Prefix

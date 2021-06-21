@@ -1,4 +1,4 @@
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: virtual-host-ingress
@@ -28,29 +28,44 @@ spec:
       http:
         paths:
           - backend:
-              serviceName: frontend
-              servicePort: 8080
+              service:
+                name: frontend
+                port:
+                  name: http
+                  number: 8080
     - host: 'www.devnews.xyz'
       http:
         paths:
           - backend:
-              serviceName: frontend
-              servicePort: 8080
+              service:
+                name: frontend
+                port:
+                  name: http
+                  number: 8080
     - host: 'api.devnews.xyz'
       http:
         paths:
           - backend:
-              serviceName: backend
-              servicePort: 8080
+              service:
+                name: backend
+                port:
+                  name: http
+                  number: 8080
     - host: 'cdn.devnews.xyz'
       http:
         paths:
           - backend:
-              serviceName: cdn
-              servicePort: 8080
+              service:
+                name: cdn
+                port:
+                  name: http
+                  number: 8080
     - host: 'kibana.devnews.xyz'
       http:
         paths:
           - backend:
-              serviceName: elk
-              servicePort: 5601
+              service:
+                name: elk
+                port:
+                  name: http
+                  number: 8080

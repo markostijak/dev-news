@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
-import {AuthService, AuthServiceConfig, FacebookLoginProvider, GoogleLoginProvider, LoginOpt, SocialUser} from 'angularx-social-login';
+import {AuthService, AuthServiceConfig, FacebookLoginProvider, GoogleLoginProvider} from 'angularx-social-login';
 import {environment} from '../../../environments/environment';
-import {LoginProvider} from 'angularx-social-login/src/entities/login-provider';
+import {GitHubLoginProvider} from './github-login-provider';
 
 @Injectable({
   providedIn: 'root'
@@ -25,43 +25,9 @@ export class Oauth2Provider extends AuthService {
       },
       {
         id: GitHubLoginProvider.PROVIDER_ID,
-        provider: new GitHubLoginProvider('d3e47fc2ddd966fa4352', {
-          redirect_uri: environment.oauth2RedirectUri
-        })
+        provider: new GitHubLoginProvider('1a0134416aad2086e0bf')
       }
     ]));
-  }
-
-}
-
-export class GitHubLoginProvider implements LoginProvider {
-  static readonly PROVIDER_ID = 'GITHUB';
-
-  private _clientId: string;
-  private _options: LoginOpt;
-
-  constructor(clientId: string, opt?: LoginOpt) {
-    this._clientId = clientId;
-    this._options = opt;
-  }
-
-  getLoginStatus(): Promise<SocialUser> {
-    return undefined;
-  }
-
-  initialize(): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-    });
-  }
-
-  signIn(): Promise<SocialUser>;
-
-  signIn(opt?: LoginOpt): Promise<SocialUser> {
-    return undefined;
-  }
-
-  signOut(revoke?: boolean): Promise<any> {
-    return undefined;
   }
 
 }

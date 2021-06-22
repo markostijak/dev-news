@@ -7,8 +7,9 @@ import {of} from 'rxjs';
 import {Authentication} from '../../domain/authentication/authentication';
 import {AuthenticationService} from '../../domain/authentication/authentication.service';
 import {fromPromise} from 'rxjs/internal-compatibility';
-import {GitHubLoginProvider, Oauth2Provider} from '../../domain/authentication/oauth2-provider';
+import {Oauth2Provider} from '../../domain/authentication/oauth2-provider';
 import {FacebookLoginProvider, GoogleLoginProvider} from 'angularx-social-login';
+import {GitHubLoginProvider} from '../../domain/authentication/github-login-provider';
 
 interface Login {
   principal: string;

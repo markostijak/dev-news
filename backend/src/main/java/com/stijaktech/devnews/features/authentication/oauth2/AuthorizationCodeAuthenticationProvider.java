@@ -1,6 +1,5 @@
 package com.stijaktech.devnews.features.authentication.oauth2;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.stijaktech.devnews.domain.user.Provider;
 import com.stijaktech.devnews.domain.user.User;
 import com.stijaktech.devnews.domain.user.UserService;
@@ -56,10 +55,9 @@ public class AuthorizationCodeAuthenticationProvider implements AuthenticationPr
         OAuth2AccessToken accessToken = accessTokenProvider.obtainAccessToken(providerDetails, accessTokenRequest);
 
         OAuth2RestTemplate restTemplate = new OAuth2RestTemplate(providerDetails, new DefaultOAuth2ClientContext(accessToken));
-        JsonNode userInfo = restTemplate.getForObject(providerDetails.getUserInfoUri(), JsonNode.class);
+        UserInfoExtractor userInfoExtractor = new UserInfoExtractor(restTemplate, providerDetails);
 
-        Provider provider = Provider.valueOf(providerString);
-        User model = extract(provider, userInfo);
+        User model = userInfoExtractor.extract(Provider.valueOf(providerString));
         model = userService.createFromOAuthProvider(model, authorizationCode);
 
         Device device = deviceService.findOrCreate(model, webDetails);
@@ -67,15 +65,6 @@ public class AuthorizationCodeAuthenticationProvider implements AuthenticationPr
         deviceService.updateLastUsedTime(model, device);
 
         return new AuthorizationCodeAuthenticationToken(user, authorizationCode, user.getAuthorities());
-    }
-
-    private User extract(Provider provider, JsonNode userInfo) {
-        return switch (provider) {
-            case FACEBOOK -> UserInfoExtractor.extractFacebookUserInfo(userInfo);
-            case GOOGLE -> UserInfoExtractor.extractGoogleUserInfo(userInfo);
-            case GITHUB -> UserInfoExtractor.extractGitHubUserInfo(userInfo);
-            default -> throw new IllegalArgumentException("Unsupported provider: " + provider.getName());
-        };
     }
 
     @Override

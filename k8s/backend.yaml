@@ -25,22 +25,6 @@ spec:
           volumeMounts:
             - mountPath: /public
               name: public
-          livenessProbe:
-            httpGet:
-              path: /actuator/health/liveness
-              port: 7777
-            periodSeconds: 10
-            timeoutSeconds: 2
-            failureThreshold: 2
-            successThreshold: 2
-          readinessProbe:
-            httpGet:
-              path: /actuator/health/readiness
-              port: 7777
-            initialDelaySeconds: 15
-            periodSeconds: 5
-            timeoutSeconds: 2
-            failureThreshold: 3
       volumes:
         - name: public
           hostPath:

@@ -3,7 +3,9 @@
     <img class="user-image w-100" [src]="comment._embedded.createdBy.picture  || 'assets/icons/user.png'"
          [alt]="comment._embedded.createdBy.username">
   </div>
-  <div fxFlex="0 0 auto" class="user">{{comment._embedded.createdBy.username}}</div>
+  <div fxFlex="0 0 auto" class="user">
+    <a class="user-link" [routerLink]="['/u', comment._embedded.createdBy.username]">{{comment._embedded.createdBy.username}}</a>
+  </div>
   <div fxFlex="0 0 auto"><span class="separator">•</span></div>
   <div fxFlex="0 0 auto" class="date">{{comment.createdAt | timeAgo}}</div>
   <div *ngIf="comment.updatedAt && comment.createdAt != comment.updatedAt" fxFlex="0 0 auto" class="date">

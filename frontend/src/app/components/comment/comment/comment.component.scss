@@ -66,3 +66,14 @@ app-comment {
   display: block;
   margin-top: 5px;
 }
+
+.user-link {
+  color: white;
+  opacity: 1;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.user-link:hover {
+  text-decoration: underline;
+}

@@ -17,7 +17,9 @@
               <span class="separator">•</span>
             </div>
             <div fxFlex="0 0 auto" class="user">Posted
-              by <span class="username-view">{{post.createdBy.username}}</span> {{post.createdAt | timeAgo}}</div>
+              by <span class="username-view">
+                <a class="user-link" [routerLink]="['/u', post.createdBy.username]">{{post.createdBy.username}}</a>
+              </span> {{post.createdAt | timeAgo}}</div>
             <div *ngIf="post.updatedAt && post.createdAt != post.updatedAt" fxFlex="0 0 auto" class="user">
               (edited {{post.updatedAt | timeAgo}})
             </div>

@@ -51,7 +51,7 @@ export class UserViewComponent extends SubscriptionSupport implements OnInit {
   }
 
   private load(username: string): void {
-    this.userService.fetchByUsername(username, 'profile')
+    this.userService.fetchByUsername(username, 'info')
       .subscribe(user => {
         this.user = user;
         this.navigate(user);

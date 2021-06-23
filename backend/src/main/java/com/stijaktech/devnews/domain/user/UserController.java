@@ -3,6 +3,7 @@ package com.stijaktech.devnews.domain.user;
 import com.stijaktech.devnews.domain.ModelAssembler;
 import com.stijaktech.devnews.domain.user.dto.UserAccount;
 import com.stijaktech.devnews.domain.user.dto.UserCreate;
+import com.stijaktech.devnews.domain.user.dto.UserInfo;
 import com.stijaktech.devnews.domain.user.dto.UserPatch;
 import com.stijaktech.devnews.domain.user.dto.UserProfile;
 import com.stijaktech.devnews.domain.user.dto.UserUpdate;
@@ -100,7 +101,7 @@ public class UserController {
     @GetMapping("/search/findByUsername")
     public ResponseEntity<?> getByUsername(@RequestParam("username") @Size(min = 5, max = 64) String username) {
         User user = userService.getByUsername(username);
-        return ResponseEntity.ok(project(user, UserView.class));
+        return ResponseEntity.ok(project(user, UserInfo.class));
     }
 
     @DeleteMapping("/{id}/devices/{deviceId}")

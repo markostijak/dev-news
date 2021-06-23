@@ -31,7 +31,7 @@ services:
 
   backend:
     container_name: 'backend'
-    image: 'stijaktech/backend'
+    image: 'mscode/backend'
     volumes:
       - c:/public/:/public
     ports:
@@ -39,6 +39,6 @@ services:
 
   frontend:
     container_name: 'frontend'
-    image: 'stijaktech/frontend'
+    image: 'mscode/frontend'
     ports:
       - '4200:80'

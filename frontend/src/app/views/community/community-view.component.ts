@@ -37,7 +37,7 @@ export class CommunityViewComponent extends SubscriptionSupport implements OnIni
   ngOnInit(): void {
     this.activatedRoute.params.pipe(takeUntil(this.destroyed$))
       .subscribe(params => {
-        this.posts = [];
+        this.posts = null;
         this.page = null;
         this.community = null;
         this.load(params['community']);

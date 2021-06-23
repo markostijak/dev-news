@@ -23,6 +23,13 @@ spec:
           ports:
             - containerPort: 27017
               name: mongo
+          volumeMounts:
+            - mountPath: /data/db
+              name: data
+      volumes:
+        - name: data
+          hostPath:
+            path: /home/marko_stijak_dev/application/data
       restartPolicy: Always
   selector:
     matchLabels:

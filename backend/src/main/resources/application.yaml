@@ -1,0 +1,162 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: 'dev-news'
+  main:
+    banner-mode: off
+  data:
+    rest:
+      base-path: '/api/v1'
+  jackson:
+    default-property-inclusion: non_null
+  servlet:
+    multipart:
+      max-file-size: '10MB'
+      max-request-size: '10MB'
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - metrics
+          - health
+          - info
+  metrics:
+    export:
+      elastic:
+        step: 1m
+        enabled: false
+        index-date-format: yyyy-MM-dd
+    tags:
+      app: ${spring.application.name}
+      hostname: ${hostname:localhost}
+
+dev-news:
+  cors:
+    origin: '*'
+  oauth2:
+    providers:
+      google:
+        client-id: 406447323616-d7q5d681g1jnpua58ipj002tl6piu8jq.apps.googleusercontent.com
+        client-secret: '<client-secret-hidden>'
+        scope:
+          - email
+          - profile
+        user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+        access-token-uri: https://www.googleapis.com/oauth2/v4/token
+        user-authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+      facebook:
+        client-id: 838239883050275
+        client-secret: '<client-secret-hidden>'
+        scope:
+          - email
+          - public_profile
+        user-info-uri: https://graph.facebook.com/me?fields=id,name,email
+        access-token-uri: https://graph.facebook.com/v2.8/oauth/access_token
+        user-authorization-uri: https://www.facebook.com/v2.8/dialog/oauth
+      github:
+        client-id: 1a0134416aad2086e0bf
+        client-secret: '<client-secret-hidden>'
+        scope:
+          - user:email
+          - read:user
+        user-info-uri: https://api.github.com/user
+        access-token-uri: https://github.com/login/oauth/access_token
+        user-authorization-uri: https://github.com/login/oauth/authorize
+  geo-ip:
+    endpoint: 'http://www.geoplugin.net/json.gp?ip='
+
+---
+# production properties
+spring:
+  config:
+    activate:
+      on-profile: prod
+  data:
+    mongodb:
+      host: 'mongo'
+      port: 27017
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: '<username-hidden>'
+    password: '<password-hidden>'
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+
+management:
+  server:
+    port: 7777
+  metrics:
+    export:
+      elastic:
+        enabled: false
+        host: 'http://elk:9200'
+
+dev-news:
+  jwt:
+    access-token-validity: '2m'
+    refresh-token-validity: '30d'
+    issuer: 'dev-news'
+  cors:
+    origin: 'https://www.devnews.xyz'
+  oauth2:
+    pre-established-redirect-uri: 'https://www.devnews.xyz'
+  file-upload:
+    host: 'https://cdn.devnews.xyz/'
+    store-location: '/public'
+
+---
+# dev properties
+spring:
+  config:
+    activate:
+      on-profile: dev
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: '<username-hidden>'
+    password: '<password-hidden>'
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+
+dev-news:
+  jwt:
+    access-token-validity: '2m'
+    refresh-token-validity: '30d'
+  cors:
+    origin: '*'
+  oauth2:
+    pre-established-redirect-uri: 'http://localhost:4200'
+  file-upload:
+    host: 'http://localhost:9000/'
+    store-location: 'C:\public'
+
+---
+# test properties
+spring:
+  config:
+    activate:
+      on-profile: test
+
+management:
+  metrics:
+    export:
+      elastic:
+        enabled: false
+
+dev-news:
+  jwt:
+    access-token-validity: '1m'
+    refresh-token-validity: '10m'
+  cors:
+    origin: '*'
+  oauth2:
+    pre-established-redirect-uri: 'http://localhost:8080'
+  file-upload:
+    host: 'http://localhost:9000/'
+    store-location: 'C:\public'

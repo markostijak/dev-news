@@ -62,7 +62,7 @@
             <div fxFlex="0 0 auto">
               <span class="separator">•</span>
             </div>
-            <div fxFlex="1 1 auto" class="user">{{post.commentsCount | shortNumber}} comments</div>
+            <div fxFlex="1 1 auto" class="user">{{post.commentsCount | shortNumber}} {{post.commentsCount | i18nPlural: {"=1": "comment", "other": "comments"} }}</div>
           </div>
           <mat-divider></mat-divider>
         </a>

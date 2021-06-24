@@ -13,7 +13,7 @@
         </div>
         <div fxFlex="1 1 100%">
           <a [routerLink]="['/c', community.alias]" class="community-title">{{community.title}}</a>
-          <div class="community-members">{{community.membersCount | shortNumber}} members</div>
+          <div class="community-members">{{community.membersCount | shortNumber}} {{community.membersCount | i18nPlural: {"=1": "member", "other": "members"} }}</div>
         </div>
         <div fxFlex="0 0 80px" *ngIf="state.user$ | async">
           <ng-container *ngIf="memberOf(community) | async; then leaveButton else joinButton"></ng-container>

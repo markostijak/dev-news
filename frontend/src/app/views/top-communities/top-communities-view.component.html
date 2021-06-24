@@ -13,9 +13,13 @@
                  [alt]="community.title">
             <h4 mat-line class="title">{{community.title}}</h4>
             <p mat-line class="subtitle">
-              <span>{{community.membersCount | shortNumber}} members</span>
+              <span>
+              {{community.membersCount | shortNumber}} {{community.membersCount | i18nPlural: {"=1": "member", "other": "members"} }}
+              </span>
               <span class="separator">•</span>
-              <span>{{community.postsCount | shortNumber}} posts</span>
+              <span>
+              {{community.postsCount | shortNumber}} {{community.postsCount | i18nPlural: {"=1": "post", "other": "posts"} }}
+              </span>
             </p>
           </a>
           <mat-divider *ngIf="!last"></mat-divider>

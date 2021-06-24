@@ -28,7 +28,7 @@
         <div class="actions">
           <button mat-raised-button class="mr-10">
             <mat-icon>mode_comment</mat-icon>
-            {{post.commentsCount | shortNumber}} Comments
+            {{post.commentsCount | shortNumber}} {{post.commentsCount | i18nPlural: {"=1": "Comment", "other": "Comments"} }}
           </button>
           <button mat-raised-button class="mr-10">
             <mat-icon>share</mat-icon>

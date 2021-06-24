@@ -27,11 +27,11 @@
     <div fxLayout="row" fxLayoutAlign="center center">
       <div fxFlex>
         <div class="numbers">{{community?.membersCount || 0 | shortNumber}}</div>
-        <div class="numbers-description">Members</div>
+        <div class="numbers-description">{{community?.membersCount || 0 | i18nPlural: {"=1": "Member", "other": "Members"} }}</div>
       </div>
       <div fxFlex>
         <div class="numbers">{{community?.postsCount || 0 | shortNumber}}</div>
-        <div class="numbers-description">Posts</div>
+        <div class="numbers-description">{{community?.postsCount || 0 | i18nPlural: {"=1": "Post", "other": "Posts"} }}</div>
       </div>
     </div>
   </mat-card-content>

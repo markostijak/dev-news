@@ -28,7 +28,7 @@
     "github-oauth-popup": "^1.2.0",
     "hammerjs": "^2.0.8",
     "javascript-time-ago": "^2.0.1",
-    "marked": "^0.7.0",
+    "marked": "^4.0.10",
     "ngx-quill": "^7.2.0",
     "ngx-virtual-scroller": "^3.0.3",
     "quill": "^1.3.6",
